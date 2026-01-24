@@ -1,0 +1,218 @@
+
+================================================================================
+EMPIRICAL RESEARCH ON VERBAL PROBABILITY MAPPINGS
+Comprehensive Analysis for Bayesian Knowledge Graph Implementation
+================================================================================
+
+EXECUTIVE SUMMARY
+-----------------
+This analysis synthesizes empirical research from landmark studies spanning 
+1967-2022 to provide principled mappings from verbal probability expressions 
+to numerical distributions suitable for Bayesian inference.
+
+KEY FINDINGS
+------------
+
+1. CONSENSUS MAPPINGS (High Reliability)
+   These terms show narrow distributions and high inter-rater agreement:
+
+   - "Always" / "Never" / "Certain" / "Impossible": 
+     * Nearly deterministic (99.7% / 0.3% medians)
+     * IQR < 1% (extremely narrow)
+     * RECOMMENDATION: Safe for automated mapping
+
+   - "Even chance" / "Toss-up" / "As often as not":
+     * 50% (IQR < 1%)
+     * Strong anchoring effect
+     * RECOMMENDATION: High confidence mapping
+
+   - "Very likely": 
+     * Mean: 82-87% across studies
+     * IQR: ~10%
+     * RECOMMENDATION: Reliable with moderate uncertainty
+
+   - "Likely" / "Probable":
+     * Mean: 69-71%
+     * IQR: 13-15%
+     * RECOMMENDATION: Good for most applications
+
+2. PROBLEMATIC TERMS (High Ambiguity - AVOID)
+
+   - "Possible":
+     * BIMODAL distribution (7.5% - 50.2% IQR = 42.7%)
+     * Multiple distinct interpretations exist
+     * RECOMMENDATION: DO NOT USE for automated extraction
+
+   - "Not unreasonable" / "Might happen":
+     * IQR > 29-30%
+     * Low modal acceptability
+     * RECOMMENDATION: AVOID - too ambiguous
+
+3. CONTEXT EFFECTS
+
+   - Base rate influences interpretation significantly
+   - Medical context: Terms interpreted MORE conservatively
+     * "Rare" in medical = 10%, but severity matters (6.3% severe vs 14% mild)
+
+   - IPCC findings: PUBLIC SYSTEMATICALLY REGRESSES TOWARD 50%
+     * "Very likely" intended as 95%, interpreted as 67%
+     * Gap of 28 percentage points!
+     * RECOMMENDATION: Account for regression in extraction
+
+4. EXPERT VS LAY POPULATIONS
+
+   - Within-subject variability < between-subject variability
+   - Experts show narrower distributions
+   - Time stability: Good (20-year replication showed ~2% average change)
+
+DISTRIBUTION PARAMETERS FOR BETA DISTRIBUTIONS
+----------------------------------------------
+
+To derive Beta(α, β) parameters from empirical data, use method of moments:
+
+Given mean (μ) and variance (σ²):
+  α = μ * ((μ*(1-μ))/σ² - 1)
+  β = (1-μ) * ((μ*(1-μ))/σ² - 1)
+
+For IQR to variance conversion:
+  σ ≈ IQR / 1.35  (assumes approximately normal)
+
+Example calculations for key terms:
+
+BETA DISTRIBUTION PARAMETERS (derived from Mosteller & Youtz 1990):
+
+Term                 Mean     IQR      Alpha      Beta       Notes
+=====================================================================================
+Very likely          87.5     10.1     16.22      2.32      
+Likely               71.1     15.0     11.12      4.52      
+Probable             70.2     13.0     15.13      6.42      
+Unlikely             17.2     13.0     2.47       11.89     
+Very unlikely        5.0      7.1      0.81       15.36     
+Even chance          50.0     0.5      9112.00    9112.00   
+Possible             38.5     42.7     0.53       0.84      
+
+
+PRACTICAL RECOMMENDATIONS FOR KNOWLEDGE GRAPH IMPLEMENTATION
+-----------------------------------------------------------
+
+1. TIERED CONFIDENCE APPROACH:
+
+   TIER 1 (High Confidence - Use freely):
+   - Always, Never, Certain, Impossible (>99% or <1%)
+   - Even chance, Toss-up (50%)
+   - Very likely (85-90%)
+   - Very unlikely (5-10%)
+
+   TIER 2 (Moderate Confidence - Use with wider priors):
+   - Likely, Probable (65-75%)
+   - Unlikely (15-20%)
+   - Usually, Frequently (70-80%)
+
+   TIER 3 (Low Confidence - AVOID or use very wide priors):
+   - Possible (too ambiguous)
+   - Might, May (no consensus)
+   - Not unreasonable (unclear)
+
+2. DOMAIN-SPECIFIC CALIBRATIONS:
+
+   Medical/Health:
+   - Use more conservative estimates
+   - Account for severity (rare severe vs rare mild)
+   - Recommend using European Commission standardized terms
+
+   General/Technical:
+   - Mosteller & Youtz science writers data is best baseline
+   - Weather forecasting: Professional calibrations available
+   - Forecasting platforms: Metaculus/Good Judgment data shows experts
+     use narrower, better-calibrated distributions
+
+3. MODIFIER EFFECTS (Mosteller & Youtz Rule):
+
+   Modified probability ≈ 0.5 * (original probability from boundary)
+
+   Examples:
+   - "Often" = 72.5%, "Very often" = 82.8%
+     * Distance from 100%: 27.5% → 17.2% (≈ 0.63x, close to 0.5)
+   - "Unlikely" = 17.2%, "Very unlikely" = 5.0%  
+     * Distance from 0%: 17.2% → 5.0% (≈ 0.29x, reasonable approximation)
+
+4. HANDLING AMBIGUITY IN EXTRACTION:
+
+   When extracting claims like "PostgreSQL usually performs better":
+
+   a) Identify the expression: "usually"
+   b) Look up baseline: Median = 75.1%, IQR = 16.7%
+   c) Consider context: Technical documentation vs casual statement
+   d) Apply Beta distribution: Beta(~15, ~5) for "usually"
+   e) For conservative approach: Use wider distribution (lower α, β)
+
+   CRITICAL: Flag high-ambiguity terms for human review!
+
+5. GAPS IN LITERATURE:
+
+   LIMITED DATA FOR:
+   - Comparative phrases ("more likely than X")
+   - Conditional phrases ("likely if X")
+   - Temporal qualifiers ("soon", "eventually")
+   - Domain-specific technical terms
+
+   RECOMMENDATION: Build your own calibration dataset for your specific
+   domain using the methods from Wallsten et al. (membership functions)
+
+CITATIONS
+---------
+
+PRIMARY SOURCES:
+
+[1] Mosteller, F., & Youtz, C. (1990). Quantifying probabilistic 
+    expressions. Statistical Science, 5(1), 2-34.
+    * N=238 science writers
+    * 52 expressions with full quartile data
+    * Gold standard for general-purpose mappings
+
+[2] Wallsten, T. S., Budescu, D. V., Rapoport, A., Zwick, R., & 
+    Forsyth, B. (1986). Measuring the vague meanings of probability 
+    terms. Journal of Experimental Psychology: General, 115(4), 348-365.
+    * Membership function methodology
+    * Individual-level validation
+
+[3] Budescu, D. V., & Wallsten, T. S. (1995). Processing linguistic 
+    probabilities: General principles and empirical evidence. 
+    Psychology of Learning and Motivation, 32, 275-318.
+    * Comprehensive theoretical framework
+    * Context effects
+
+[4] Budescu, D. V., Por, H. H., & Broomell, S. B. (2012). Effective 
+    communication of uncertainty in the IPCC reports. Climatic Change, 
+    113(2), 181-200.
+    * IPCC scale interpretation
+    * Regression toward 50% phenomenon
+
+[5] Andreadis, K., et al. (2021). Imprecision and preferences in 
+    interpretation of verbal probabilities in health. Journal of 
+    General Internal Medicine.
+    * Medical context meta-analysis
+    * European Commission terms
+
+[6] Vogel, T., et al. (2022). The interpretation of verbal 
+    probabilities: A systematic literature review and meta-analysis.
+    Studies in Health Technology and Informatics.
+    * 21 studies, 1967-2018
+    * 35 expressions synthesized
+
+FORECASTING-SPECIFIC:
+
+[7] Tetlock, P. E., & Gardner, D. (2015). Superforecasting: The art 
+    and science of prediction. Good Judgment Project findings.
+
+[8] Metaculus platform data (ongoing). Public forecasting tournaments
+    with calibration tracking.
+
+DOMAIN-SPECIFIC CALIBRATIONS:
+
+Weather: National Weather Service probability of precipitation
+Medical: European Commission medication risk communication guidelines
+Intelligence: Kent (1964) Words of Estimative Probability
+Nuclear: NRC NUREG reports on verbal uncertainty
+
+================================================================================

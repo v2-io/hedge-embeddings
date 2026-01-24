@@ -1,0 +1,15 @@
+Expression,Mean,CI_Lower,CI_Upper,N_Studies,Context
+Rare,10.0,7.99,12.01,7,Medical/Health
+Rare (severe),10.06,5.45,14.68,3,Medical/Health
+Rare (mild),14.14,7.88,20.4,3,Medical/Health
+Uncommon,17.64,13.19,22.09,4,Medical/Health
+Unlikely,17.71,14.86,20.55,6,Medical/Health
+Possible,43.28,36.66,49.89,6,Medical/Health
+Common (severe),43.08,40.27,45.88,3,Medical/Health
+Common (mild),50.47,45.59,55.34,3,Medical/Health
+Common,58.73,50.4,67.06,6,Medical/Health
+Very common,60.1,42.36,77.85,3,Medical/Health
+Probable,69.87,67.07,72.67,5,Medical/Health
+Likely,71.87,69.9,73.84,6,Medical/Health
+Usually,75.38,71.53,79.23,3,Medical/Health
+Very likely,84.3,79.43,89.17,3,Medical/Health

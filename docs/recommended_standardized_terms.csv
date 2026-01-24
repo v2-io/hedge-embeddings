@@ -1,0 +1,6 @@
+Term,Central,Range_Low,Range_High,Frequency_Term,Reliability
+Very Likely,90,80,95,Very Frequently,High consensus
+Likely/Probable,70,60,80,Frequently,High consensus
+Possible,40,30,60,Often,High consensus
+Unlikely,20,10,30,Infrequently,High consensus
+Very Unlikely,10,5,15,Rarely,High consensus

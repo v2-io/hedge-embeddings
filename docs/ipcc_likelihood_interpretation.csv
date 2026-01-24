@@ -1,0 +1,11 @@
+IPCC_Term,IPCC_Intended,Intended_Midpoint,Public_Mean,Study
+Virtually certain,99-100%,99.5,,"Budescu et al. 2009, 2012"
+Extremely likely,>95%,97.5,,"Budescu et al. 2009, 2012"
+Very likely,>90%,95.0,67.0,"Budescu et al. 2009, 2012"
+Likely,>66%,83.0,62.0,"Budescu et al. 2009, 2012"
+More likely than not,>50%,75.0,,"Budescu et al. 2009, 2012"
+About as likely as not,33-66%,50.0,48.0,"Budescu et al. 2009, 2012"
+Unlikely,<33%,17.0,23.0,"Budescu et al. 2009, 2012"
+Very unlikely,<10%,5.0,17.0,"Budescu et al. 2009, 2012"
+Extremely unlikely,<5%,2.5,,"Budescu et al. 2009, 2012"
+Exceptionally unlikely,<1%,0.5,,"Budescu et al. 2009, 2012"
