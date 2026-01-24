@@ -4,7 +4,7 @@
 structure in modern sentence embedding models, and if so, whether that structure
 is calibrated to empirical probability.
 
-**Status:** Experiments 1-3 complete. Core hypothesis validated with nuance.
+**Status:** Experiments 1-4 complete across 5 models. Core hypothesis validated.
 
 **Date:** 2026-01-23 (experiments run same day)
 
@@ -558,26 +558,33 @@ and fast.
 
 ## Remaining Questions (Post-Experiment)
 
-1. **Can we build a universal axis?** If we regress out the syntactic component
-   (e.g., by centering each type group before PCA), does a single axis emerge?
-   This would simplify the system.
+1. **~~Can we build a universal axis?~~** PARTIALLY ANSWERED in Experiment 3
+   (FINDINGS-03.md). Rather than one universal axis, 4 type-specific axes give
+   near-perfect calibration (oracle MAE = 5.9%). The axes span a genuine 4D
+   subspace. The modal axis (cos 0.75 with predicative) is the closest to
+   "universal" and works best as a general-purpose fallback (MAE = 9.7% for
+   all phrases on MXBAI). The remaining challenge is axis SELECTION, not axis
+   QUALITY.
 
-2. **Does the IQR-consistency prediction hold?** We haven't yet tested whether
-   ambiguous phrases (high IQR, like "possible") produce less consistent
-   difference vectors across claims than precise phrases (low IQR, like
-   "certain"). This requires embedding each phrase in many claims (20+) and
-   measuring per-phrase consistency. (Initial evidence from diff magnitude vs.
-   IQR was ρ = -0.24, non-significant — but magnitude isn't the same as
-   directional consistency.)
+2. **~~Does the IQR-consistency prediction hold?~~** ANSWERED: NO. (FINDINGS-04.md)
+   Tested on mxbai (1024d) and qwen3-embedding (4096d) with 20 diverse claims
+   per phrase. Correlation between consistency and -IQR: ρ = +0.05 and -0.20
+   (both ns). The model encodes a single stable meaning for each phrase
+   regardless of human interpretive variance. IQR must come from external data,
+   not geometry.
 
 3. **Domain shift detection?** The medical meta-analysis data shows measurable
    shifts for some phrases. Can the geometry detect this? (Experiment 4 from the
    original plan.)
 
-4. **How to handle novel phrasings?** "I'd wager that...", "signs point to...",
-   "it stands to reason..." — phrases not in Mosteller. Can we embed these and
-   project onto the probability axis? What syntactic type do they belong to? This
-   is the practical value proposition.
+4. **~~How to handle novel phrasings?~~** ANSWERED in Experiment 2 (FINDINGS-02.md).
+   Novel phrases project onto trained axes with correct ranking (ρ = 0.84-0.92)
+   but compressed calibration. First-person frames ("I think", "I doubt") work
+   well. Sentence-initial adverbs are problematic on some models (nomic treats
+   them all identically). Key insight: the adverbial axis was trained on
+   FREQUENCY adverbs (always, often, rarely) — these are semantically different
+   from MODAL adverbs (probably, certainly, possibly) even though they share
+   the same syntactic slot.
 
 5. **Does the Vogel data validate?** Initial cross-validation (Part B, all types
    mixed, PC1) showed marginal ρ = 0.48 with Vogel. Re-running Vogel validation
@@ -590,11 +597,25 @@ and fast.
 
 ---
 
-**Document Status:** Experiments 1-3 complete. Core hypothesis validated (with
-nuance about syntactic types). Ready for next-phase experiments.
+**Document Status:** Experiments 1-4 complete across 5 models. Core hypothesis
+validated. Practical calibration achievable (MAE 3.2% with modal axis on qwen3,
+~8% on 768d models, oracle MAE 4.3-6.5%). IQR-consistency prediction falsified
+(informative negative). Secondary finding: median-consistency correlation flips
+with dimensionality (768d → uncertainty more consistent; 4096d → certainty more
+consistent). Key remaining work: axis selection automation, real-text evaluation,
+domain shift testing.
 
 **Key files:**
-- `experiment_01_hedge_direction.py` — initial experiment (mixed types)
-- `experiment_01b_within_type.py` — within-type analysis (the main result)
+- `experiment_01_hedge_direction.py` — Part A (consistency) + Part B (mixed types)
+- `experiment_01b_within_type.py` — within-type analysis (core finding)
+- `experiment_02_novel_phrases.py` — novel phrase generalization
+- `experiment_03_modal_axis.py` — modal adverb axis + subspace analysis
+- `experiment_04_iqr_consistency.py` — IQR-consistency test (negative result)
+- `experiment_05_ensemble.py` — ensemble axis combination strategies
+- `FINDINGS-01.md` — within-type probability axes (5 models)
+- `FINDINGS-02.md` — novel phrase projection (5 models)
+- `FINDINGS-03.md` — modal axis solution (5 models, MAE 3.2-8.5%)
+- `FINDINGS-04.md` — IQR-consistency falsified (4 models, dimensionality pattern)
+- `FINDINGS-05.md` — ensemble approaches (modest negative: modal-only is near-optimal)
 - `docs/mosteller_youtz_1990_full.csv` — ground truth data
 - `docs/epistemic-geometry-hedging-as-linear-structure.md` — original hypothesis
