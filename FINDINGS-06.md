@@ -145,3 +145,44 @@ on epistemic modifiers.
 The exception (negation) is linguistically principled: negation is not a
 scaling operation on the original meaning — it creates a qualitatively different
 meaning. The geometry correctly encodes this distinction.
+
+---
+
+## Appendix: Negation Geometry (Quick Probe)
+
+A follow-up test asked: is there a consistent "negation vector" in embedding
+space? If diff("not X") - diff("X") is the same for all X, then negation IS
+a linear operation (just one that's orthogonal to probability).
+
+**Result: Negation is NOT a single direction (mean pairwise cosine of negation
+vectors = -0.06).** But it IS highly structured:
+
+| Pair | Cosine |
+|------|--------|
+| not-likely vs not-probable | **+0.96** |
+| not-possible vs not-probable | +0.78 |
+| not-possible vs not-impossible | **-0.93** |
+| not-likely vs not-unlikely | **-0.89** |
+| not-impossible vs not-unlikely | +0.77 |
+
+The pattern: negating a high-probability word (certain, likely, probable) produces
+vectors that are mutually aligned (+0.39 to +0.96) but ANTI-CORRELATED with
+vectors from negating low-probability words (impossible, unlikely). The cosines
+between these groups are -0.63 to -0.93.
+
+**Interpretation:** Negation acts as a **probability-reflecting** operation.
+It pushes the meaning toward the opposite side of the probability spectrum:
+- "Not certain" pushes DOWN from 99% toward center
+- "Not impossible" pushes UP from 0% toward center
+- The two push in OPPOSITE directions
+
+There is no single "not" vector. Instead, negation is context-dependent in
+a structured way: it inverts the probability direction of the negated word.
+This is why "not impossible" (cos 0.22 with the "impossible" direction in
+Experiment 06) creates a seemingly unrelated direction — it's pushing in the
+mirror-image direction from where "impossible" would push.
+
+**Practical implication:** A calibration system cannot handle negation by
+adding a fixed vector. Negated hedges must be treated as distinct lexical
+items, or the system must detect negation and approximately invert the
+probability estimate (reflect through ~50%).
