@@ -558,13 +558,11 @@ and fast.
 
 ## Remaining Questions (Post-Experiment)
 
-1. **~~Can we build a universal axis?~~** PARTIALLY ANSWERED in Experiment 3
-   (FINDINGS-03.md). Rather than one universal axis, 4 type-specific axes give
-   near-perfect calibration (oracle MAE = 5.9%). The axes span a genuine 4D
-   subspace. The modal axis (cos 0.75 with predicative) is the closest to
-   "universal" and works best as a general-purpose fallback (MAE = 9.7% for
-   all phrases on MXBAI). The remaining challenge is axis SELECTION, not axis
-   QUALITY.
+1. **~~Can we build a universal axis?~~** ANSWERED: The modal axis IS effectively
+   universal (MAE 3.2-8.5% across 5 models, within 1-4% of oracle). Ensemble
+   approaches don't improve on it (FINDINGS-05). The axis selection problem is
+   LESS IMPORTANT than initially thought — modal-only is near-optimal for the
+   natural hedging distribution.
 
 2. **~~Does the IQR-consistency prediction hold?~~** ANSWERED: NO. (FINDINGS-04.md)
    Tested on mxbai (1024d) and qwen3-embedding (4096d) with 20 diverse claims
@@ -595,15 +593,36 @@ and fast.
    the de-hedging idea from the geometry paper becomes tractable: project out
    the hedge subspace to recover pure propositional content.
 
+7. **~~Do compound hedges compose linearly?~~** ANSWERED: YES, approximately.
+   (FINDINGS-06.md) Direction composes linearly (cos 0.82-0.89), magnitude is
+   sub-linear (ratio ~0.75). The one exception is negation (cos 0.22 on qwen3) —
+   "not impossible" creates a qualitatively different direction. For a practical
+   system: just project the compound directly, no decomposition needed.
+
+8. **Negation geometry.** Negation breaks linear composition (cos 0.22-0.64).
+   How does "not" interact with the probability subspace? Is there a negation
+   operator in the geometry (like the king-queen analogy but for probability
+   inversion)? Or is each negated expression its own semantic entity?
+
+9. **Real-text evaluation.** All experiments use template sentences. Do the
+   trained axes work on actual hedged text from documents, papers, or
+   conversations? This is the production-worthiness test.
+
 ---
 
-**Document Status:** Experiments 1-4 complete across 5 models. Core hypothesis
-validated. Practical calibration achievable (MAE 3.2% with modal axis on qwen3,
-~8% on 768d models, oracle MAE 4.3-6.5%). IQR-consistency prediction falsified
-(informative negative). Secondary finding: median-consistency correlation flips
-with dimensionality (768d → uncertainty more consistent; 4096d → certainty more
-consistent). Key remaining work: axis selection automation, real-text evaluation,
-domain shift testing.
+**Document Status:** Experiments 1-6 complete across 5 models. Core hypothesis
+validated and extended. Key findings:
+- Probability IS linear structure in embedding space (ρ > 0.90 supervised)
+- 4 type-specific axes, with modal axis as near-universal fallback (MAE 3.2-8.5%)
+- Ensemble approaches don't beat modal-only for natural hedging (Experiment 5)
+- Compound hedges compose linearly in direction, sub-linearly in magnitude (Experiment 6)
+- IQR/interpretive precision not in geometry (Experiment 4, informative negative)
+- Median-consistency flips with dimensionality (novel architectural observation)
+- Negation is the one construct that breaks linear composition (cos 0.22 on qwen3)
+
+Remaining frontiers: domain shift detection, real-text evaluation (non-template
+sentences), de-hedging (projecting out the hedge subspace to recover propositional
+content), and the negation problem.
 
 **Key files:**
 - `experiment_01_hedge_direction.py` — Part A (consistency) + Part B (mixed types)
@@ -611,11 +630,13 @@ domain shift testing.
 - `experiment_02_novel_phrases.py` — novel phrase generalization
 - `experiment_03_modal_axis.py` — modal adverb axis + subspace analysis
 - `experiment_04_iqr_consistency.py` — IQR-consistency test (negative result)
-- `experiment_05_ensemble.py` — ensemble axis combination strategies
+- `experiment_05_ensemble.py` — ensemble axis combination (modal-only is near-optimal)
+- `experiment_06_compound_hedges.py` — compound hedge composition (linear algebra)
 - `FINDINGS-01.md` — within-type probability axes (5 models)
 - `FINDINGS-02.md` — novel phrase projection (5 models)
 - `FINDINGS-03.md` — modal axis solution (5 models, MAE 3.2-8.5%)
 - `FINDINGS-04.md` — IQR-consistency falsified (4 models, dimensionality pattern)
 - `FINDINGS-05.md` — ensemble approaches (modest negative: modal-only is near-optimal)
+- `FINDINGS-06.md` — compound hedge composition (linear algebra with exceptions)
 - `docs/mosteller_youtz_1990_full.csv` — ground truth data
 - `docs/epistemic-geometry-hedging-as-linear-structure.md` — original hypothesis
