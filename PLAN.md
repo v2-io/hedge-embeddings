@@ -144,6 +144,43 @@ audience (CMCL), naturalistic text is especially valued.
 **Scope:** 2–3 sessions if done properly. **Resources:** Corpus of hedged
 sentences, annotators or LLM-assisted probability ratings.
 
+### Framing Guidance (from expert pre-review)
+
+The paper lives or dies by framing. The main reviewer objection will be:
+"Semantic directions in embeddings are mature; this is another one." The
+counter-argument must be clear:
+
+**We are not classifying.** We are recovering a **quantitative, human-
+interpretable scale** with **cross-dataset psychometric validity**. This is
+a case study in **calibrated semantic structure**, bridging psychometric
+semantics and representation learning, with a measurement perspective:
+embeddings and human surveys as convergent instruments measuring the same
+latent epistemic probability dimension.
+
+The six distinctive contributions in combination (no prior work has all six):
+
+1. **Target phenomenon:** Epistemic hedging as *graded probability*, not
+   binary classification of hedged/unhedged or modal/non-modal.
+2. **Psychometric calibration:** Quantitative alignment to Mosteller & Youtz
+   (1990) with ρ > 0.90, not just "we can recover some ordering."
+3. **Cross-dataset transfer:** Mosteller → Vogel (ρ = 0.99, MAE = 5.1%) as
+   a *cognitive* result, not just an engineering trick.
+4. **Syntactic confound discovery:** PC1 = syntax, probability on PC2 when
+   types are mixed; within-type, probability becomes dominant. Non-obvious
+   structural result that matters for the broader probing community.
+5. **Cross-architecture robustness + compression:** 5 models, axis concentrated
+   in early Matryoshka dimensions. "Emergent property of distributional
+   training" claim.
+6. **Informative negative on IQR:** Models encode stable point meaning, not
+   human interpretive variance. Theoretically meaningful for semantics/
+   pragmatics.
+
+**The "yet another axis" objection is disarmed by the calibration story.**
+Generic probing finds that "something correlates." We show *what* it
+correlates with (Mosteller medians), *how well* (ρ > 0.90 LOO), and that
+it *transfers* to independent data collected by different researchers over
+different decades (Vogel 2022, 21 studies, 1967–2018).
+
 ### Paper Structure (from `feedback-analysis.md`)
 
 1. Introduction — the hypothesis and why it matters
