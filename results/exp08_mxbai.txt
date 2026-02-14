@@ -1,0 +1,110 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 08: Bimodality Probe + Wintle Cross-Validation         ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: mxbai-embed-large                                         ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 1024
+
+Training axes on Mosteller data...
+  Predicative: ρ = 0.967
+  Modal: ρ = 0.946
+  Adverbial: ρ = 0.946
+
+══════════════════════════════════════════════════════════════════════════════
+PART A: BIMODALITY PROBE — Does geometry encode the ambiguity
+        spectrum of 'possible' when modifiers disambiguate?
+══════════════════════════════════════════════════════════════════════════════
+
+  PREDICATIVE FRAME: "It is {modifier} possible that X"
+  Phrase                            Pred   Modal  Expect
+  ──────────────────────────────  ──────  ──────  ──────
+  barely possible                   0.1%    4.4%   10.0%
+  just barely possible             13.4%   13.9%    5.0%
+  theoretically possible           47.4%   42.2%   10.0%
+  remotely possible                44.5%   41.3%    8.0%
+  just possible                    63.6%   58.8%   15.0%
+  technically possible             49.5%   43.1%   12.0%
+  possible                         51.1%   46.6%   38.5%
+  entirely possible                74.1%   74.5%   55.0%
+  quite possible                   60.3%   55.7%   50.0%
+  perfectly possible               73.9%   73.9%   60.0%
+  very possible                    62.5%   56.9%   55.0%
+  eminently possible               69.1%   66.7%   60.0%
+
+  Low-leaning mean (pred axis): 36.4%
+  High-leaning mean (pred axis): 68.0%
+  Bare 'possible' (pred axis): 51.1%
+  Spread (high - low): 31.6 percentage points
+  → POSITIVE: Modifiers traverse the ambiguity range.
+
+  Spearman ρ (pred projection vs. expected): +0.893 (p=9.287e-05)
+
+  MODAL FRAME: "The experiment will {modifier} possibly succeed"
+  Phrase                           Modal  Expect
+  ──────────────────────────────  ──────  ──────
+  barely possibly                   2.3%   10.0%
+  just possibly                    56.3%   15.0%
+  possibly                         45.3%   38.5%
+  quite possibly                   59.0%   50.0%
+  very possibly                    57.2%   55.0%
+
+  CONTROLS: Same modifiers on unambiguous words
+  Phrase                            Pred  Expect
+  ──────────────────────────────  ──────  ──────
+  barely likely                     4.6%   55.0%
+  likely                           74.4%   71.1%
+  entirely likely                  93.5%   80.0%
+  very likely                      84.2%   87.5%
+  barely certain                   20.1%   85.0%
+  certain                          93.1%   99.6%
+  entirely certain                100.0%   99.0%
+  not entirely impossible          26.9%   25.0%
+  not impossible                   28.9%   40.0%
+  not at all impossible            34.6%   45.0%
+
+══════════════════════════════════════════════════════════════════════════════
+PART B: WINTLE ET AL. (2019) CROSS-VALIDATION
+  Train on Mosteller (1990, n=238), test on Wintle (2019, n≈924)
+  Third independent validation source.
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative (n_train=13, n_test=9):
+    Wintle Spearman ρ = +0.9667 (p = 2.16e-05)
+    Wintle MAE = 3.6%
+    Per-phrase:
+      Almost certain             Pred= 88.4%  Wintle= 93.0%  Err= 4.6%  Most=90.2%
+      Very likely                Pred= 84.2%  Wintle= 85.0%  Err= 0.8%  Most=87.5%
+      Likely                     Pred= 74.4%  Wintle= 73.0%  Err= 1.4%  Most=71.1%
+      Probable                   Pred= 75.4%  Wintle= 72.0%  Err= 3.4%  Most=70.2%
+      Very unlikely              Pred=  4.4%  Wintle=  8.0%  Err= 3.6%  Most=5.0%
+      Unlikely                   Pred=  6.2%  Wintle= 15.0%  Err= 8.8%  Most=17.2%
+      Impossible                 Pred=  0.0%  Wintle=  2.0%  Err= 2.0%  Most=0.3%
+      Possible                   Pred= 51.1%  Wintle= 45.0%  Err= 6.1%  Most=38.5%
+      Improbable                 Pred= 14.0%  Wintle= 12.0%  Err= 2.0%  Most=12.5%
+
+  Adverbial (n_train=19, n_test=3):
+    Wintle Spearman ρ = +1.0000 (p = 0.00e+00)
+    Wintle MAE = 8.1%
+    Per-phrase:
+      Almost always              Pred= 98.3%  Wintle= 90.0%  Err= 8.3%  Most=91.7%
+      Usually                    Pred= 63.9%  Wintle= 78.0%  Err=14.1%  Most=75.1%
+      Rarely                     Pred=  6.1%  Wintle=  8.0%  Err= 1.9%  Most=7.2%
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  Part A — Bimodality probe:
+    Predicative ρ (projection vs. expected): +0.893
+    Spread (high-leaning minus low-leaning): 31.6pp
+
+  Part B — Wintle cross-validation (train Mosteller → test Wintle):
+    Predicative: ρ = +0.967, MAE = 3.6% (n=9)
+    Adverbial: ρ = +1.000, MAE = 8.1% (n=3)
+
+  THREE-DATASET COMPARISON (Predicative axis):
+    Mosteller (1990, n=238) → Vogel (2022, 21 studies): see paper_validation.py
+    Mosteller (1990, n=238) → Wintle (2019, n≈924): ρ = +0.967, MAE = 3.6%
+
