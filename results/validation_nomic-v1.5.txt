@@ -1,0 +1,161 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Paper Validation: Baselines, LOO, Bootstrap CIs, Vogel           ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: nomic-embed-text:v1.5                                     ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 768
+
+══════════════════════════════════════════════════════════════════════════════
+SECTION 1: BASELINES (supervised ridge vs. alternatives)
+══════════════════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────
+  Predicative (n=13)
+────────────────────────────────────────────────────────────
+
+  Method                               ρ      MAE  Notes
+  ──────────────────────────────  ──────  ───────  ─────────────────────────
+  Random direction                0.427±0.258  27.3±6.3%  mean of 100 random unit vectors
+  Mean-diff direction                  0.527      24.8%  
+  PCA PC1                              0.846      15.2%  PC1 var=34%
+  Supervised ridge (in-sample)         0.934       7.1%  
+
+────────────────────────────────────────────────────────────
+  Adverbial (n=19)
+────────────────────────────────────────────────────────────
+
+  Method                               ρ      MAE  Notes
+  ──────────────────────────────  ──────  ───────  ─────────────────────────
+  Random direction                0.457±0.250  25.1±4.9%  mean of 100 random unit vectors
+  Mean-diff direction                  0.391      26.5%  
+  PCA PC1                              0.870      17.8%  PC1 var=42%
+  Supervised ridge (in-sample)         0.949       7.0%  
+
+────────────────────────────────────────────────────────────
+  Noun phrase (n=11)
+────────────────────────────────────────────────────────────
+
+  Method                               ρ      MAE  Notes
+  ──────────────────────────────  ──────  ───────  ─────────────────────────
+  Random direction                0.479±0.225  21.7±4.8%  mean of 100 random unit vectors
+  Mean-diff direction                  0.255      24.6%  
+  PCA PC1                              0.982       4.4%  PC1 var=36%
+  Supervised ridge (in-sample)         0.973       3.3%  
+
+══════════════════════════════════════════════════════════════════════════════
+SECTION 2: LEAVE-ONE-OUT CROSS-VALIDATION
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative (n=13):
+    LOO Spearman ρ = +0.8736 (p = 9.53e-05)
+    LOO MAE = 13.5%
+    LOO max error = 31.6%
+    Worst LOO predictions:
+      Possible                   Pred= 70.1%  True= 38.5%  Err=31.6%
+      Very improbable            Pred= 25.7%  True=  4.8%  Err=20.9%
+      Very likely                Pred= 67.0%  True= 87.5%  Err=20.5%
+
+  Adverbial (n=19):
+    LOO Spearman ρ = +0.9227 (p = 1.89e-08)
+    LOO MAE = 11.8%
+    LOO max error = 26.7%
+    Worst LOO predictions:
+      Occasionally               Pred= 46.7%  True= 20.0%  Err=26.7%
+      Usually                    Pred= 49.8%  True= 75.1%  Err=25.3%
+      Sometimes                  Pred= 49.3%  True= 25.0%  Err=24.3%
+
+  Noun phrase (n=11):
+    LOO Spearman ρ = +0.9364 (p = 2.21e-05)
+    LOO MAE = 6.5%
+    LOO max error = 16.4%
+    Worst LOO predictions:
+      Poor chance                Pred= 26.7%  True= 10.3%  Err=16.4%
+      Less than an even chance   Pred= 27.5%  True= 40.2%  Err=12.7%
+      Very low probability       Pred= 17.1%  True=  4.9%  Err=12.2%
+
+══════════════════════════════════════════════════════════════════════════════
+SECTION 3: BOOTSTRAP 95% CONFIDENCE INTERVALS (10,000 resamples)
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative:
+    Supervised ρ = +0.9341  95% CI: [+0.7175, +1.0000]
+
+  Adverbial:
+    Supervised ρ = +0.9491  95% CI: [+0.7941, +0.9929]
+
+  Noun phrase:
+    Supervised ρ = +0.9727  95% CI: [+0.8310, +1.0000]
+
+  LOO bootstrap CIs:
+    Predicative: LOO ρ = +0.8736  95% CI: [+0.5763, +0.9833]
+    Adverbial: LOO ρ = +0.9227  95% CI: [+0.7679, +0.9734]
+    Noun phrase: LOO ρ = +0.9364  95% CI: [+0.6827, +1.0000]
+
+══════════════════════════════════════════════════════════════════════════════
+SECTION 4: VOGEL WITHIN-TYPE CROSS-VALIDATION
+  (Train on Mosteller, test on Vogel — independent meta-analysis)
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative (n_train=13, n_test=11):
+    Vogel Spearman ρ = +0.9455 (p = 1.12e-05)
+    Vogel MAE = 7.1%
+    Per-phrase predictions:
+      Certain                    Pred= 97.6%  Vogel= 95.0%  Err= 2.6%
+      Almost certain             Pred= 87.2%  Vogel= 85.7%  Err= 1.5%
+      Very likely                Pred= 73.3%  Vogel= 82.3%  Err= 9.0%
+      Very probable              Pred= 78.2%  Vogel= 82.5%  Err= 4.3%
+      Likely                     Pred= 74.1%  Vogel= 69.2%  Err= 4.9%
+      Probable                   Pred= 78.5%  Vogel= 70.1%  Err= 8.4%
+      Possible                   Pred= 57.9%  Vogel= 42.0%  Err=15.9%
+      Unlikely                   Pred=  8.0%  Vogel= 17.9%  Err= 9.9%
+      Very unlikely              Pred=  3.6%  Vogel= 11.1%  Err= 7.5%
+      Improbable                 Pred= 22.5%  Vogel= 15.8%  Err= 6.7%
+      Impossible                 Pred=  0.0%  Vogel=  7.2%  Err= 7.2%
+
+  Adverbial (n_train=19, n_test=3):
+    Vogel Spearman ρ = +0.5000 (p = 6.67e-01)
+    Vogel MAE = 12.2%
+    Per-phrase predictions:
+      Usually                    Pred= 60.0%  Vogel= 76.8%  Err=16.8%
+      Seldom                     Pred=  0.3%  Vogel= 11.7%  Err=11.4%
+      Rarely                     Pred=  0.5%  Vogel=  8.9%  Err= 8.4%
+
+  Noun phrase: No Vogel expressions for this type. Skipped.
+
+══════════════════════════════════════════════════════════════════════════════
+SECTION 5: MODAL AXIS — ALL EXPRESSIONS vs. MOSTELLER-ONLY
+══════════════════════════════════════════════════════════════════════════════
+
+  Modal (all 15) (n=15):
+    In-sample:  ρ = 0.971, MAE = 7.7%
+    LOO:        ρ = 0.948, MAE = 12.2%
+
+  Modal (Mosteller-only 8) (n=8):
+    In-sample:  ρ = 0.952, MAE = 9.1%
+    LOO:        ρ = 0.667, MAE = 15.1%
+
+  Mosteller-only → author-estimated (n=7):
+    ρ = 0.964, MAE = 17.8%
+      conceivably           Pred= 68.4%  True= 38.5%  Err=29.9%
+      definitely            Pred= 86.8%  True= 99.6%  Err=12.8%
+      perhaps               Pred= 64.4%  True= 38.5%  Err=25.9%
+      maybe                 Pred= 61.2%  True= 38.5%  Err=22.7%
+      presumably            Pred= 73.8%  True= 70.2%  Err= 3.6%
+      undoubtedly           Pred= 80.5%  True= 95.0%  Err=14.5%
+      arguably              Pred= 70.5%  True= 55.0%  Err=15.5%
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY TABLE FOR PAPER
+══════════════════════════════════════════════════════════════════════════════
+
+Model: nomic-embed-text:v1.5
+
+  Group              n   In-sample ρ     LOO ρ   LOO MAE      Bootstrap 95% CI    Random ρ
+  ───────────────  ───  ────────────  ────────  ────────  ────────────────────  ──────────
+  Predicative       13         0.934     0.874     13.5%  [+0.576, +0.983]  0.427±0.258
+  Adverbial         19         0.949     0.923     11.8%  [+0.768, +0.973]  0.457±0.250
+  Noun phrase       11         0.973     0.936      6.5%  [+0.683, +1.000]  0.479±0.225
+
+Done.
