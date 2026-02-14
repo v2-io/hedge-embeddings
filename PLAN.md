@@ -91,6 +91,59 @@ The empirical paper has all the data it needs:
 | **Cross-linguistic pilot** (3 languages, 1 multilingual model) | Medium-high — dramatically strengthens universality claim | 1–2 sessions | Multilingual embedding model in Ollama or HF |
 | **LLM decomposition** (ask LLMs for P(claim)) | Medium — adds a third measurement class | 1 session | API access to Claude/GPT-4/Llama |
 
+### Literature-Informed Priorities (from undermind.ai review, Feb 2026)
+
+The automated literature review (`literature-review-undermind.md`) confirms our
+work fills a clearly identified gap. It also reveals what reviewers in this space
+will expect. The following five items are ordered by impact-per-effort for making
+the paper more compelling at top venues (ICLR, TACL, EMNLP):
+
+**1. Causal intervention along the probability axis.**
+Ji et al. (2025) and Marks & Tegmark (2023) both do causal interventions —
+they manipulate activations along discovered directions and show behavioral
+effects. We don't do this. For CMCL this is fine; for ICLR/TACL a reviewer
+may ask. Requires open-weights LLM access (can't edit frozen embedding model
+activations). Would involve: add/subtract a scaled probability direction in
+an LLM's residual stream and show that the model's output hedging changes.
+**Scope:** 2–3 sessions. **Resources:** Open-weights LLM (Llama 3, Qwen 2.5),
+GPU, interpretability tooling (TransformerLens or hooks).
+
+**2. Wintle et al. (2019) as a THIRD cross-validation source.**
+We cross-validate Mosteller → Vogel. Adding Wintle et al. (n≈924, more recent,
+different methodology) as a third independent validation source would make the
+convergent measurement argument airtight. Just map their expressions to ours
+and test projections.
+**Scope:** 0.5 session. **Resources:** Download Wintle data (or extract from
+paper), match expressions to our templates.
+
+**3. Explicit comparison to Ji et al.'s verbal uncertainty direction.**
+Reviewers will ask how our probability axis relates to Ji et al.'s VU direction.
+If we can show they're related but distinct (VU = binary confident/uncertain;
+ours = continuously calibrated probability), that's a clean differentiation.
+If our axis is more informative (predicts Mosteller medians better than a
+VU-style probe), even better. This may not require reproducing their exact
+method — even a conceptual comparison with citations suffices for a workshop
+paper, but an empirical comparison strengthens the full paper.
+**Scope:** 1 session (conceptual) to 2 sessions (empirical replication).
+**Resources:** For empirical: open-weights LLM, their probe methodology.
+
+**4. Syntactic-type confound as a general contribution to probing methodology.**
+The polarity confound identified by Bürger et al. (2024) for truth directions
+is analogous to our syntactic confound. We can frame our contribution partly
+as: "Here's another confound that matters when probing for semantic properties
+in embedding space — syntactic realization type." This generalizes beyond
+hedging and increases the paper's relevance to the broader probing/
+interpretability community.
+**Scope:** 0 additional sessions (framing, not experiments). Just write it up.
+
+**5. Non-template evaluation (reinforced by literature context).**
+All truth-direction papers also use controlled templates, so this is somewhat
+accepted in the field. But we should acknowledge it as a limitation and, if
+possible, show even a small pilot on naturalistic text. For a cognitive modeling
+audience (CMCL), naturalistic text is especially valued.
+**Scope:** 2–3 sessions if done properly. **Resources:** Corpus of hedged
+sentences, annotators or LLM-assisted probability ratings.
+
 ### Paper Structure (from `feedback-analysis.md`)
 
 1. Introduction — the hypothesis and why it matters
