@@ -202,6 +202,119 @@ ZH_MODAL_TEMPLATE = "实验{PHRASE}会成功"
 
 
 # ═══════════════════════════════════════════════════════════════════════
+# Japanese
+# ═══════════════════════════════════════════════════════════════════════
+
+JA_PREDICATIVE = {
+    "確実な": 99.6,        # certain (kakujitsu na)
+    "ほぼ確実な": 90.2,    # almost certain
+    "非常にありそうな": 87.5,  # very likely
+    "ありそうな": 71.1,    # likely (arisō na)
+    "あり得る": 38.5,      # possible (arieru)
+    "ありそうにない": 17.2,  # unlikely
+    "非常にありそうにない": 5.0,  # very unlikely
+    "不可能な": 0.3,       # impossible (fukanō na)
+}
+JA_PRED_TEMPLATE = "実験が成功するのは{PHRASE}ことだ"
+JA_BARE = "実験は成功する"
+
+JA_MODAL = {
+    "きっと": 95.0,        # surely/definitely (kitto)
+    "確かに": 90.0,        # certainly (tashika ni)
+    "おそらく": 70.2,      # probably (osoraku)
+    "たぶん": 65.0,        # probably/maybe (tabun)
+    "もしかしたら": 38.5,   # possibly/perhaps (moshikashitara)
+    "ひょっとしたら": 30.0,  # by some chance (hyotto shitara)
+    "まさか": 5.0,         # surely not / no way (masaka) — low probability
+}
+JA_MODAL_TEMPLATE = "実験は{PHRASE}成功する"
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Korean
+# ═══════════════════════════════════════════════════════════════════════
+
+KO_PREDICATIVE = {
+    "확실한": 99.6,        # certain (hwaksilhan)
+    "거의 확실한": 90.2,    # almost certain
+    "매우 가능성이 높은": 87.5,  # very likely
+    "가능성이 높은": 71.1,  # likely
+    "가능한": 38.5,        # possible (ganeunghan)
+    "가능성이 낮은": 17.2,  # unlikely
+    "매우 가능성이 낮은": 5.0,  # very unlikely
+    "불가능한": 0.3,       # impossible (bulganeunghan)
+}
+KO_PRED_TEMPLATE = "실험이 성공하는 것은 {PHRASE} 일이다"
+KO_BARE = "실험은 성공할 것이다"
+
+KO_MODAL = {
+    "분명히": 95.0,        # clearly/certainly (bunmyeonghi)
+    "확실히": 99.6,        # certainly (hwaksilhi)
+    "아마": 70.2,          # probably (ama)
+    "아마도": 65.0,        # probably (amado)
+    "혹시": 38.5,          # possibly/perhaps (hoksi)
+    "어쩌면": 38.5,        # perhaps/maybe (eojjeomyeon)
+}
+KO_MODAL_TEMPLATE = "실험은 {PHRASE} 성공할 것이다"
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Arabic
+# ═══════════════════════════════════════════════════════════════════════
+
+AR_PREDICATIVE = {
+    "مؤكد": 99.6,            # certain (mu'akkad)
+    "شبه مؤكد": 90.2,        # almost certain
+    "مرجح جداً": 87.5,       # very likely
+    "مرجح": 71.1,            # likely (murajjaḥ)
+    "ممكن": 38.5,            # possible (mumkin)
+    "غير مرجح": 17.2,        # unlikely
+    "غير مرجح جداً": 5.0,    # very unlikely
+    "مستحيل": 0.3,           # impossible (mustaḥīl)
+}
+AR_PRED_TEMPLATE = "من {PHRASE} أن التجربة ستنجح"
+AR_BARE = "التجربة ستنجح"
+
+AR_MODAL = {
+    "بالتأكيد": 99.6,        # certainly (bi-t-ta'kīd)
+    "على الأرجح": 75.0,      # most likely ('ala al-arjaḥ)
+    "ربما": 50.0,            # perhaps/maybe (rubbamā)
+    "من المحتمل": 65.0,      # probably (min al-muḥtamal)
+    "قد": 45.0,              # might/may (qad) — modal particle
+    "بالكاد": 10.0,          # hardly (bi-l-kād)
+}
+AR_MODAL_TEMPLATE = "{PHRASE} ستنجح التجربة"
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Hindi
+# ═══════════════════════════════════════════════════════════════════════
+
+HI_PREDICATIVE = {
+    "निश्चित": 99.6,           # certain (niśchit)
+    "लगभग निश्चित": 90.2,     # almost certain
+    "बहुत संभावित": 87.5,      # very likely
+    "संभावित": 71.1,           # likely (sambhāvit)
+    "संभव": 38.5,             # possible (sambhav)
+    "असंभावित": 17.2,          # unlikely
+    "बहुत असंभावित": 5.0,      # very unlikely
+    "असंभव": 0.3,             # impossible (asambhav)
+}
+HI_PRED_TEMPLATE = "प्रयोग सफल होना {PHRASE} है"
+HI_BARE = "प्रयोग सफल होगा"
+
+HI_MODAL = {
+    "निश्चित रूप से": 99.6,    # certainly
+    "शायद": 50.0,              # perhaps/maybe (śāyad)
+    "संभवतः": 65.0,            # probably (sambhavataḥ)
+    "कदाचित": 30.0,            # perhaps/perchance (kadācit)
+    "ज़रूर": 90.0,              # surely (zarūr)
+    "मुश्किल से": 10.0,         # hardly (muśkil se)
+}
+HI_MODAL_TEMPLATE = "प्रयोग {PHRASE} सफल होगा"
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # Language configs
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -225,6 +338,22 @@ LANGUAGES = {
     "Chinese": {
         "predicative": (ZH_PREDICATIVE, ZH_PRED_TEMPLATE, ZH_BARE),
         "modal": (ZH_MODAL, ZH_MODAL_TEMPLATE, ZH_BARE),
+    },
+    "Japanese": {
+        "predicative": (JA_PREDICATIVE, JA_PRED_TEMPLATE, JA_BARE),
+        "modal": (JA_MODAL, JA_MODAL_TEMPLATE, JA_BARE),
+    },
+    "Korean": {
+        "predicative": (KO_PREDICATIVE, KO_PRED_TEMPLATE, KO_BARE),
+        "modal": (KO_MODAL, KO_MODAL_TEMPLATE, KO_BARE),
+    },
+    "Arabic": {
+        "predicative": (AR_PREDICATIVE, AR_PRED_TEMPLATE, AR_BARE),
+        "modal": (AR_MODAL, AR_MODAL_TEMPLATE, AR_BARE),
+    },
+    "Hindi": {
+        "predicative": (HI_PREDICATIVE, HI_PRED_TEMPLATE, HI_BARE),
+        "modal": (HI_MODAL, HI_MODAL_TEMPLATE, HI_BARE),
     },
 }
 

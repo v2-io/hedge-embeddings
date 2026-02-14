@@ -1,0 +1,355 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 09: Cross-Linguistic Probability Geometry              ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: bge-m3                                                    ║
+║                                                                    ║
+║  Question: Does the English probability axis work for German,      ║
+║  French, Spanish, and Chinese hedge expressions?                   ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 1024
+
+══════════════════════════════════════════════════════════════════════════════
+STEP 1: ENGLISH BASELINE (train and verify)
+══════════════════════════════════════════════════════════════════════════════
+
+  English predicative: in-sample ρ = 0.937, LOO ρ = 0.783, LOO MAE = 11.0%
+
+  English modal: in-sample ρ = 0.982, LOO ρ = 0.982, LOO MAE = 9.7%
+
+══════════════════════════════════════════════════════════════════════════════
+STEP 2: ZERO-SHOT CROSS-LINGUISTIC TRANSFER
+  (English-trained axis applied to other languages)
+══════════════════════════════════════════════════════════════════════════════
+
+  ────────────────────────────────────────────────────────────
+  German
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.952 (p = 2.60e-04), MAE = 8.3%
+    Per-phrase:
+      sicher                     Pred= 81.3%  Expected= 99.6%  Err=18.3%
+      fast sicher                Pred= 81.9%  Expected= 90.2%  Err= 8.3%
+      sehr wahrscheinlich        Pred= 78.9%  Expected= 87.5%  Err= 8.6%
+      wahrscheinlich             Pred= 72.0%  Expected= 71.1%  Err= 0.9%
+      möglich                    Pred= 52.9%  Expected= 38.5%  Err=14.4%
+      unwahrscheinlich           Pred=  5.1%  Expected= 17.2%  Err=12.1%
+      sehr unwahrscheinlich      Pred=  8.7%  Expected=  5.0%  Err= 3.7%
+      unmöglich                  Pred=  0.0%  Expected=  0.3%  Err= 0.3%
+
+  modal (n=7):
+    Zero-shot ρ = +0.918 (p = 3.56e-03), MAE = 7.1%
+    Per-phrase:
+      sicherlich                 Pred= 87.9%  Expected= 99.6%  Err=11.7%
+      zweifellos                 Pred= 91.0%  Expected= 95.0%  Err= 4.0%
+      bestimmt                   Pred= 82.1%  Expected= 95.0%  Err=12.9%
+      vermutlich                 Pred= 71.3%  Expected= 70.2%  Err= 1.1%
+      wahrscheinlich             Pred= 72.5%  Expected= 70.2%  Err= 2.3%
+      vielleicht                 Pred= 44.9%  Expected= 38.5%  Err= 6.4%
+      möglicherweise             Pred= 50.0%  Expected= 38.5%  Err=11.5%
+
+  ────────────────────────────────────────────────────────────
+  French
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.952 (p = 2.60e-04), MAE = 7.3%
+    Per-phrase:
+      certain                    Pred= 82.9%  Expected= 99.6%  Err=16.7%
+      presque certain            Pred= 89.2%  Expected= 90.2%  Err= 1.0%
+      très probable              Pred= 81.1%  Expected= 87.5%  Err= 6.4%
+      probable                   Pred= 68.6%  Expected= 71.1%  Err= 2.5%
+      possible                   Pred= 54.2%  Expected= 38.5%  Err=15.7%
+      improbable                 Pred=  2.7%  Expected= 17.2%  Err=14.5%
+      très improbable            Pred=  6.5%  Expected=  5.0%  Err= 1.5%
+      impossible                 Pred=  0.0%  Expected=  0.3%  Err= 0.3%
+
+  modal (n=7):
+    Zero-shot ρ = +0.946 (p = 1.29e-03), MAE = 8.4%
+    Per-phrase:
+      certainement               Pred= 92.6%  Expected= 99.6%  Err= 7.0%
+      indubitablement            Pred= 99.5%  Expected= 95.0%  Err= 4.5%
+      sans doute                 Pred= 86.8%  Expected= 75.0%  Err=11.8%
+      vraisemblablement          Pred= 76.0%  Expected= 70.2%  Err= 5.8%
+      probablement               Pred= 72.1%  Expected= 70.2%  Err= 1.9%
+      possiblement               Pred= 54.0%  Expected= 38.5%  Err=15.5%
+      peut-être                  Pred= 50.4%  Expected= 38.5%  Err=11.9%
+
+  ────────────────────────────────────────────────────────────
+  Spanish
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.905 (p = 2.01e-03), MAE = 9.7%
+    Per-phrase:
+      seguro                     Pred= 74.0%  Expected= 99.6%  Err=25.6%
+      casi seguro                Pred= 81.1%  Expected= 90.2%  Err= 9.1%
+      muy probable               Pred= 77.1%  Expected= 87.5%  Err=10.4%
+      probable                   Pred= 67.0%  Expected= 71.1%  Err= 4.1%
+      posible                    Pred= 52.2%  Expected= 38.5%  Err=13.7%
+      improbable                 Pred=  3.1%  Expected= 17.2%  Err=14.1%
+      muy improbable             Pred=  4.9%  Expected=  5.0%  Err= 0.1%
+      imposible                  Pred=  0.0%  Expected=  0.3%  Err= 0.3%
+
+  modal (n=7):
+    Zero-shot ρ = +0.852 (p = 1.48e-02), MAE = 9.1%
+    Per-phrase:
+      ciertamente                Pred= 78.7%  Expected= 99.6%  Err=20.9%
+      indudablemente             Pred= 96.2%  Expected= 95.0%  Err= 1.2%
+      seguramente                Pred= 82.3%  Expected= 85.0%  Err= 2.7%
+      probablemente              Pred= 65.1%  Expected= 70.2%  Err= 5.1%
+      tal vez                    Pred= 46.2%  Expected= 38.5%  Err= 7.7%
+      quizás                     Pred= 47.6%  Expected= 38.5%  Err= 9.1%
+      posiblemente               Pred= 55.2%  Expected= 38.5%  Err=16.7%
+
+  ────────────────────────────────────────────────────────────
+  Chinese
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.952 (p = 2.60e-04), MAE = 12.4%
+    Per-phrase:
+      确定的                        Pred= 85.9%  Expected= 99.6%  Err=13.7%
+      几乎确定的                      Pred= 89.2%  Expected= 90.2%  Err= 1.0%
+      很可能的                       Pred= 72.0%  Expected= 87.5%  Err=15.5%
+      可能的                        Pred= 58.1%  Expected= 71.1%  Err=13.0%
+      有可能的                       Pred= 60.9%  Expected= 38.5%  Err=22.4%
+      不太可能的                      Pred= 20.5%  Expected= 17.2%  Err= 3.3%
+      非常不可能的                     Pred= 18.5%  Expected=  5.0%  Err=13.5%
+      不可能的                       Pred= 17.2%  Expected=  0.3%  Err=16.9%
+
+  modal (n=7):
+    Zero-shot ρ = +0.991 (p = 1.46e-05), MAE = 10.1%
+    Per-phrase:
+      肯定                         Pred= 91.2%  Expected= 99.6%  Err= 8.4%
+      一定                         Pred= 88.0%  Expected= 95.0%  Err= 7.0%
+      八成                         Pred= 74.0%  Expected= 80.0%  Err= 6.0%
+      大概                         Pred= 60.3%  Expected= 65.0%  Err= 4.7%
+      可能                         Pred= 59.5%  Expected= 50.0%  Err= 9.5%
+      或许                         Pred= 56.3%  Expected= 38.5%  Err=17.8%
+      也许                         Pred= 55.7%  Expected= 38.5%  Err=17.2%
+
+  ────────────────────────────────────────────────────────────
+  Japanese
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.952 (p = 2.60e-04), MAE = 10.4%
+    Per-phrase:
+      確実な                        Pred= 86.7%  Expected= 99.6%  Err=12.9%
+      ほぼ確実な                      Pred= 87.7%  Expected= 90.2%  Err= 2.5%
+      非常にありそうな                   Pred= 75.3%  Expected= 87.5%  Err=12.2%
+      ありそうな                      Pred= 62.5%  Expected= 71.1%  Err= 8.6%
+      あり得る                       Pred= 58.3%  Expected= 38.5%  Err=19.8%
+      ありそうにない                    Pred= 14.5%  Expected= 17.2%  Err= 2.7%
+      非常にありそうにない                 Pred= 20.4%  Expected=  5.0%  Err=15.4%
+      不可能な                       Pred=  9.1%  Expected=  0.3%  Err= 8.8%
+
+  modal (n=7):
+    Zero-shot ρ = +0.857 (p = 1.37e-02), MAE = 18.1%
+    Per-phrase:
+      きっと                        Pred= 92.5%  Expected= 95.0%  Err= 2.5%
+      確かに                        Pred= 79.9%  Expected= 90.0%  Err=10.1%
+      おそらく                       Pred= 77.9%  Expected= 70.2%  Err= 7.7%
+      たぶん                        Pred= 79.7%  Expected= 65.0%  Err=14.7%
+      もしかしたら                     Pred= 50.8%  Expected= 38.5%  Err=12.3%
+      ひょっとしたら                    Pred= 60.7%  Expected= 30.0%  Err=30.7%
+      まさか                        Pred= 53.5%  Expected=  5.0%  Err=48.5%
+
+  ────────────────────────────────────────────────────────────
+  Korean
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +1.000 (p = 0.00e+00), MAE = 8.3%
+    Per-phrase:
+      확실한                        Pred= 81.2%  Expected= 99.6%  Err=18.4%
+      거의 확실한                     Pred= 81.1%  Expected= 90.2%  Err= 9.1%
+      매우 가능성이 높은                 Pred= 73.4%  Expected= 87.5%  Err=14.1%
+      가능성이 높은                    Pred= 68.6%  Expected= 71.1%  Err= 2.5%
+      가능한                        Pred= 48.2%  Expected= 38.5%  Err= 9.7%
+      가능성이 낮은                    Pred= 11.5%  Expected= 17.2%  Err= 5.7%
+      매우 가능성이 낮은                 Pred= 11.5%  Expected=  5.0%  Err= 6.5%
+      불가능한                       Pred=  0.9%  Expected=  0.3%  Err= 0.6%
+
+  modal (n=6):
+    Zero-shot ρ = +0.841 (p = 3.61e-02), MAE = 8.2%
+    Per-phrase:
+      확실히                        Pred= 90.7%  Expected= 99.6%  Err= 8.9%
+      분명히                        Pred= 91.1%  Expected= 95.0%  Err= 3.9%
+      아마                         Pred= 60.6%  Expected= 70.2%  Err= 9.6%
+      아마도                        Pred= 55.7%  Expected= 65.0%  Err= 9.3%
+      어쩌면                        Pred= 56.0%  Expected= 38.5%  Err=17.5%
+      혹시                         Pred= 38.5%  Expected= 38.5%  Err= 0.0%
+
+  ────────────────────────────────────────────────────────────
+  Arabic
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.833 (p = 1.02e-02), MAE = 6.9%
+    Per-phrase:
+      مؤكد                       Pred= 75.1%  Expected= 99.6%  Err=24.5%
+      شبه مؤكد                   Pred= 89.1%  Expected= 90.2%  Err= 1.1%
+      مرجح جداً                  Pred= 82.1%  Expected= 87.5%  Err= 5.4%
+      مرجح                       Pred= 75.9%  Expected= 71.1%  Err= 4.8%
+      ممكن                       Pred= 36.4%  Expected= 38.5%  Err= 2.1%
+      غير مرجح                   Pred=  9.5%  Expected= 17.2%  Err= 7.7%
+      غير مرجح جداً              Pred= 13.4%  Expected=  5.0%  Err= 8.4%
+      مستحيل                     Pred=  1.6%  Expected=  0.3%  Err= 1.3%
+
+  modal (n=6):
+    Zero-shot ρ = +0.943 (p = 4.80e-03), MAE = 3.6%
+    Per-phrase:
+      بالتأكيد                   Pred= 94.7%  Expected= 99.6%  Err= 4.9%
+      على الأرجح                 Pred= 78.7%  Expected= 75.0%  Err= 3.7%
+      من المحتمل                 Pred= 68.0%  Expected= 65.0%  Err= 3.0%
+      ربما                       Pred= 49.9%  Expected= 50.0%  Err= 0.1%
+      قد                         Pred= 51.7%  Expected= 45.0%  Err= 6.7%
+      بالكاد                     Pred=  6.6%  Expected= 10.0%  Err= 3.4%
+
+  ────────────────────────────────────────────────────────────
+  Hindi
+  ────────────────────────────────────────────────────────────
+
+  predicative (n=8):
+    Zero-shot ρ = +0.952 (p = 2.60e-04), MAE = 12.5%
+    Per-phrase:
+      निश्चित                    Pred= 78.6%  Expected= 99.6%  Err=21.0%
+      लगभग निश्चित               Pred= 82.1%  Expected= 90.2%  Err= 8.1%
+      बहुत संभावित               Pred= 65.1%  Expected= 87.5%  Err=22.4%
+      संभावित                    Pred= 52.3%  Expected= 71.1%  Err=18.8%
+      संभव                       Pred= 50.1%  Expected= 38.5%  Err=11.6%
+      असंभावित                   Pred=  1.2%  Expected= 17.2%  Err=16.0%
+      बहुत असंभावित              Pred=  3.1%  Expected=  5.0%  Err= 1.9%
+      असंभव                      Pred=  0.0%  Expected=  0.3%  Err= 0.3%
+
+  modal (n=6):
+    Zero-shot ρ = +1.000 (p = 0.00e+00), MAE = 6.5%
+    Per-phrase:
+      निश्चित रूप से             Pred= 98.1%  Expected= 99.6%  Err= 1.5%
+      ज़रूर                      Pred= 81.2%  Expected= 90.0%  Err= 8.8%
+      संभवतः                     Pred= 55.7%  Expected= 65.0%  Err= 9.3%
+      शायद                       Pred= 46.1%  Expected= 50.0%  Err= 3.9%
+      कदाचित                     Pred= 43.3%  Expected= 30.0%  Err=13.3%
+      मुश्किल से                 Pred= 12.0%  Expected= 10.0%  Err= 2.0%
+
+══════════════════════════════════════════════════════════════════════════════
+STEP 3: WITHIN-LANGUAGE AXES AND ALIGNMENT
+  (Train per-language axis, measure cosine with English axis)
+══════════════════════════════════════════════════════════════════════════════
+
+  German:
+    predicative:
+      Within-language: ρ = 0.952, LOO ρ = 0.667, LOO MAE = 15.2%
+      Axis alignment with English: cos = 0.940
+    modal:
+      Within-language: ρ = 0.918, LOO ρ = 0.918, LOO MAE = 5.9%
+      Axis alignment with English: cos = 0.761
+
+  French:
+    predicative:
+      Within-language: ρ = 0.952, LOO ρ = 0.857, LOO MAE = 14.3%
+      Axis alignment with English: cos = 0.941
+    modal:
+      Within-language: ρ = 0.946, LOO ρ = 0.946, LOO MAE = 8.2%
+      Axis alignment with English: cos = 0.705
+
+  Spanish:
+    predicative:
+      Within-language: ρ = 0.952, LOO ρ = 0.595, LOO MAE = 16.3%
+      Axis alignment with English: cos = 0.904
+    modal:
+      Within-language: ρ = 0.852, LOO ρ = 0.852, LOO MAE = 9.0%
+      Axis alignment with English: cos = 0.779
+
+  Chinese:
+    predicative:
+      Within-language: ρ = 0.952, LOO ρ = 0.833, LOO MAE = 16.2%
+      Axis alignment with English: cos = 0.779
+    modal:
+      Within-language: ρ = 0.955, LOO ρ = 0.883, LOO MAE = 7.3%
+      Axis alignment with English: cos = 0.627
+
+  Japanese:
+    predicative:
+      Within-language: ρ = 0.976, LOO ρ = 0.833, LOO MAE = 16.8%
+      Axis alignment with English: cos = 0.845
+    modal:
+      Within-language: ρ = 0.964, LOO ρ = 0.750, LOO MAE = 17.4%
+      Axis alignment with English: cos = 0.594
+
+  Korean:
+    predicative:
+      Within-language: ρ = 1.000, LOO ρ = 0.786, LOO MAE = 16.0%
+      Axis alignment with English: cos = 0.865
+    modal:
+      Within-language: ρ = 0.928, LOO ρ = 0.696, LOO MAE = 11.4%
+      Axis alignment with English: cos = 0.750
+
+  Arabic:
+    predicative:
+      Within-language: ρ = 0.952, LOO ρ = 0.667, LOO MAE = 15.5%
+      Axis alignment with English: cos = 0.859
+    modal:
+      Within-language: ρ = 1.000, LOO ρ = 0.771, LOO MAE = 16.6%
+      Axis alignment with English: cos = 0.795
+
+  Hindi:
+    predicative:
+      Within-language: ρ = 0.952, LOO ρ = 0.690, LOO MAE = 16.7%
+      Axis alignment with English: cos = 0.845
+    modal:
+      Within-language: ρ = 1.000, LOO ρ = 0.486, LOO MAE = 21.5%
+      Axis alignment with English: cos = 0.824
+
+══════════════════════════════════════════════════════════════════════════════
+STEP 4: CROSS-LANGUAGE AXIS PAIRWISE ALIGNMENT (predicative)
+══════════════════════════════════════════════════════════════════════════════
+
+                Englis  German  French  Spanis  Chines  Japane  Korean  Arabic   Hindi
+  ────────────  ──────  ──────  ──────  ──────  ──────  ──────  ──────  ──────  ──────
+  English        1.000  0.940  0.941  0.904  0.779  0.845  0.865  0.859  0.845
+  German        0.940   1.000  0.917  0.926  0.782  0.828  0.860  0.853  0.839
+  French        0.941  0.917   1.000  0.860  0.766  0.811  0.833  0.881  0.815
+  Spanish       0.904  0.926  0.860   1.000  0.770  0.823  0.850  0.812  0.800
+  Chinese       0.779  0.782  0.766  0.770   1.000  0.821  0.821  0.756  0.813
+  Japanese      0.845  0.828  0.811  0.823  0.821   1.000  0.900  0.800  0.849
+  Korean        0.865  0.860  0.833  0.850  0.821  0.900   1.000  0.802  0.871
+  Arabic        0.859  0.853  0.881  0.812  0.756  0.800  0.802   1.000  0.768
+  Hindi         0.845  0.839  0.815  0.800  0.813  0.849  0.871  0.768   1.000
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  English baseline (bge-m3):
+    predicative: LOO ρ = 0.783, MAE = 11.0%
+    modal: LOO ρ = 0.982, MAE = 9.7%
+
+  Zero-shot transfer (English axis → other languages):
+  Language      Frame          Zero-shot ρ     MAE  Axis align
+  ────────────  ────────────  ────────────  ──────  ──────────
+  German        predicative        +0.952    8.3%       0.940
+  German        modal              +0.918    7.1%       0.761
+  French        predicative        +0.952    7.3%       0.941
+  French        modal              +0.946    8.4%       0.705
+  Spanish       predicative        +0.905    9.7%       0.904
+  Spanish       modal              +0.852    9.1%       0.779
+  Chinese       predicative        +0.952   12.4%       0.779
+  Chinese       modal              +0.991   10.1%       0.627
+  Japanese      predicative        +0.952   10.4%       0.845
+  Japanese      modal              +0.857   18.1%       0.594
+  Korean        predicative        +1.000    8.3%       0.865
+  Korean        modal              +0.841    8.2%       0.750
+  Arabic        predicative        +0.833    6.9%       0.859
+  Arabic        modal              +0.943    3.6%       0.795
+  Hindi         predicative        +0.952   12.5%       0.845
+  Hindi         modal              +1.000    6.5%       0.824
+
+  STRONG TRANSFER: Mean zero-shot |ρ| = 0.928
+  The English probability axis works for other languages.
+  Mean axis alignment (cos): 0.801 — axes point in similar directions.
+
