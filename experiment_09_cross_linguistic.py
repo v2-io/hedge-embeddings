@@ -452,12 +452,12 @@ def main():
             print(f"\n  {frame} (n={len(phrases)}):")
             print(f"    Zero-shot ρ = {r_zero:+.3f} (p = {p_zero:.2e}), "
                   f"MAE = {mae_zero:.1f}%")
-            print(f"    Per-phrase:")
+            print(f"    Per-phrase (EN equiv = Mosteller value of English translation):")
             sorted_idx = np.argsort(medians)[::-1]
             for i in sorted_idx:
                 err = abs(preds[i] - medians[i])
-                print(f"      {phrases[i]:25s}  Pred={preds[i]:5.1f}%  "
-                      f"Expected={medians[i]:5.1f}%  Err={err:4.1f}%")
+                print(f"      {phrases[i]:25s}  Projected={preds[i]:5.1f}%  "
+                      f"EN equiv={medians[i]:5.1f}%  Δ={err:4.1f}%")
 
     # ═══════════════════════════════════════════════════════════════════
     # Step 3: Within-language axes and alignment with English
@@ -553,7 +553,11 @@ def main():
         print(f"    {frame}: LOO ρ = {res['r_loo']:.3f}, MAE = {res['mae_loo']:.1f}%")
 
     print(f"\n  Zero-shot transfer (English axis → other languages):")
-    print(f"  {'Language':<12s}  {'Frame':<12s}  {'Zero-shot ρ':>12s}  {'MAE':>6s}  {'Axis align':>10s}")
+    print(f"  NOTE: ρ measures ranking quality (language-independent).")
+    print(f"  NOTE: MAE is vs. English translation equivalents, NOT native-speaker")
+    print(f"        ground truth. Δ may reflect genuine cross-linguistic probability")
+    print(f"        differences, not model error.")
+    print(f"\n  {'Language':<12s}  {'Frame':<12s}  {'Zero-shot ρ':>12s}  {'MAE†':>6s}  {'Axis align':>10s}")
     print(f"  {'─'*12}  {'─'*12}  {'─'*12}  {'─'*6}  {'─'*10}")
     for lang_name, frames in cross_results.items():
         for frame, res in frames.items():
@@ -561,6 +565,7 @@ def main():
             align_str = f"{align:.3f}" if isinstance(align, float) else align
             print(f"  {lang_name:<12s}  {frame:<12s}  {res['zero_shot_rho']:+11.3f}  "
                   f"{res['zero_shot_mae']:5.1f}%  {align_str:>10s}")
+    print(f"\n  † MAE is against English Mosteller equivalents, not native calibration data.")
 
     # Verdict
     print()
