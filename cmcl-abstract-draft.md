@@ -6,7 +6,7 @@
 
 ## Abstract
 
-We investigate whether epistemic hedging — the linguistic expression of uncertainty through words like "probably," "certainly," and "possibly" — manifests as calibrated linear structure in sentence embedding space. Recent work has shown that truth (Marks & Tegmark, 2023) and verbal uncertainty (Ji et al., 2025) are approximately linearly encoded in LLM representations, and that models can be fine-tuned to classify words of estimative probability (Sileo & Moens, 2023). However, no prior work has demonstrated that *pretrained* sentence embeddings encode a *continuously calibrated* probability axis aligned with human psychometric data. Using the Mosteller & Youtz (1990) dataset as ground truth (53 verbal probability expressions, n=238), we find that within syntactic types, probability is the dominant linear direction in five architecturally diverse embedding models (Spearman ρ > 0.90 supervised, 0.70–0.94 leave-one-out). A supervised axis trained on Mosteller data cross-validates against the independent Vogel (2022) meta-analysis at ρ = 0.99. The axis survives 12× dimensional compression and generalizes to novel hedge phrases not in the calibration data (ρ = 0.75–0.94). These results suggest that embedding models learn a geometric encoding of human probability semantics as an emergent property of distributional training.
+We investigate whether epistemic hedging — the linguistic expression of uncertainty through words like "probably," "certainly," and "possibly" — manifests as calibrated linear structure in sentence embedding space. Recent work has shown that truth (Marks & Tegmark, 2023) and verbal uncertainty (Ji et al., 2025) are approximately linearly encoded in LLM representations, and that models can be fine-tuned to classify words of estimative probability (Sileo & Moens, 2023). However, no prior work has demonstrated that *pretrained* sentence embeddings encode a *continuously calibrated* probability axis aligned with human psychometric data. Using the Mosteller & Youtz (1990) dataset (53 verbal probability expressions, n=238), we find that within syntactic types, probability is the dominant linear direction in five architecturally diverse embedding models (Spearman ρ > 0.90 supervised, 0.70–0.94 leave-one-out). The axis cross-validates against two independent datasets (Vogel 2022: ρ = 0.99; Wintle 2019: ρ = 0.97), transfers zero-shot to 8 typologically diverse languages (mean |ρ| = 0.93), survives 12× dimensional compression, and passes permutation null hypothesis tests (p ≤ 0.005). These results suggest that embedding models learn a cross-linguistic geometric encoding of human probability semantics as an emergent property of distributional training.
 
 ---
 
@@ -59,19 +59,38 @@ The mxbai result (ρ = 0.991, MAE = 5.1%) represents near-perfect transfer from 
 
 **Dimensional truncation.** On the Matryoshka-trained nomic model (Muennighoff et al., 2024), truncating from 768 to 64 dimensions degrades LOO ρ by only 0.027 (worst case), indicating the probability axis is concentrated in early dimensions and extractable with minimal computation.
 
-**Novel phrase generalization.** The trained axes rank novel phrases not in Mosteller (e.g., "I think," "I doubt," "signs point to") with ρ = 0.75–0.94 against intuitive probability ratings across 5 models, demonstrating generalization beyond the calibration vocabulary.
+**Novel phrase generalization.** The trained axes rank novel phrases not in Mosteller (e.g., "I think," "I doubt," "signs point to") with ρ = 0.75–0.94 against intuitive probability ratings across 5 models.
+
+**Cross-linguistic transfer.** Using a multilingual embedding model (bge-m3, XLM-RoBERTa, 1024d), we train the probability axis on English Mosteller data and project hedge expressions from 8 typologically diverse languages zero-shot:
+
+| Language | Family | Predicative ρ | Modal ρ |
+|---|---|---|---|
+| German | Germanic | 0.952 | 0.918 |
+| French | Romance | 0.952 | 0.946 |
+| Spanish | Romance | 0.905 | 0.852 |
+| Chinese | Sinitic | 0.952 | 0.991 |
+| Japanese | Japonic | 0.952 | 0.857 |
+| Korean | Koreanic | 1.000 | 0.841 |
+| Arabic | Semitic | 0.833 | 0.943 |
+| Hindi | Indo-Aryan | 0.952 | 1.000 |
+
+Mean zero-shot |ρ| = 0.928 across all language-frame combinations. Per-language axes align with the English axis at cosine 0.63–0.94 (predicative) and show typologically expected clustering (European languages cos > 0.86; Japanese-Korean cos = 0.90). Note: cross-linguistic "expected" values are English Mosteller equivalents, not native-speaker ground truth — the ranking (ρ) is the more trustworthy measure than MAE.
+
+**Null hypothesis controls.** Permutation tests (1000 shuffles of Mosteller medians) confirm the signal is in the phrase→probability mapping, not the template structure (p ≤ 0.005 all types). Non-epistemic adjectives ("expensive," "old," "fast") in the same templates produce LOO ρ = 0.31 vs. 0.87 for real hedge expressions. Random Uniform(0,100) labels achieve our LOO ρ in ≤ 6/1000 trials (p ≤ 0.006).
 
 ## 4. Discussion
 
-Our results demonstrate that sentence embedding models learn calibrated probability structure as an emergent geometric property — extending the truth-direction findings (Marks & Tegmark, 2023; Yu et al., 2025) from binary factuality to continuously graded epistemic modality.
+Our results demonstrate that sentence embedding models learn calibrated probability structure as an emergent geometric property — extending the truth-direction findings (Marks & Tegmark, 2023; Yu et al., 2025) from binary factuality to continuously graded epistemic modality, and from English to a cross-linguistic universal.
 
 The structure is **type-specific**: different syntactic constructions have different probability axes, forming a 4-dimensional epistemic subspace (analogous to the multi-dimensional truth cones of Yu et al., 2025). The four axes are moderately correlated (cosine 0.25–0.81), with predicative-modal alignment increasing with model size — suggesting larger models develop a more unified probability representation.
 
 Unlike Sileo and Moens (2023), who show that models can be *fine-tuned* to classify words of estimative probability, we find that calibrated probability structure is *already present* in pretrained representations. And unlike Ji et al. (2025), who identify a verbal uncertainty direction calibrated to model behavior, our axis is calibrated to *human psychometric data* — bridging distributional geometry to cognitive science.
 
-The convergence between human surveys (Mosteller, 1990; Vogel, 2022) and distributional geometry (five embedding models) suggests both measure the same underlying quantity: the communicative probability function of hedge expressions in English. A separate experiment (not detailed here) found that models do *not* encode interpretive precision (IQR; ρ ≈ 0 across 4 models) — they capture a single stable meaning per expression, unlike the bimodal human distribution for ambiguous terms like "possible."
+The cross-linguistic transfer is particularly striking: an axis trained on English psychometric data correctly ranks hedge expressions in Chinese, Japanese, Korean, Arabic, and Hindi — languages with fundamentally different morphological strategies for expressing epistemic stance. This suggests the probability axis is not an artifact of English distributional statistics but a property of how human languages encode epistemic modality, accessible through multilingual embedding geometry.
 
-**Limitations.** All experiments use template sentences; real-text evaluation is needed. The novel-phrase evaluation uses author intuitions rather than independent annotations. Cross-linguistic validation with multilingual models remains future work.
+The convergence between human surveys (Mosteller, Vogel, Wintle — three independent datasets spanning 1967–2019) and distributional geometry (six embedding models, eight languages) suggests these are independent measurements of the same underlying quantity: the communicative probability function of epistemic expressions. A separate experiment found that models do *not* encode interpretive precision (IQR; ρ ≈ 0 across 4 models) — they capture a single stable meaning per expression, though modifiers that disambiguate ambiguous terms like "possible" traverse the full semantic range ("barely possible" → 7–13%, "eminently possible" → 63–70%).
+
+**Limitations.** All experiments use template sentences; real-text evaluation is needed. The cross-linguistic templates were constructed without native speaker verification; the "expected" probability values are English Mosteller equivalents, not native-speaker ground truth — cross-linguistic ranking may be more reliable than calibration. The novel-phrase evaluation uses author intuitions rather than independent annotations.
 
 ---
 
@@ -95,6 +114,8 @@ Marks, S., & Tegmark, M. (2023). The geometry of truth. *arXiv:2310.06824*.
 
 Mikolov, T., Yih, W., & Zweig, G. (2013). Linguistic regularities in continuous space word representations. In *NAACL-HLT* (pp. 746–751).
 
+Chen, J., et al. (2024). BGE M3-embedding: Multi-lingual, multi-functionality, multi-granularity text embeddings through self-knowledge distillation. *arXiv:2402.03216*.
+
 Mosteller, F., & Youtz, C. (1990). Quantifying probabilistic expressions. *Statistical Science*, 5(1), 2–34.
 
 Muennighoff, N., et al. (2024). Matryoshka representation learning. In *NeurIPS*.
@@ -102,6 +123,8 @@ Muennighoff, N., et al. (2024). Matryoshka representation learning. In *NeurIPS*
 Sileo, D., & Moens, M.-F. (2023). Probing neural language models for understanding of words of estimative probability. In *Proceedings of *SEM* (pp. 469–476).
 
 Vogel, T., et al. (2022). Systematic review of verbal probability expressions.
+
+Wintle, B., et al. (2019). Verbal probabilities: Very likely to be somewhat more confusing than numbers. *PLoS ONE*, 14(4), e0213522.
 
 Yu, S., et al. (2025). From directions to cones: Exploring multidimensional representations of propositional facts in LLMs. *arXiv:2501.14457*.
 
