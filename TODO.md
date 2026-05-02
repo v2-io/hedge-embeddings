@@ -449,6 +449,32 @@ After seeing the new findings, Codex revised his earlier read in a favorable but
 
 These five do NOT replace §4 trim of TODO.md (they don't get us from 25 pages to 10 by themselves). They're the specific prose deltas the new experimental evidence justifies, on top of whatever section-level cuts we make in the trim pass.
 
+---
+
+### §8.7 — M10 modal-axis outliers (`improbably`, `very probably`); M9 as a revision-pass option
+
+**Finding (2026-05-02, surfaced by data-module agent's M10 reruns; commit `c6325f7` for results, prose integration in commits `463ab33` for §4.5/§4.7).** Under canonical M10 the modal axis on nomic-embed-text v1.5 has full-dimensional LOO ρ = 0.648 — substantially below the M15 number (0.948) that earlier exploratory runs reported. Two M10 items account for the gap: `improbably` (true 12.5%, predicted 50–58% across all five embedding models tested) and `very probably` (similar pattern, smaller magnitude). The mechanism is morphological-derivative drift: the adverbial form `improbably` is often used as an intensifier ("improbably handsome") rather than as a probability hedge, so its embedding sits closer to 50% than to its source-adjective median of 12.5%. This is a genuine linguistic finding, not a code bug, and is now surfaced honestly in §4.5 truncation prose.
+
+Truncation in fact mitigates the distortion (M10 modal LOO ρ on nomic rises from 0.648 at full d to 0.806 at 64d — the 64d projection apparently drops dimensions where `improbably`'s intensifier-loaded geometry lives).
+
+**Why M10 stays canonical for first submission.** M10's calibration grounding is the load-bearing virtue: every M10 item has a probability value derived from Mosteller's 1990 psychometric survey. M15's 7 author-estimated additions (`conceivably`, `definitely`, `perhaps`, `maybe`, `presumably`, `undoubtedly`, `arguably`) trade calibration grounding for sample-size headroom. The paper's central novelty claim — *"calibrated to human psychometric medians from \citet{mosteller1990quantifying}"* — survives M10 cleanly and is compromised by M15. Codex's preserve-negative-results principle applies: the `improbably` outlier finding makes the paper more credible, not weaker.
+
+**M9-Mosteller-only-clean as a revision-pass option (NOT for first submission).** If a reviewer presses on the modal LOO ρ = 0.648 number being lower than the larger-n axes, the principled remediation is to drop `improbably` (and possibly `very probably`) from M10 on the grounds that the adverb form has demonstrable semantic drift from the source adjective. Call this M9 (or M8 if both items go). This move would:
+
+- *Preserve* the calibration-grounding virtue: every remaining item is still Mosteller-grounded.
+- *Increase* the modal LOO ρ substantially (the agent's data suggests this is largely the cause of the drop from 0.948 M15 to 0.648 M10).
+- *Be defensible on linguistic grounds*: we'd be excluding items for documented semantic-drift reasons, not because they hurt the numbers. The exclusion criterion is principled (adverb-form drift from source adjective); the resulting set is still psychometrically grounded.
+- *Require rerunning* the modal-axis-using experiments (§4.1 Table 1 modal column, §4.4 concept erasure, §4.6 null tests, §4.5 truncation, §4.7 ensemble) on the new M9 set. The data module already supports this cleanly via the `--modal=` flag pattern; a `MODAL_M9` constant in `data/mosteller.py` plus a `--modal=m9` flag on each experiment is the implementation.
+
+**For first submission:** keep canonical M10 with the `improbably` outlier surfaced honestly in §4.5 prose. The M9 path is in reserve for revision response if a reviewer specifically asks why the modal LOO ρ is lower than the larger-n axes. Acting on it pre-emptively would look like cherry-picking; it's defensible only as a *response* to a critique that names the specific concern.
+
+**Cross-references in current paper.md:**
+- §4.5 truncation paragraph names `improbably` and `very probably` as systematic outliers and gives the morphological-derivative-drift explanation.
+- §4.7 ensemble paragraph notes the model-dependent ensemble-vs-modal pattern that the M10 outlier partially explains.
+- §6 L4 (small-n + modal axis) does not currently mention the outlier finding specifically — would be a natural place to add a clause if §4.5 prose feels insufficient.
+
+---
+
 ## §9 — Manuscript-quality items captured from Codex 01-33 read (post-trim phase)
 
 Per Joseph (2026-05-02): defer rendering / manuscript-quality issues until after the trim phase. Captured here so they don't get lost. Categorized as non-trim items extracted from `tmp/codex-feedback-01-33.md`; trim/restructuring items in that file are deliberately not duplicated here.
