@@ -789,8 +789,10 @@ def figure_8_pca_confound(bare_emb):
                        edgecolor="#CCCCCC", alpha=0.9))
 
     # --- Panel B: Predicative only (PC1 = probability) ---
+    # viridis: perceptually uniform, colorblind-safe, grayscale-safe
+    # (replaces RdYlGn which fails for red-green deficiency, ~8% of men)
     norm = Normalize(vmin=0, vmax=100)
-    cmap = plt.cm.RdYlGn
+    cmap = plt.cm.viridis
     sc = ax2.scatter(pc_pred[:, 0], pc_pred[:, 1],
                      c=pred_medians, cmap=cmap, norm=norm, s=60,
                      edgecolors="white", linewidth=0.5, zorder=3)
@@ -1276,6 +1278,197 @@ def figure_12_crossmodel():
 
 
 # ---------------------------------------------------------------------------
+# Figure 13: Concept Erasure — ΔMAE vs. cos(v_A, v_B)
+# ---------------------------------------------------------------------------
+
+def _parse_exp11_pairs(path):
+    """Parse the MAE-based pairwise erasure table from an exp11 results file.
+
+    Returns a list of dicts with keys: pair, cos, mae_b, mae_t, dmae.
+    The MAE-based table looks like::
+
+        A→B                          cos |  MAE_b   MAE_t    ΔMAE | ...
+        Predicative→Adverbial     +0.424 |   5.47   14.57   +9.10 | ...
+
+    We grab the 12 ordered cross-type pairs by matching the leading "X→Y"
+    label (lossy on Unicode arrow handling, so we accept either '→' or '->').
+    """
+    rows = []
+    with open(path, "r", encoding="utf-8") as f:
+        in_mae_section = False
+        for line in f:
+            stripped = line.strip()
+            if "MAE-based view" in stripped:
+                in_mae_section = True
+                continue
+            if not in_mae_section:
+                continue
+            # End of MAE section
+            if stripped.startswith("═") or stripped.startswith("CROSS-PAIR"):
+                if rows:
+                    break
+            # Pair lines start with a capitalised type name
+            if not stripped or stripped.startswith(("A→B", "---", "MAE", "cos")):
+                continue
+            # Look for an arrow in the first token group
+            if "→" not in stripped and "->" not in stripped:
+                continue
+            # Split on '|' — this gives us 5 segments; we need segments 0 and 1
+            parts = [p.strip() for p in line.split("|")]
+            if len(parts) < 5:
+                continue
+            head = parts[0]  # "Predicative→Adverbial     +0.424"
+            mae_part = parts[1]  # "5.47   14.57   +9.10"
+            # Extract pair label and cosine
+            head_tokens = head.split()
+            if len(head_tokens) < 2:
+                continue
+            pair = head_tokens[0]
+            # Cosine is the last token of head
+            try:
+                cos_val = float(head_tokens[-1])
+            except ValueError:
+                continue
+            mae_tokens = mae_part.split()
+            if len(mae_tokens) < 3:
+                continue
+            try:
+                mae_b = float(mae_tokens[0])
+                mae_t = float(mae_tokens[1])
+                dmae = float(mae_tokens[2])
+            except ValueError:
+                continue
+            rows.append({
+                "pair": pair,
+                "cos": cos_val,
+                "mae_b": mae_b,
+                "mae_t": mae_t,
+                "dmae": dmae,
+            })
+    return rows
+
+
+def figure_13_erasure_mae_cos():
+    print("\nFigure 13: Concept Erasure ΔMAE vs. Cosine...")
+
+    base = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "results")
+    mxbai_rows = _parse_exp11_pairs(os.path.join(base, "exp11_mxbai.txt"))
+    qwen3_rows = _parse_exp11_pairs(os.path.join(base, "exp11_qwen3.txt"))
+
+    if len(mxbai_rows) != 12 or len(qwen3_rows) != 12:
+        print(f"  WARNING: parsed {len(mxbai_rows)} mxbai / "
+              f"{len(qwen3_rows)} qwen3 rows (expected 12 each)")
+
+    # Reported in results files; recompute as a sanity check.
+    cos_m = np.array([r["cos"] for r in mxbai_rows])
+    dm_m = np.array([r["dmae"] for r in mxbai_rows])
+    cos_q = np.array([r["cos"] for r in qwen3_rows])
+    dm_q = np.array([r["dmae"] for r in qwen3_rows])
+    r_m = float(np.corrcoef(cos_m, dm_m)[0, 1]) if len(cos_m) > 1 else float("nan")
+    r_q = float(np.corrcoef(cos_q, dm_q)[0, 1]) if len(cos_q) > 1 else float("nan")
+    print(f"  mxbai r(cos, ΔMAE) = {r_m:+.3f}  (results file: +0.922)")
+    print(f"  qwen3 r(cos, ΔMAE) = {r_q:+.3f}  (results file: +0.857)")
+
+    # Color/marker scheme: discrete, colorblind-safe (sampled from viridis)
+    # — distinct from any of the rainbow palettes elsewhere in the figure set.
+    color_mxbai = "#440154"   # viridis dark-purple
+    color_qwen3 = "#1F9E89"   # viridis teal
+    marker_mxbai = "o"
+    marker_qwen3 = "s"
+
+    fig, ax = plt.subplots(figsize=(7, 5.2))
+
+    # Per-model best-fit lines (transparent dashed) — visualise the r values
+    x_grid = np.linspace(0.30, 1.00, 50)
+    for cos_v, dm_v, col in [(cos_m, dm_m, color_mxbai),
+                             (cos_q, dm_q, color_qwen3)]:
+        if len(cos_v) > 1:
+            slope, intercept, _, _, _ = stats.linregress(cos_v, dm_v)
+            ax.plot(x_grid, slope * x_grid + intercept,
+                    color=col, linestyle="--", linewidth=1.2,
+                    alpha=0.45, zorder=2)
+
+    # Headline pair predicate: predicative <-> modal
+    def is_headline(pair):
+        return pair in ("Predicative→Modal", "Modal→Predicative")
+
+    # Plot non-headline points
+    for rows, col, mk, label_r in [
+        (mxbai_rows, color_mxbai, marker_mxbai, r_m),
+        (qwen3_rows, color_qwen3, marker_qwen3, r_q),
+    ]:
+        non_h = [r for r in rows if not is_headline(r["pair"])]
+        ax.scatter([r["cos"] for r in non_h],
+                   [r["dmae"] for r in non_h],
+                   color=col, marker=mk, s=70,
+                   edgecolors="white", linewidth=0.6, zorder=3, alpha=0.85)
+
+    # Highlight headline pairs with larger markers + black edge
+    # Use a small label offset table (per model × direction) to avoid overlap
+    # at the dense top-right cluster of headline points.
+    label_offsets = {
+        # (model_key, pair) -> (dx, dy, ha, va)
+        ("mxbai", "Predicative→Modal"): (+0.012, -0.4, "left", "top"),
+        ("mxbai", "Modal→Predicative"): (+0.012, +0.4, "left", "bottom"),
+        ("qwen3", "Predicative→Modal"): (-0.012, -0.4, "right", "top"),
+        ("qwen3", "Modal→Predicative"): (-0.012, +0.4, "right", "bottom"),
+    }
+    for model_key, rows, col, mk in [
+        ("mxbai", mxbai_rows, color_mxbai, marker_mxbai),
+        ("qwen3", qwen3_rows, color_qwen3, marker_qwen3),
+    ]:
+        head = [r for r in rows if is_headline(r["pair"])]
+        ax.scatter([r["cos"] for r in head],
+                   [r["dmae"] for r in head],
+                   color=col, marker=mk, s=170,
+                   edgecolors="black", linewidth=1.4, zorder=5)
+        for r in head:
+            direction = "Pred→Modal" if r["pair"] == "Predicative→Modal" \
+                else "Modal→Pred"
+            dx, dy, ha, va = label_offsets[(model_key, r["pair"])]
+            ax.annotate(
+                direction,
+                (r["cos"], r["dmae"]),
+                xytext=(r["cos"] + dx, r["dmae"] + dy),
+                fontsize=8.5, color=col, ha=ha, va=va,
+                fontweight="bold", zorder=6,
+            )
+
+    ax.set_xlabel(r"$\cos(\mathbf{v}_A,\, \mathbf{v}_B)$  (eraser–target axis alignment)")
+    ax.set_ylabel(r"$\Delta\mathrm{MAE}_{\mathrm{real}}$  (percentage points)")
+    ax.set_title(
+        "Concept Erasure: ΔMAE Tracks Inter-Axis Cosine Alignment\n"
+        "(12 ordered cross-type pairs per model; predicative ↔ modal called out)"
+    )
+    ax.set_xlim(0.30, 1.00)
+    ax.set_ylim(-1.0, 28.0)
+
+    # Legend with Pearson r values per model + headline marker entry
+    legend_handles = [
+        Line2D([0], [0], marker=marker_mxbai, linestyle="none",
+               markersize=9, markerfacecolor=color_mxbai,
+               markeredgecolor="white", markeredgewidth=0.6,
+               label=f"mxbai-embed-large (r = {r_m:.2f})"),
+        Line2D([0], [0], marker=marker_qwen3, linestyle="none",
+               markersize=9, markerfacecolor=color_qwen3,
+               markeredgecolor="white", markeredgewidth=0.6,
+               label=f"qwen3-embedding (r = {r_q:.2f})"),
+        Line2D([0], [0], marker="o", linestyle="none",
+               markersize=11, markerfacecolor="#888888",
+               markeredgecolor="black", markeredgewidth=1.2,
+               label="Headline pair (Pred ↔ Modal)"),
+        Line2D([0], [0], color="#888888", linestyle="--", linewidth=1.2,
+               alpha=0.6, label="Per-model linear fit"),
+    ]
+    ax.legend(handles=legend_handles, loc="upper left",
+              framealpha=0.92, fontsize=9)
+
+    fig.tight_layout()
+    savefig(fig, "fig13_erasure_mae_cos")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -1315,6 +1508,7 @@ def main():
     figure_7_null_hypothesis()
     figure_9_method()
     figure_12_crossmodel()
+    figure_13_erasure_mae_cos()
 
     print("\n" + "=" * 60)
     print("  All figures generated successfully!")

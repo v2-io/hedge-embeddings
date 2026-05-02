@@ -445,12 +445,11 @@ __ABSTRACT__
 
 __BODY__
 
-% References: TACL uses acl_natbib. A refs.bib file is not yet built; the
-% draft still has citations in (Author et al., Year) markdown form. When
-% refs.bib lands, uncomment the two lines below and re-run.
-%
-% \bibliography{refs}
-% \bibliographystyle{tex/acl_natbib}
+% References: TACL uses acl_natbib (BibTeX-compatible). The compile pass
+% in convert_to_tex.py runs `lualatex -> bibtex -> lualatex -> lualatex`
+% so that natbib resolves \citep{...} / \citet{...} keys against refs.bib.
+\bibliography{refs}
+\bibliographystyle{tex/acl_natbib}
 
 \end{document}
 """
@@ -480,12 +479,29 @@ def assemble_tex(title: str, abstract_tex: str, body_tex: str) -> str:
 import os
 
 def try_compile(tex_path: Path) -> tuple[bool, str]:
-    """Run the configured LaTeX engine twice. Return (ok, last_log_tail)."""
+    """Compile sequence: lualatex -> bibtex -> lualatex -> lualatex.
+
+    The bibtex pass is required so natbib's \\citep / \\citet keys resolve
+    against refs.bib. We run lualatex once first to emit the .aux file,
+    then bibtex on the aux to produce the .bbl, then lualatex twice more
+    so cross-references and the bibliography back-link correctly.
+
+    If refs.bib does not exist next to the .tex file, we skip the bibtex
+    pass and fall back to the previous two-pass behavior. Bibtex warnings
+    (e.g. missing fields) are non-fatal: only an explicit non-zero exit
+    surfaced as a "I couldn't open" or fatal error stops the build.
+
+    Return (ok, last_log_tail).
+    """
     engine = os.environ.get("LATEX_ENGINE", "lualatex")
     if shutil.which(engine) is None:
         return False, f"{engine} not on PATH (brew install --cask mactex or basictex)"
+    bib_path = tex_path.with_suffix(".bib").parent / "refs.bib"
+    has_bib = bib_path.exists() and shutil.which("bibtex") is not None
+
     log_tail = ""
-    for pass_num in (1, 2):
+
+    def run_engine() -> tuple[int, str]:
         proc = subprocess.run(
             [
                 engine,
@@ -498,9 +514,42 @@ def try_compile(tex_path: Path) -> tuple[bool, str]:
             text=True,
             check=False,
         )
-        log_tail = proc.stdout[-2000:] if proc.stdout else proc.stderr[-2000:]
-        if proc.returncode != 0:
+        out = proc.stdout[-2000:] if proc.stdout else proc.stderr[-2000:]
+        return proc.returncode, out
+
+    # Pass 1
+    rc, log_tail = run_engine()
+    if rc != 0:
+        return False, log_tail
+
+    # Optional bibtex pass
+    if has_bib:
+        bib_proc = subprocess.run(
+            ["bibtex", tex_path.stem],
+            cwd=tex_path.parent,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        bib_log = bib_proc.stdout + bib_proc.stderr
+        # bibtex returns non-zero only on hard errors (missing .aux, etc).
+        # Missing-citation warnings exit zero. Surface them in log_tail.
+        if bib_proc.returncode != 0:
+            return False, (log_tail + "\n--- bibtex log ---\n" + bib_log[-2000:])
+        log_tail = bib_log[-2000:]
+
+        # Pass 2 + 3 to resolve \cite refs and update the .toc / .out
+        for _ in range(2):
+            rc, log_tail = run_engine()
+            if rc != 0:
+                return False, log_tail
+    else:
+        # No refs.bib (or no bibtex on PATH) — fall back to a second engine
+        # pass for cross-reference resolution only.
+        rc, log_tail = run_engine()
+        if rc != 0:
             return False, log_tail
+
     return True, log_tail
 
 

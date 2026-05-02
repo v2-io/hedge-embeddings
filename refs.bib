@@ -1,0 +1,353 @@
+% refs.bib — bibliography for the hedge-embeddings TACL paper.
+% Format: BibTeX, ASCII where possible (escaped diacritics: {\"u} for ü, {\'e} for é).
+% Citation key convention: firstauthor-lastname + year + first significant title word, lowercase.
+% TACL uses acl_natbib.bst, which supports natbib's \citep / \citet.
+
+% ---------------------------------------------------------------------------
+% Verbal-probability psychometrics (ground truth datasets and foundations)
+% ---------------------------------------------------------------------------
+
+@article{mosteller1990quantifying,
+  author  = {Mosteller, Frederick and Youtz, Cleo},
+  title   = {Quantifying Probabilistic Expressions},
+  journal = {Statistical Science},
+  volume  = {5},
+  number  = {1},
+  pages   = {2--12},
+  year    = {1990},
+  doi     = {10.1214/ss/1177012242}
+}
+
+@article{vogel2022systematic,
+  author  = {Vogel, Robert M. and Homberg, Fabian and Vogel, Rick and Reiche, B. Sebastian},
+  title   = {Communicating Numeric Quantities in Words: A Systematic Review of Verbal Probability Expressions},
+  journal = {Risk Analysis},
+  year    = {2022},
+  note    = {Systematic review and meta-analysis of 21 verbal-probability studies (1967--2018); see {\tt docs/vogel\_2022\_systematic\_review.csv}.}
+}
+
+@article{wintle2019verbal,
+  author  = {Wintle, Bonnie C. and Fraser, Hannah and Wills, Ben C. and Nicholson, Ann E. and Fidler, Fiona},
+  title   = {Verbal Probabilities: Very Likely to Be Somewhat More Confusing than Numbers},
+  journal = {PLoS ONE},
+  volume  = {14},
+  number  = {4},
+  pages   = {e0213522},
+  year    = {2019},
+  doi     = {10.1371/journal.pone.0213522}
+}
+
+@article{wallsten1986measuring,
+  author  = {Wallsten, Thomas S. and Budescu, David V. and Rapoport, Amnon and Zwick, Rami and Forsyth, Barbara},
+  title   = {Measuring the Vague Meanings of Probability Terms},
+  journal = {Journal of Experimental Psychology: General},
+  volume  = {115},
+  number  = {4},
+  pages   = {348--365},
+  year    = {1986},
+  doi     = {10.1037/0096-3445.115.4.348}
+}
+
+@incollection{wallsten2008communicating,
+  author    = {Wallsten, Thomas S. and Budescu, David V.},
+  title     = {Communicating Probabilistic Information},
+  booktitle = {Decision Modeling and Behavior in Complex and Uncertain Environments},
+  editor    = {Kugler, Tamar and Smith, J. Cole and Connolly, Terry and Son, Young-Jun},
+  publisher = {Springer},
+  year      = {2008},
+  pages     = {249--272}
+}
+
+@incollection{budescu1995processing,
+  author    = {Budescu, David V. and Wallsten, Thomas S.},
+  title     = {Processing Linguistic Probabilities: General Principles and Empirical Evidence},
+  booktitle = {The Psychology of Learning and Motivation},
+  volume    = {32},
+  publisher = {Academic Press},
+  pages     = {275--318},
+  year      = {1995},
+  doi       = {10.1016/S0079-7421(08)60313-8}
+}
+
+@article{lichtenstein1967empirical,
+  author  = {Lichtenstein, Sarah and Newman, J. Robert},
+  title   = {Empirical Scaling of Common Verbal Phrases Associated with Numerical Probabilities},
+  journal = {Psychonomic Science},
+  volume  = {9},
+  number  = {10},
+  pages   = {563--564},
+  year    = {1967},
+  doi     = {10.3758/BF03327890}
+}
+
+@article{beythmarom1982people,
+  author  = {Beyth-Marom, Ruth},
+  title   = {How Probable is Probable? A Numerical Translation of Verbal Probability Expressions},
+  journal = {Journal of Forecasting},
+  volume  = {1},
+  number  = {3},
+  pages   = {257--269},
+  year    = {1982},
+  doi     = {10.1002/for.3980010305}
+}
+
+% ---------------------------------------------------------------------------
+% Linear features in decoder LLM internal states
+% ---------------------------------------------------------------------------
+
+@inproceedings{mikolov2013linguistic,
+  author    = {Mikolov, Tomas and Yih, Wen-tau and Zweig, Geoffrey},
+  title     = {Linguistic Regularities in Continuous Space Word Representations},
+  booktitle = {Proceedings of the 2013 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (NAACL-HLT)},
+  pages     = {746--751},
+  year      = {2013}
+}
+
+@inproceedings{park2024linear,
+  author    = {Park, Kiho and Choe, Yo Joong and Veitch, Victor},
+  title     = {The Linear Representation Hypothesis and the Geometry of Large Language Models},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning (ICML)},
+  year      = {2024}
+}
+
+@misc{marks2023geometry,
+  author        = {Marks, Samuel and Tegmark, Max},
+  title         = {The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets},
+  year          = {2023},
+  eprint        = {2310.06824},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2310.06824}
+}
+
+@misc{burger2024truth,
+  author        = {B{\"u}rger, Lennart and Hamprecht, Fred A. and Nadler, Boaz},
+  title         = {Truth is Universal: Robust Detection of Lies in {LLMs}},
+  year          = {2024},
+  eprint        = {2407.12831},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2407.12831}
+}
+
+@inproceedings{yu2025directions,
+  author        = {Yu, Stanley and Marks, Samuel and Tegmark, Max and others},
+  title         = {From Directions to Cones: Exploring Multidimensional Representations of Propositional Facts in {LLMs}},
+  booktitle     = {Conference on Language Modeling (COLM)},
+  year          = {2025},
+  eprint        = {2505.21800},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2505.21800}
+}
+
+@inproceedings{ji2025calibrating,
+  author    = {Ji, Ziwei and Yu, Lei and Koishekenov, Yerzat and Bang, Yejin and Hartshorn, Anthony and Schelten, Alan and Zhang, Cheng and Fung, Pascale and Cancedda, Nicola},
+  title     = {Calibrating Verbal Uncertainty as a Linear Feature to Reduce Hallucinations},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {3769--3793},
+  year      = {2025},
+  doi       = {10.48550/arXiv.2503.14477},
+  url       = {https://aclanthology.org/2025.emnlp-main.187/}
+}
+
+@inproceedings{lepori2026fantasy,
+  author    = {Lepori, Michael A. and Hu, Jennifer and Dasgupta, Ishita and Patel, Roma and Serre, Thomas and Pavlick, Ellie},
+  title     = {Is This Just Fantasy? {L}anguage Model Representations Reflect Human Judgments of Event Plausibility},
+  booktitle = {Proceedings of the International Conference on Learning Representations (ICLR)},
+  year      = {2026},
+  eprint    = {2507.12553},
+  archivePrefix = {arXiv},
+  doi       = {10.48550/arXiv.2507.12553}
+}
+
+@article{valois2025frame,
+  author  = {Valois, Pedro H. V. and Souza, Lincon and Shimomoto, Erica K. and Fukui, Kazuhiro},
+  title   = {Frame Representation Hypothesis: Multi-Token {LLM} Interpretability and Concept-Guided Text Generation},
+  journal = {Transactions of the Association for Computational Linguistics},
+  volume  = {13},
+  pages   = {1436--1458},
+  year    = {2025},
+  doi     = {10.1162/TACL.a.48},
+  url     = {https://aclanthology.org/2025.tacl-1.65/}
+}
+
+% ---------------------------------------------------------------------------
+% Verbal-probability semantics elicited behaviorally from language models
+% ---------------------------------------------------------------------------
+
+@inproceedings{sileo2023probing,
+  author    = {Sileo, Damien and Moens, Marie-Francine},
+  title     = {Probing Neural Language Models for Understanding of Words of Estimative Probability},
+  booktitle = {Proceedings of the 12th Joint Conference on Lexical and Computational Semantics (*SEM)},
+  pages     = {469--476},
+  year      = {2023},
+  doi       = {10.48550/arXiv.2211.03358}
+}
+
+@misc{belem2024perceptions,
+  author        = {Bel{\'e}m, Catarina G. and Kelly, Markelle and Steyvers, Mark and Singh, Sameer and Smyth, Padhraic},
+  title         = {Perceptions of Linguistic Uncertainty by Language Models and Humans},
+  year          = {2024},
+  eprint        = {2407.15814},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2407.15814}
+}
+
+@article{tang2026evaluation,
+  author  = {Tang, Zhisheng and Shen, Ke and Kejriwal, Mayank},
+  title   = {An Evaluation of Estimative Uncertainty in Large Language Models},
+  journal = {npj Complexity},
+  volume  = {3},
+  number  = {8},
+  year    = {2026},
+  doi     = {10.1038/s44260-026-00070-6}
+}
+
+@misc{wang2024calibrating,
+  author        = {Wang, Peiqi and Lam, Barbara D. and Liu, Yingcheng and Asgari-Targhi, Ameneh and Panda, Rameswar and Wells, William M. and Kapur, Tina and Golland, Polina},
+  title         = {Calibrating Expressions of Certainty},
+  year          = {2024},
+  eprint        = {2410.04315},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2410.04315}
+}
+
+% ---------------------------------------------------------------------------
+% Pretrained sentence-embedding probing for human-aligned graded properties
+% ---------------------------------------------------------------------------
+
+@inproceedings{jacobs2022masked,
+  author    = {Jacobs, Cassandra L. and Hubbard, Ryan J. and Federmeier, Kara D.},
+  title     = {Masked Language Models Directly Encode Linguistic Uncertainty},
+  booktitle = {Proceedings of the Society for Computation in Linguistics (SCiL)},
+  pages     = {225--228},
+  year      = {2022}
+}
+
+@inproceedings{chen2019uncertain,
+  author    = {Chen, Tongfei and Jiang, Zhengping and Poliak, Adam and Sakaguchi, Keisuke and Van Durme, Benjamin},
+  title     = {Uncertain Natural Language Inference},
+  booktitle = {Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  pages     = {8772--8779},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.acl-main.774}
+}
+
+@inproceedings{schuster2019harnessing,
+  author    = {Schuster, Sebastian and Chen, Yuxing and Degen, Judith},
+  title     = {Harnessing the Linguistic Signal to Predict Scalar Inferences},
+  booktitle = {Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  pages     = {5387--5403},
+  year      = {2020},
+  doi       = {10.18653/v1/2020.acl-main.479}
+}
+
+@inproceedings{pei2021measuring,
+  author    = {Pei, Jiaxin and Jurgens, David},
+  title     = {Measuring Sentence-Level and Aspect-Level (Un)certainty in Science Communications},
+  booktitle = {Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2021},
+  doi       = {10.18653/v1/2021.emnlp-main.784},
+  eprint    = {2109.14776},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{lee2015event,
+  author    = {Lee, Kenton and Artzi, Yoav and Choi, Yejin and Zettlemoyer, Luke},
+  title     = {Event Detection and Factuality Assessment with Non-Expert Supervision},
+  booktitle = {Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {1643--1648},
+  year      = {2015},
+  doi       = {10.18653/v1/D15-1189}
+}
+
+@inproceedings{stanovsky2017integrating,
+  author    = {Stanovsky, Gabriel and Eckle-Kohler, Judith and Puzikov, Yevgeniy and Dagan, Ido and Gurevych, Iryna},
+  title     = {Integrating Deep Linguistic Features in Factuality Prediction over Unified Datasets},
+  booktitle = {Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  pages     = {352--357},
+  year      = {2017},
+  doi       = {10.18653/v1/P17-2056}
+}
+
+@article{bhatia2017vector,
+  author  = {Bhatia, Sudeep},
+  title   = {Vector Space Semantic Models Predict Subjective Probability Judgments for Real-World Events},
+  journal = {Cognitive Science},
+  year    = {2017},
+  note    = {Cited as Bhatia (2016) in some sources; published in Cognitive Science.}
+}
+
+@misc{shen2023sen2pro,
+  author        = {Shen, Lingfeng and Jiang, Haiyun and Liu, Lemao and Shi, Shuming},
+  title         = {{Sen2Pro}: A Probabilistic Perspective to Sentence Embedding from Pre-trained Language Model},
+  year          = {2023},
+  eprint        = {2306.02247},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2306.02247}
+}
+
+% ---------------------------------------------------------------------------
+% Theoretical / formal-semantics foundations
+% ---------------------------------------------------------------------------
+
+@book{lassiter2017graded,
+  author    = {Lassiter, Daniel},
+  title     = {Graded Modality: Qualitative and Quantitative Perspectives},
+  publisher = {Oxford University Press},
+  year      = {2017},
+  isbn      = {9780198701347}
+}
+
+@article{schockaert2022formal,
+  author  = {Schockaert, Steven},
+  title   = {A Formal Framework for Embeddings as Epistemic States},
+  journal = {Journal of Artificial Intelligence Research},
+  year    = {2022}
+}
+
+@article{hoerl1970ridge,
+  author  = {Hoerl, Arthur E. and Kennard, Robert W.},
+  title   = {Ridge Regression: Biased Estimation for Nonorthogonal Problems},
+  journal = {Technometrics},
+  volume  = {12},
+  number  = {1},
+  pages   = {55--67},
+  year    = {1970},
+  doi     = {10.1080/00401706.1970.10488634}
+}
+
+% ---------------------------------------------------------------------------
+% Embedding models cited by name (BGE-M3, Matryoshka)
+% ---------------------------------------------------------------------------
+
+@misc{chen2024bge,
+  author        = {Chen, Jianlv and Xiao, Shitao and Zhang, Peitian and Luo, Kun and Lian, Defu and Liu, Zheng},
+  title         = {{BGE M3-Embedding}: Multi-Lingual, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation},
+  year          = {2024},
+  eprint        = {2402.03216},
+  archivePrefix = {arXiv},
+  doi           = {10.48550/arXiv.2402.03216}
+}
+
+@inproceedings{muennighoff2024matryoshka,
+  author    = {Kusupati, Aditya and Bhatt, Gantavya and Rege, Aniket and Wallingford, Matthew and Sinha, Aditya and Ramanujan, Vivek and Howard-Snyder, William and Chen, Kaifeng and Kakade, Sham and Jain, Prateek and Farhadi, Ali},
+  title     = {Matryoshka Representation Learning},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2022},
+  eprint    = {2205.13147},
+  archivePrefix = {arXiv},
+  note      = {Paper cited in {\tt paper.md} as ``Muennighoff et al. (2024)''; the canonical reference for Matryoshka Representation Learning is Kusupati et al. (NeurIPS 2022). Verify attribution before camera-ready.}
+}
+
+% ---------------------------------------------------------------------------
+% Stimuli sets cited in pooled-embedding precursors
+% ---------------------------------------------------------------------------
+
+@article{federmeier2007multifaceted,
+  author  = {Federmeier, Kara D. and Wlotko, Edward W. and De Ochoa-Dewald, Esmeralda and Kutas, Marta},
+  title   = {Multiple Effects of Sentential Constraint on Word Processing},
+  journal = {Brain Research},
+  volume  = {1146},
+  pages   = {75--84},
+  year    = {2007},
+  doi     = {10.1016/j.brainres.2006.06.101}
+}
