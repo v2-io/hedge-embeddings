@@ -1,0 +1,85 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 07: Matryoshka Truncation Test                         ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: nomic-embed-text:v1.5                                     ║
+║  Modal set: M10 (n=10)                                             ║
+║                                                                    ║
+║  Question: Does the probability axis survive dimensional           ║
+║  truncation? How few dimensions suffice?                           ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Full dimension: 768
+
+Embedding all sentences at full 768d...
+
+══════════════════════════════════════════════════════════════════════════════
+TRUNCATION RESULTS
+══════════════════════════════════════════════════════════════════════════════
+
+  Group              768d    512d    256d    128d     64d     32d
+  ───────────────  ──────  ──────  ──────  ──────  ──────  ──────
+
+  IN-SAMPLE Spearman ρ:
+  Predicative      0.934  0.940  0.956  0.930  0.930  0.901
+  Adverbial        0.949  0.947  0.928  0.951  0.957  0.918
+  Noun phrase      0.973  0.973  0.945  0.945  0.955  0.955
+  Modal            0.927  0.927  0.927  0.927  0.952  0.891
+
+  LEAVE-ONE-OUT Spearman ρ:
+  Predicative      0.874  0.885  0.885  0.852  0.897  0.852
+  Adverbial        0.923  0.907  0.896  0.893  0.896  0.807
+  Noun phrase      0.936  0.918  0.918  0.900  0.909  0.936
+  Modal            0.648  0.758  0.782  0.770  0.806  0.418
+
+  LEAVE-ONE-OUT MAE:
+  Predicative      13.5%  13.8%  14.3%  14.6%  14.1%  17.5%
+  Adverbial        11.8%  12.5%  13.6%  14.7%  16.5%  18.4%
+  Noun phrase       6.5%   6.7%   6.8%   6.7%   7.8%   9.0%
+  Modal            17.9%  17.6%  16.5%  17.2%  17.4%  19.1%
+
+══════════════════════════════════════════════════════════════════════════════
+AXIS STABILITY: cosine(full_axis[:d], truncated_axis)
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative       1.000  0.999  0.990  0.975  0.974  0.975
+
+  Adverbial         1.000  0.997  0.988  0.962  0.941  0.909
+
+  Noun phrase       1.000  0.999  0.997  0.994  0.990  0.987
+
+  Modal             1.000  0.998  0.991  0.976  0.953  0.910
+
+══════════════════════════════════════════════════════════════════════════════
+AXIS WEIGHT CONCENTRATION
+  (fraction of axis L2 norm in first N dimensions)
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative      1.000  0.854  0.622  0.456  0.352  0.221
+
+  Adverbial        1.000  0.822  0.604  0.436  0.306  0.204
+
+  Noun phrase      1.000  0.835  0.602  0.421  0.277  0.215
+
+  Modal            1.000  0.837  0.623  0.431  0.295  0.222
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  LOO ρ ≥ 0.9 for all groups: not achieved at any truncation
+  LOO ρ ≥ 0.8 for all groups: 64d minimum
+  LOO ρ ≥ 0.7 for all groups: 64d minimum
+  LOO ρ ≥ 0.6 for all groups: 64d minimum
+
+  Degradation from full dimensionality (LOO ρ):
+     512d: worst-case drop = +0.018
+     256d: worst-case drop = +0.026
+     128d: worst-case drop = +0.036
+      64d: worst-case drop = +0.027
+      32d: worst-case drop = +0.230
+
+  Model uses Matryoshka training: YES
+  128d sufficient? YES — LOO ρ > 0.6 for all groups at 128d
+  → Probability extraction is feasible with 6× fewer dimensions
+

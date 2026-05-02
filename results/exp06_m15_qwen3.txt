@@ -1,0 +1,179 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 06: Compound Hedge Composition                         ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: qwen3-embedding                                           ║
+║                                                                    ║
+║  Question: Do compound hedges decompose linearly in embedding      ║
+║  space? Is diff(compound) ≈ sum(diff(components))?                 ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 4096
+
+Training modal axis...
+  Modal axis trained (slope=152.1, intercept=63.8)
+
+══════════════════════════════════════════════════════════════════════════════
+COMPOUND HEDGE ANALYSIS
+══════════════════════════════════════════════════════════════════════════════
+
+  Type: first_person + modal
+  Compound: "I think the experiment will probably succeed"
+    Component: "I think the experiment will succeed"
+      → Modal axis: 64.6%
+    Component: "The experiment will probably succeed"
+      → Modal axis: 64.8%
+  Compound → Modal axis: 69.4%
+  Component average: 64.7%
+  Intuition: 60.0%
+  Cosine(compound_diff, sum_component_diffs): 0.9605
+  Magnitude: compound=0.4476, sum=0.6151, ratio=0.728
+
+  Type: first_person + modal
+  Compound: "I suspect the experiment will possibly succeed"
+    Component: "I suspect the experiment will succeed"
+      → Modal axis: 69.3%
+    Component: "The experiment will possibly succeed"
+      → Modal axis: 38.6%
+  Compound → Modal axis: 47.3%
+  Component average: 53.9%
+  Intuition: 35.0%
+  Cosine(compound_diff, sum_component_diffs): 0.9378
+  Magnitude: compound=0.5343, sum=0.6813, ratio=0.784
+
+  Type: first_person + modal
+  Compound: "I believe the experiment will certainly succeed"
+    Component: "I believe the experiment will succeed"
+      → Modal axis: 68.4%
+    Component: "The experiment will certainly succeed"
+      → Modal axis: 97.4%
+  Compound → Modal axis: 97.6%
+  Component average: 82.9%
+  Intuition: 85.0%
+  Cosine(compound_diff, sum_component_diffs): 0.9241
+  Magnitude: compound=0.4479, sum=0.5122, ratio=0.874
+
+  Type: first_person + modal (conflicting)
+  Compound: "I doubt the experiment will probably succeed"
+    Component: "I doubt the experiment will succeed"
+      → Modal axis: 12.7%
+    Component: "The experiment will probably succeed"
+      → Modal axis: 64.8%
+  Compound → Modal axis: 21.3%
+  Component average: 38.7%
+  Intuition: 30.0%
+  Cosine(compound_diff, sum_component_diffs): 0.9433
+  Magnitude: compound=0.7015, sum=0.8639, ratio=0.812
+
+  Type: attenuator + modal
+  Compound: "The experiment will quite possibly succeed"
+    Component: "The experiment will possibly succeed"
+      → Modal axis: 38.6%
+  Compound → Modal axis: 67.0%
+  Component average: 38.6%
+  Intuition: 45.0%
+  Cosine(compound_diff, sum_component_diffs): 0.7636
+  Magnitude: compound=0.3369, sum=0.4032, ratio=0.835
+
+  Type: attenuator + predicative
+  Compound: "It is fairly likely that the experiment will succeed"
+    Component: "It is likely that the experiment will succeed"
+      → Modal axis: 63.0%
+  Compound → Modal axis: 64.0%
+  Component average: 63.0%
+  Intuition: 65.0%
+  Cosine(compound_diff, sum_component_diffs): 0.9237
+  Magnitude: compound=0.4896, sum=0.3536, ratio=1.385
+
+  Type: attenuator + predicative
+  Compound: "It is almost certainly true that the experiment will succeed"
+    Component: "It is certain that the experiment will succeed"
+      → Modal axis: 98.2%
+  Compound → Modal axis: 89.6%
+  Component average: 98.2%
+  Intuition: 90.0%
+  Cosine(compound_diff, sum_component_diffs): 0.6640
+  Magnitude: compound=0.3519, sum=0.3747, ratio=0.939
+
+  Type: double first_person
+  Compound: "I think I believe the experiment will succeed"
+    Component: "I think the experiment will succeed"
+      → Modal axis: 64.6%
+    Component: "I believe the experiment will succeed"
+      → Modal axis: 68.4%
+  Compound → Modal axis: 64.2%
+  Component average: 66.5%
+  Intuition: 60.0%
+  Cosine(compound_diff, sum_component_diffs): 0.8762
+  Magnitude: compound=0.5278, sum=0.7634, ratio=0.691
+
+  Type: evidential + modal
+  Compound: "It seems like the experiment will probably succeed"
+    Component: "It seems like the experiment will succeed"
+      → Modal axis: 57.0%
+    Component: "The experiment will probably succeed"
+      → Modal axis: 64.8%
+  Compound → Modal axis: 65.8%
+  Component average: 60.9%
+  Intuition: 55.0%
+  Cosine(compound_diff, sum_component_diffs): 0.9562
+  Magnitude: compound=0.4004, sum=0.5932, ratio=0.675
+
+  Type: negation + predicative
+  Compound: "It is not impossible that the experiment will succeed"
+    Component: "It is impossible that the experiment will succeed"
+      → Modal axis: 27.8%
+  Compound → Modal axis: 39.2%
+  Component average: 27.8%
+  Intuition: 40.0%
+  Cosine(compound_diff, sum_component_diffs): 0.2233
+  Magnitude: compound=0.5400, sum=0.7007, ratio=0.771
+
+══════════════════════════════════════════════════════════════════════════════
+COMPOSITION ANALYSIS
+══════════════════════════════════════════════════════════════════════════════
+
+  Direction similarity (compound vs. sum of components):
+    Mean cosine: 0.8173
+    Range: [0.2233, 0.9605]
+    → STRONG: compound hedges compose nearly linearly in direction
+
+  Probability prediction (compound vs. component average):
+    Spearman ρ = +0.709 (p = 2.167e-02)
+    MAE = 10.0%
+
+  Compound predictions vs. intuition:
+    Spearman ρ = +0.790 (p = 6.514e-03)
+    MAE = 8.2%
+
+══════════════════════════════════════════════════════════════════════════════
+PER-TYPE BREAKDOWN
+══════════════════════════════════════════════════════════════════════════════
+
+  Type                                   Cos  Comp.   Avg.  Intuit
+  ───────────────────────────────────  ─────  ─────  ─────  ──────
+  first_person + modal                 0.961   69.4   64.7   60.0%
+  first_person + modal                 0.938   47.3   53.9   35.0%
+  first_person + modal                 0.924   97.6   82.9   85.0%
+  first_person + modal (conflicting    0.943   21.3   38.7   30.0%
+  attenuator + modal                   0.764   67.0   38.6   45.0%
+  attenuator + predicative             0.924   64.0   63.0   65.0%
+  attenuator + predicative             0.664   89.6   98.2   90.0%
+  double first_person                  0.876   64.2   66.5   60.0%
+  evidential + modal                   0.956   65.8   60.9   55.0%
+  negation + predicative               0.223   39.2   27.8   40.0%
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  Composition models compared:
+
+    Compound modal-axis vs. component average:  ρ=+0.709, MAE=10.0%
+    Compound modal-axis vs. intuition:          ρ=+0.790, MAE=8.2%
+
+  FINDING: Compound hedges largely compose linearly in embedding space.
+  The direction of a compound hedge ≈ the sum of component directions.
+  However, the MAGNITUDE of the effect is non-linear —
+  the direction is right but the calibration needs adjustment.
+

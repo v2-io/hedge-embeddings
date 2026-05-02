@@ -1,0 +1,159 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 05: Ensemble Axis Combination                          ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: nomic-embed-text:v1.5                                     ║
+║                                                                    ║
+║  Question: Can a logistic ensemble of 4 axes approach oracle       ║
+║  performance without knowing the correct axis per phrase?          ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 768
+
+Training axes...
+  Predicative : slope=  245.8, intercept= 49.1
+  Frequency   : slope=  270.9, intercept= 36.3
+  Noun phrase : slope=  166.3, intercept= 45.2
+  Modal       : slope=  279.6, intercept= 65.6
+
+Building training set...
+  58 phrases from 4 groups, projected onto 4 axes
+  Target range: 0.3% – 99.7%
+
+Fitting ensembles on calibrated probability features...
+  Linear ensemble: weights = [+0.3372, +0.3164, +0.2930, +0.4466]
+    bias = -6.24
+  Logistic (calibrated): weights = [+0.777, +0.691, +0.447, +0.917]
+    bias = -1.193
+
+══════════════════════════════════════════════════════════════════════════════
+TRAINING SET PERFORMANCE (in-sample, n=58)
+══════════════════════════════════════════════════════════════════════════════
+
+  Strategy                        ρ     MAE  Max err  Notes
+  ─────────────────────────  ──────  ──────  ───────  ────────────────────
+  Modal only (linear)        +0.849   14.2%    46.9%  
+  Average (4 linear)         +0.908   16.1%    40.7%  
+  Magnitude-weighted         +0.913   13.0%    37.9%  
+  Max-projection             +0.890   12.6%    48.7%  
+  Linear ensemble            +0.912   11.5%    45.3%  
+  Logistic (calibrated)      +0.914   19.5%    38.6%  (in-sample)
+  Oracle                     +0.977    4.7%    14.2%  (cheating)
+
+══════════════════════════════════════════════════════════════════════════════
+LEAVE-ONE-OUT CROSS-VALIDATION (n=58)
+══════════════════════════════════════════════════════════════════════════════
+
+  Computing LOO predictions for ensemble strategies...
+
+  Strategy                        ρ     MAE  Max err
+  ─────────────────────────  ──────  ──────  ───────
+  Modal only (linear)        +0.849   14.2%    46.9%
+  Average (4 linear)         +0.908   16.1%    40.7%
+  Magnitude-weighted         +0.913   13.0%    37.9%
+  Max-projection             +0.890   12.6%    48.7%
+  Linear ensemble (LOO)      +0.891   12.5%    47.9%
+  Logistic-cal (LOO)         +0.898   19.9%    39.6%
+  Oracle (upper bound)       +0.977    4.7%    14.2%
+
+══════════════════════════════════════════════════════════════════════════════
+PER-GROUP BREAKDOWN (LOO linear ensemble)
+══════════════════════════════════════════════════════════════════════════════
+
+  predicative     (n=13):  Linear MAE= 14.6%  Modal MAE= 18.6%  Δ= -4.1%
+  frequency       (n=19):  Linear MAE= 12.8%  Modal MAE= 16.3%  Δ= -3.5%
+  noun_phrase     (n=11):  Linear MAE= 10.6%  Modal MAE= 14.1%  Δ= -3.5%
+  modal           (n=15):  Linear MAE= 11.7%  Modal MAE=  7.7%  Δ= +4.0%
+
+══════════════════════════════════════════════════════════════════════════════
+NOVEL PHRASE EVALUATION (out-of-sample, n=23)
+══════════════════════════════════════════════════════════════════════════════
+
+  Strategy                        ρ     MAE  Max err
+  ─────────────────────────  ──────  ──────  ───────
+  Modal only                 +0.738   15.2%    47.0%
+  Average                    +0.855   22.7%    44.5%
+  Mag-weighted               +0.779   21.6%    44.5%
+  Max-proj                   +0.699   23.3%    48.7%
+  Linear ens.                +0.864   13.4%    37.5%
+  Logistic-cal               +0.864   19.1%    39.9%
+  Oracle                     +0.848    9.3%    37.5%
+
+  Per-category (Linear ensemble vs. Modal only):
+  Category         Modal MAE   Lin. MAE       Δ
+  modal                 8.5%      11.9%   +3.4%
+  first_person         15.0%       9.9%   -5.1%
+  anti_hedge           34.1%      22.2%  -11.9%
+  novel                17.3%      14.7%   -2.7%
+
+══════════════════════════════════════════════════════════════════════════════
+DETAILED NOVEL PREDICTIONS (Linear ens. vs. Modal only)
+══════════════════════════════════════════════════════════════════════════════
+
+  Phrase                                             Lin Modal Target Err-L
+  ──────────────────────────────────────────────── ───── ───── ────── ─────
+  --- modal ---
+  The experiment will probably succeed              56.8  63.5  70.2% 13.4%
+  The experiment will certainly succeed             80.1  91.3  99.6% 19.5%
+  The experiment will possibly succeed              50.5  54.2  38.5% 12.0%
+  The experiment will likely succeed                65.1  69.7  71.1%  6.0%
+  The experiment will definitely succeed            83.8  96.3  99.6% 15.8%
+  The experiment will perhaps succeed               45.4  49.1  38.5%  6.9%
+  The experiment will presumably succeed            65.7  71.1  70.0%  4.3%
+  The experiment will conceivably succeed           58.5  55.8  35.0% 23.5%
+  The experiment will undoubtedly succeed           77.7  87.2  95.0% 17.3%
+  The experiment will arguably succeed              54.7  63.8  55.0%  0.3%
+  --- first_person ---
+  I think the experiment will succeed               70.7  63.1  65.0%  5.7%
+  I believe the experiment will succeed             70.3  58.4  70.0%  0.3%
+  I suspect the experiment will succeed             55.0  38.3  55.0%  0.0%
+  I doubt the experiment will succeed               25.8  15.3  20.0%  5.8%
+  I'm not sure the experiment will succeed           2.5   0.0  40.0% 37.5%
+  --- anti_hedge ---
+  Obviously, the experiment will succeed            75.2  65.8  95.0% 19.8%
+  Clearly, the experiment will succeed              75.2  65.8  92.0% 16.8%
+  Without question, the experiment will succeed     68.2  51.0  98.0% 29.8%
+  --- novel ---
+  All indications suggest the experiment will s...  75.7  65.4  80.0%  4.3%
+  It's a safe bet that the experiment will succeed  67.6  54.4  85.0% 17.4%
+  There's a slim chance the experiment will suc...  37.7  33.2  15.0% 22.7%
+  The experiment might well succeed                 54.0  59.3  60.0%  6.0%
+  I wouldn't be surprised if the experiment suc...  32.0  32.5  55.0% 23.0%
+
+══════════════════════════════════════════════════════════════════════════════
+CROSS-CONTEXT: Does the ensemble generalize to different claims?
+══════════════════════════════════════════════════════════════════════════════
+
+  Context: "The treatment will be effective"
+    Modal-only MAE:  16.8%,  Linear ens. MAE:   5.9%
+      Certain               Modal= 77.3%  Lin.= 94.4%  Target= 99.6%
+      Almost certain        Modal= 71.3%  Lin.= 84.1%  Target= 90.2%
+      Very likely           Modal= 64.1%  Lin.= 73.0%  Target= 87.5%
+      Likely                Modal= 59.7%  Lin.= 69.7%  Target= 71.1%
+      Probable              Modal= 62.1%  Lin.= 72.5%  Target= 70.2%
+
+  Context: "The prediction will be correct"
+    Modal-only MAE:   9.5%,  Linear ens. MAE:   6.3%
+      Certain               Modal= 80.9%  Lin.= 91.8%  Target= 99.6%
+      Almost certain        Modal= 80.1%  Lin.= 84.6%  Target= 90.2%
+      Very likely           Modal= 73.3%  Lin.= 76.5%  Target= 87.5%
+      Likely                Modal= 69.8%  Lin.= 73.6%  Target= 71.1%
+      Probable              Modal= 66.8%  Lin.= 74.9%  Target= 70.2%
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  Linear ensemble weights:
+    Pred    : +0.3372
+    Freq    : +0.3164
+    NP      : +0.2930
+    Modal   : +0.4466
+    Bias    : -6.24
+
+  Best non-oracle strategy (novel phrases): Linear ens.
+    MAE = 13.4% (oracle = 9.3%)
+    Gap from oracle: 4.1%
+
+  RESULT: Linear ensemble IMPROVES over modal-only by 1.8% MAE on novel phrases.
+
