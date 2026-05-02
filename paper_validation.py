@@ -33,6 +33,14 @@ import requests
 from scipy import stats
 from pathlib import Path
 
+from data.mosteller import (
+    PREDICATIVE_13, PREDICATIVE_TEMPLATE,
+    ADVERBIAL_19, ADVERBIAL_TEMPLATE,
+    NOUN_PHRASE_11, NOUN_PHRASE_TEMPLATE,
+    MODAL_M10, MODAL_M15, MODAL_TEMPLATE,
+    BARE_CLAIM,
+)
+
 MODEL = sys.argv[1] if len(sys.argv) > 1 else "nomic-embed-text:v1.5"
 OLLAMA_URL = "http://localhost:11434/api/embed"
 
@@ -84,65 +92,18 @@ def spearman_ci_bootstrap(x, y, n_boot=10000, ci=0.95, seed=42):
 
 
 # ---------------------------------------------------------------------------
-# Training data (same as other experiments)
+# Training data — sourced from data/mosteller.py
+# MODAL_ALL is the legacy 15-item exploratory set (M15);
+# MODAL_MOSTELLER_ONLY is now the canonical 10-item M10 set (was 8 items —
+# extended to canonical M10 to match experiment_11 / paper §4.1 / §4.4).
 # ---------------------------------------------------------------------------
 
-PREDICATIVE = {
-    "Certain": 99.6, "Almost certain": 90.2, "Very likely": 87.5,
-    "Likely": 71.1, "Probable": 70.2, "Very probable": 89.7,
-    "Possible": 38.5, "Unlikely": 17.2, "Very unlikely": 5.0,
-    "Improbable": 12.5, "Very improbable": 4.8, "Impossible": 0.3,
-    "Not unreasonable": 37.6,
-}
-PREDICATIVE_TEMPLATE = "It is {PHRASE} that the experiment will succeed"
+PREDICATIVE = PREDICATIVE_13
+ADVERBIAL = ADVERBIAL_19
+NOUN_PHRASE = NOUN_PHRASE_11
 
-ADVERBIAL = {
-    "Always": 99.7, "Almost always": 91.7, "Very often": 82.8,
-    "Often": 72.5, "Usually": 75.1, "Sometimes": 25.0,
-    "Occasionally": 20.0, "Seldom": 10.2, "Very seldom": 4.9,
-    "Rarely": 7.2, "Very rarely": 3.0, "Almost never": 2.9,
-    "Never": 0.3, "Not often": 19.7, "Not very often": 10.1,
-    "As often as not": 50.0, "More often than not": 59.8,
-    "Once in a while": 15.3, "Now and then": 15.1,
-}
-ADVERBIAL_TEMPLATE = "The experiment will {PHRASE} succeed"
-
-NOUN_PHRASE = {
-    "Very high probability": 92.5, "High probability": 82.3,
-    "Moderate probability": 52.4, "Low probability": 15.0,
-    "Very low probability": 4.9, "High chance": 80.4,
-    "Poor chance": 10.3, "Low chance": 9.8, "Even chance": 50.0,
-    "Better than even chance": 57.6, "Less than an even chance": 40.2,
-}
-NOUN_PHRASE_TEMPLATE = "There is a {PHRASE} that the experiment will succeed"
-
-# Modal axis — ALL expressions (including author estimates)
-MODAL_ALL = {
-    "certainly": 99.6, "almost certainly": 90.2, "very likely": 87.5,
-    "likely": 71.1, "probably": 70.2, "possibly": 38.5,
-    "unlikely": 17.2, "very unlikely": 5.0,
-    "conceivably": 38.5, "definitely": 99.6, "perhaps": 38.5,
-    "maybe": 38.5, "presumably": 70.2, "undoubtedly": 95.0,
-    "arguably": 55.0,
-}
-
-# Modal axis — MOSTELLER-ONLY expressions (no author estimates)
-# Matches experiment_11_concept_erasure.py:172 — n=10 canonical set.
-MODAL_MOSTELLER_ONLY = {
-    "certainly": 99.6,         # adverb of "Certain"
-    "almost certainly": 90.2,  # adverb of "Almost certain"
-    "very likely": 87.5,
-    "likely": 71.1,
-    "probably": 70.2,          # adverb of "Probable"
-    "very probably": 89.7,     # adverb of "Very probable"
-    "possibly": 38.5,          # adverb of "Possible"
-    "unlikely": 17.2,
-    "very unlikely": 5.0,
-    "improbably": 12.5,        # adverb of "Improbable"
-}
-MODAL_TEMPLATE = "The experiment will {PHRASE} succeed"
-
-BARE_CLAIM = "The experiment will succeed"
+MODAL_ALL = MODAL_M15
+MODAL_MOSTELLER_ONLY = MODAL_M10
 
 # Vogel expressions matched to our syntactic types
 VOGEL_PREDICATIVE = {
@@ -322,8 +283,8 @@ def run_modal_comparison(bare_emb):
     # Train both axes
     results = {}
 
-    for label, expressions in [("Modal (all 15)", MODAL_ALL),
-                                ("Modal (Mosteller-only 10)", MODAL_MOSTELLER_ONLY)]:
+    for label, expressions in [("Modal (M15 incl. author-estimated)", MODAL_ALL),
+                                ("Modal (Mosteller-only M10)", MODAL_MOSTELLER_ONLY)]:
         phrases = list(expressions.keys())
         medians = np.array([expressions[p] for p in phrases])
         sentences = [MODAL_TEMPLATE.replace("{PHRASE}", p) for p in phrases]
@@ -354,14 +315,13 @@ def run_modal_comparison(bare_emb):
             "axis": w, "slope": slope, "intercept": intercept,
         }
 
-    # Cross-test: train on Mosteller-only, test on the author-estimated phrases
-    # in MODAL_ALL not present in the Mosteller-only set.
+    # Cross-test: train on Mosteller-only, test on the 7 author-estimated phrases
     author_only = {k: v for k, v in MODAL_ALL.items()
                    if k not in MODAL_MOSTELLER_ONLY}
     if author_only:
-        w_m = results["Modal (Mosteller-only 10)"]["axis"]
-        sl_m = results["Modal (Mosteller-only 10)"]["slope"]
-        int_m = results["Modal (Mosteller-only 10)"]["intercept"]
+        w_m = results["Modal (Mosteller-only M10)"]["axis"]
+        sl_m = results["Modal (Mosteller-only M10)"]["slope"]
+        int_m = results["Modal (Mosteller-only M10)"]["intercept"]
 
         a_phrases = list(author_only.keys())
         a_medians = np.array([author_only[p] for p in a_phrases])

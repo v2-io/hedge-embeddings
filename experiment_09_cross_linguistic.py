@@ -25,6 +25,13 @@ import numpy as np
 import requests
 from scipy import stats
 
+from data.mosteller import (
+    CROSSLINGUAL_PRED_12, CROSSLINGUAL_MODAL_10,
+    PREDICATIVE_TEMPLATE as _EN_PRED_TEMPLATE,
+    MODAL_TEMPLATE as _EN_MODAL_TEMPLATE,
+    BARE_CLAIM as _EN_BARE,
+)
+
 MODEL = sys.argv[1] if len(sys.argv) > 1 else "bge-m3"
 OLLAMA_URL = "http://localhost:11434/api/embed"
 
@@ -65,24 +72,19 @@ def loo_evaluate(diffs, medians):
 
 # ═══════════════════════════════════════════════════════════════════════
 # English (Mosteller training data)
+#
+# Sourced from data.mosteller. EN_PREDICATIVE is CROSSLINGUAL_PRED_12 (drops
+# "Not unreasonable" for translation parity). EN_MODAL is CROSSLINGUAL_MODAL_10
+# (7 Mosteller-grounded + 3 author-estimated for translation parity across
+# 8 target languages — see manifest in data/mosteller.py for the full list).
 # ═══════════════════════════════════════════════════════════════════════
 
-EN_PREDICATIVE = {
-    "certain": 99.6, "almost certain": 90.2, "very likely": 87.5,
-    "likely": 71.1, "probable": 70.2, "very probable": 89.7,
-    "possible": 38.5, "unlikely": 17.2, "very unlikely": 5.0,
-    "improbable": 12.5, "very improbable": 4.8, "impossible": 0.3,
-}
-EN_PRED_TEMPLATE = "It is {PHRASE} that the experiment will succeed"
-EN_BARE = "The experiment will succeed"
+EN_PREDICATIVE = CROSSLINGUAL_PRED_12
+EN_PRED_TEMPLATE = _EN_PRED_TEMPLATE
+EN_BARE = _EN_BARE
 
-EN_MODAL = {
-    "certainly": 99.6, "almost certainly": 90.2, "probably": 70.2,
-    "likely": 71.1, "possibly": 38.5, "unlikely": 17.2,
-    "very unlikely": 5.0, "definitely": 99.6, "perhaps": 38.5,
-    "undoubtedly": 95.0,
-}
-EN_MODAL_TEMPLATE = "The experiment will {PHRASE} succeed"
+EN_MODAL = CROSSLINGUAL_MODAL_10
+EN_MODAL_TEMPLATE = _EN_MODAL_TEMPLATE
 
 
 # ═══════════════════════════════════════════════════════════════════════

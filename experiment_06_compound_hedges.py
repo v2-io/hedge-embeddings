@@ -36,7 +36,20 @@ import numpy as np
 import requests
 from scipy import stats
 
-MODEL = sys.argv[1] if len(sys.argv) > 1 else "nomic-embed-text:v1.5"
+from data.mosteller import MODAL_M10, MODAL_M15, MODAL_TEMPLATE, BARE_CLAIM as _BARE_CLAIM
+
+# CLI: positional model name + optional --modal=m10|m15
+_args = [a for a in sys.argv[1:] if not a.startswith("--")]
+_flags = {a.split("=", 1)[0]: a.split("=", 1)[1] if "=" in a else ""
+          for a in sys.argv[1:] if a.startswith("--")}
+
+MODEL = _args[0] if _args else "nomic-embed-text:v1.5"
+MODAL_SET_NAME = _flags.get("--modal", "m10").lower()
+if MODAL_SET_NAME not in {"m10", "m15"}:
+    print(f"ERROR: --modal must be m10 or m15, got {MODAL_SET_NAME!r}")
+    sys.exit(2)
+MODAL_ADVERB = MODAL_M10 if MODAL_SET_NAME == "m10" else MODAL_M15
+
 OLLAMA_URL = "http://localhost:11434/api/embed"
 
 
@@ -56,20 +69,13 @@ def cosine(a, b):
 
 
 def train_modal_axis(bare_emb):
-    """Train the modal adverb axis. Returns (axis, slope, intercept)."""
-    MODAL_ADVERB = {
-        "certainly": 99.6, "almost certainly": 90.2, "very likely": 87.5,
-        "likely": 71.1, "probably": 70.2, "possibly": 38.5,
-        "unlikely": 17.2, "very unlikely": 5.0,
-        "conceivably": 38.5, "definitely": 99.6, "perhaps": 38.5,
-        "maybe": 38.5, "presumably": 70.2, "undoubtedly": 95.0,
-        "arguably": 55.0,
-    }
-    TEMPLATE = "The experiment will {PHRASE} succeed"
+    """Train the modal adverb axis. Returns (axis, slope, intercept).
 
+    Uses MODAL_ADVERB (canonical M10 by default; M15 via --modal=m15 flag).
+    """
     phrases = list(MODAL_ADVERB.keys())
     medians = np.array([MODAL_ADVERB[p] for p in phrases])
-    sentences = [TEMPLATE.replace("{PHRASE}", p) for p in phrases]
+    sentences = [MODAL_TEMPLATE.replace("{PHRASE}", p) for p in phrases]
     embeddings = embed_texts(sentences)
     diffs = embeddings - bare_emb
 

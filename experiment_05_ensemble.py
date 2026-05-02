@@ -40,7 +40,26 @@ import requests
 from scipy import stats
 from scipy.optimize import minimize
 
-MODEL = sys.argv[1] if len(sys.argv) > 1 else "nomic-embed-text:v1.5"
+from data.mosteller import (
+    PREDICATIVE_13, PREDICATIVE_TEMPLATE,
+    ADVERBIAL_19, ADVERBIAL_TEMPLATE,
+    NOUN_PHRASE_11, NOUN_PHRASE_TEMPLATE,
+    MODAL_M10, MODAL_M15, MODAL_TEMPLATE,
+    BARE_CLAIM,
+)
+
+# CLI: positional model name + optional --modal=m10|m15
+_args = [a for a in sys.argv[1:] if not a.startswith("--")]
+_flags = {a.split("=", 1)[0]: a.split("=", 1)[1] if "=" in a else ""
+          for a in sys.argv[1:] if a.startswith("--")}
+
+MODEL = _args[0] if _args else "nomic-embed-text:v1.5"
+MODAL_SET_NAME = _flags.get("--modal", "m10").lower()
+if MODAL_SET_NAME not in {"m10", "m15"}:
+    print(f"ERROR: --modal must be m10 or m15, got {MODAL_SET_NAME!r}")
+    sys.exit(2)
+MODAL_ADVERB = MODAL_M10 if MODAL_SET_NAME == "m10" else MODAL_M15
+
 OLLAMA_URL = "http://localhost:11434/api/embed"
 
 
@@ -86,50 +105,15 @@ def train_axis(expressions, template, bare_emb):
 
 
 # ---------------------------------------------------------------------------
-# Training data: all 4 syntactic groups
+# Training data: all 4 syntactic groups — sourced from data/mosteller.py
+# (MODAL_ADVERB is set above from --modal flag; defaults to canonical M10).
+# Local aliases preserve the historic variable names used in main().
 # ---------------------------------------------------------------------------
 
-BARE_CLAIM = "The experiment will succeed"
-
-PREDICATIVE = {
-    "Certain": 99.6, "Almost certain": 90.2, "Very likely": 87.5,
-    "Likely": 71.1, "Probable": 70.2, "Very probable": 89.7,
-    "Possible": 38.5, "Unlikely": 17.2, "Very unlikely": 5.0,
-    "Improbable": 12.5, "Very improbable": 4.8, "Impossible": 0.3,
-    "Not unreasonable": 37.6,
-}
-PREDICATIVE_TEMPLATE = "It is {PHRASE} that the experiment will succeed"
-
-FREQUENCY = {
-    "Always": 99.7, "Almost always": 91.7, "Very often": 82.8,
-    "Often": 72.5, "Usually": 75.1, "Sometimes": 25.0,
-    "Occasionally": 20.0, "Seldom": 10.2, "Very seldom": 4.9,
-    "Rarely": 7.2, "Very rarely": 3.0, "Almost never": 2.9,
-    "Never": 0.3, "Not often": 19.7, "Not very often": 10.1,
-    "As often as not": 50.0, "More often than not": 59.8,
-    "Once in a while": 15.3, "Now and then": 15.1,
-}
-FREQUENCY_TEMPLATE = "The experiment will {PHRASE} succeed"
-
-NOUN_PHRASE = {
-    "Very high probability": 92.5, "High probability": 82.3,
-    "Moderate probability": 52.4, "Low probability": 15.0,
-    "Very low probability": 4.9, "High chance": 80.4,
-    "Poor chance": 10.3, "Low chance": 9.8, "Even chance": 50.0,
-    "Better than even chance": 57.6, "Less than an even chance": 40.2,
-}
-NOUN_PHRASE_TEMPLATE = "There is a {PHRASE} that the experiment will succeed"
-
-# Modal adverb axis: Mosteller-derived + estimated values
-MODAL_ADVERB = {
-    "certainly": 99.6, "almost certainly": 90.2, "very likely": 87.5,
-    "likely": 71.1, "probably": 70.2, "possibly": 38.5,
-    "unlikely": 17.2, "very unlikely": 5.0,
-    "conceivably": 38.5, "definitely": 99.6, "perhaps": 38.5,
-    "maybe": 38.5, "presumably": 70.2, "undoubtedly": 95.0,
-    "arguably": 55.0,
-}
-MODAL_TEMPLATE = "The experiment will {PHRASE} succeed"
+PREDICATIVE = PREDICATIVE_13
+FREQUENCY = ADVERBIAL_19
+FREQUENCY_TEMPLATE = ADVERBIAL_TEMPLATE
+NOUN_PHRASE = NOUN_PHRASE_11
 
 
 # ---------------------------------------------------------------------------

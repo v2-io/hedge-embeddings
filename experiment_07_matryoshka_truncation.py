@@ -21,8 +21,10 @@ For non-MRL models, truncation is just taking the first N dimensions of
 the embedding vector (which may or may not be meaningful).
 
 Usage:
-  python3 experiment_07_matryoshka_truncation.py [model_name]
+  python3 experiment_07_matryoshka_truncation.py [model_name] [--modal=m10|m15]
   Default model: nomic-embed-text:v1.5
+  Default modal set: m10 (canonical 10-item Mosteller-grounded)
+                     Pass --modal=m15 to reproduce the legacy 15-item run.
 """
 
 import sys
@@ -30,7 +32,26 @@ import numpy as np
 import requests
 from scipy import stats
 
-MODEL = sys.argv[1] if len(sys.argv) > 1 else "nomic-embed-text:v1.5"
+from data.mosteller import (
+    PREDICATIVE_13, PREDICATIVE_TEMPLATE,
+    ADVERBIAL_19, ADVERBIAL_TEMPLATE,
+    NOUN_PHRASE_11, NOUN_PHRASE_TEMPLATE,
+    MODAL_M10, MODAL_M15, MODAL_TEMPLATE,
+    BARE_CLAIM,
+)
+
+# CLI: positional model name + optional --modal=m10|m15
+_args = [a for a in sys.argv[1:] if not a.startswith("--")]
+_flags = {a.split("=", 1)[0]: a.split("=", 1)[1] if "=" in a else ""
+          for a in sys.argv[1:] if a.startswith("--")}
+
+MODEL = _args[0] if _args else "nomic-embed-text:v1.5"
+MODAL_SET_NAME = _flags.get("--modal", "m10").lower()
+if MODAL_SET_NAME not in {"m10", "m15"}:
+    print(f"ERROR: --modal must be m10 or m15, got {MODAL_SET_NAME!r}")
+    sys.exit(2)
+MODAL_EXPRESSIONS = MODAL_M10 if MODAL_SET_NAME == "m10" else MODAL_M15
+
 OLLAMA_URL = "http://localhost:11434/api/embed"
 
 
@@ -71,55 +92,14 @@ def loo_evaluate(diffs, medians, lam=0.1):
 
 
 # ---------------------------------------------------------------------------
-# Training data
+# Training data — sourced from data/mosteller.py
 # ---------------------------------------------------------------------------
 
-BARE_CLAIM = "The experiment will succeed"
-
 GROUPS = {
-    "Predicative": {
-        "expressions": {
-            "Certain": 99.6, "Almost certain": 90.2, "Very likely": 87.5,
-            "Likely": 71.1, "Probable": 70.2, "Very probable": 89.7,
-            "Possible": 38.5, "Unlikely": 17.2, "Very unlikely": 5.0,
-            "Improbable": 12.5, "Very improbable": 4.8, "Impossible": 0.3,
-            "Not unreasonable": 37.6,
-        },
-        "template": "It is {PHRASE} that the experiment will succeed",
-    },
-    "Adverbial": {
-        "expressions": {
-            "Always": 99.7, "Almost always": 91.7, "Very often": 82.8,
-            "Often": 72.5, "Usually": 75.1, "Sometimes": 25.0,
-            "Occasionally": 20.0, "Seldom": 10.2, "Very seldom": 4.9,
-            "Rarely": 7.2, "Very rarely": 3.0, "Almost never": 2.9,
-            "Never": 0.3, "Not often": 19.7, "Not very often": 10.1,
-            "As often as not": 50.0, "More often than not": 59.8,
-            "Once in a while": 15.3, "Now and then": 15.1,
-        },
-        "template": "The experiment will {PHRASE} succeed",
-    },
-    "Noun phrase": {
-        "expressions": {
-            "Very high probability": 92.5, "High probability": 82.3,
-            "Moderate probability": 52.4, "Low probability": 15.0,
-            "Very low probability": 4.9, "High chance": 80.4,
-            "Poor chance": 10.3, "Low chance": 9.8, "Even chance": 50.0,
-            "Better than even chance": 57.6, "Less than an even chance": 40.2,
-        },
-        "template": "There is a {PHRASE} that the experiment will succeed",
-    },
-    "Modal": {
-        "expressions": {
-            "certainly": 99.6, "almost certainly": 90.2, "very likely": 87.5,
-            "likely": 71.1, "probably": 70.2, "possibly": 38.5,
-            "unlikely": 17.2, "very unlikely": 5.0,
-            "conceivably": 38.5, "definitely": 99.6, "perhaps": 38.5,
-            "maybe": 38.5, "presumably": 70.2, "undoubtedly": 95.0,
-            "arguably": 55.0,
-        },
-        "template": "The experiment will {PHRASE} succeed",
-    },
+    "Predicative": {"expressions": PREDICATIVE_13,  "template": PREDICATIVE_TEMPLATE},
+    "Adverbial":   {"expressions": ADVERBIAL_19,    "template": ADVERBIAL_TEMPLATE},
+    "Noun phrase": {"expressions": NOUN_PHRASE_11,  "template": NOUN_PHRASE_TEMPLATE},
+    "Modal":       {"expressions": MODAL_EXPRESSIONS, "template": MODAL_TEMPLATE},
 }
 
 
@@ -129,6 +109,8 @@ def main():
     print("║  Experiment 07: Matryoshka Truncation Test                         ║")
     print("╠══════════════════════════════════════════════════════════════════════╣")
     print(f"║  Model: {MODEL:<58s}║")
+    modal_label = f"Modal set: {MODAL_SET_NAME.upper()} (n={len(MODAL_EXPRESSIONS)})"
+    print(f"║  {modal_label:<66s}║")
     print("║                                                                    ║")
     print("║  Question: Does the probability axis survive dimensional           ║")
     print("║  truncation? How few dimensions suffice?                           ║")
