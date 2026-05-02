@@ -1,27 +1,66 @@
 # PLAN.md — Master Plan for Paper and Research Program
 
-**Last updated:** 2026-02-16
+**Last updated:** 2026-05-01 (May 2026 paper-drafting session)
 
 ---
 
-## Project Status at a Glance
+## Project Status at a Glance (May 2026)
+
+**Empirical work complete (eleven experiments).** Ten experiments through Feb 2026
+plus experiment_11 (concept erasure / functional validation) on May 1, 2026.
+All results in `results/`; per-experiment write-ups in `FINDINGS-01.md` through
+`FINDINGS-06.md`; concept-erasure design in
+`brainstorms/concept-erasure-experiment-design.md`.
+
+**TACL paper draft in progress** (`paper.md` → `paper.tex` → `paper.pdf`):
+- Abstract, §1 Introduction, §2 Related Work, §3 Method, §4 Results
+  (4.1–4.7), §6 Limitations all in prose form.
+- §5 Discussion and §7 Conclusion drafted by an agent during this session
+  (May 1, 2026), pending integration.
+- Citations: 34 entries in `refs.bib`; in-text rewrite from `(Author, Year)`
+  to natbib `\citep{}` / `\citet{}` complete for §1 / §2 / §3 / §4 prose
+  subsections / §6.  §4.4, §5, §7 still pending.
+- LaTeX pipeline: `convert_to_tex.py` → lualatex → bibtex → lualatex →
+  lualatex.  Compiles cleanly to a 20-page PDF (target is ~10 pages — see
+  Recommended Path Forward §I.).
+
+**Independent novelty audit complete** (Undermind, May 1, 2026): the conjunction
+claim (continuously calibrated verbal probability axis × frozen pretrained
+pooled sentence embedding × aligned with human psychometric data × validated
+against independent psychometric datasets) is novel as audited.  Memo at
+`Novelty_memo_for_hedge_embeddings.md`.
+
+**Connection to ASF (Agentic Systems Framework, `~/src/agentic-systems/`).**
+The work on this paper is now understood as measurement infrastructure for
+the epistemic states of language-constituted agents — specifically Component
+03 (Logogenic Agents) of ASF.  The calibrated probability axis lets a
+practitioner read off the linguistic encoding of goal-resolvable observation
+ambiguity that Component 03's architectural-bias bound takes as input.
+Initial incorporation work has begun in the agentic-systems repo;
+the §5 of `paper.md` will fold a one-paragraph reference to this in the
+next integration pass.
 
 ```
-COMPLETED EXPERIMENTS          PAPER-READY VALIDATION        PROPOSALS (NOT YET RUN)
-───────────────────────        ──────────────────────        ───────────────────────
-01  Hedge consistency    ✓     Baselines (5 models)    ✓     Causal measurement model
-01b Within-type axes     ✓     LOO cross-validation    ✓     Corpus grounding
-02  Novel phrases        ✓     Bootstrap 95% CIs       ✓     LLM decomposition
-03  Modal axis           ✓     Vogel within-type       ✓     Self-report truth axis
-04  IQR-consistency      ✓     Mosteller-only modal    ✓     Fast/slow/authentic
-05  Ensemble             ✓     Saved results (17 files)✓
-06  Compound hedges      ✓
-07  Matryoshka truncation✓     NEW EXPERIMENTS (Feb 2026)
-08  Bimodality + Wintle  ✓     ─────────────────────────
-09  Cross-linguistic (8) ✓     Bimodality probe      ✓
-10  Null hypothesis      ✓     Wintle 3rd validation ✓
-                               8-language transfer   ✓
-                               Permutation tests     ✓
+COMPLETED EXPERIMENTS          PAPER-READY VALIDATION        FUTURE-WORK PROPOSALS
+───────────────────────        ──────────────────────        ─────────────────────
+01  Hedge consistency    ✓     Baselines (5 models)    ✓     Self-report truth axis ★
+01b Within-type axes     ✓     LOO cross-validation    ✓     Causal measurement model
+02  Novel phrases        ✓     Bootstrap 95% CIs       ✓     Fast/slow/authentic
+03  Modal axis           ✓     Vogel cross-validation  ✓     Corpus grounding
+04  IQR-consistency      ✓     Wintle cross-validation ✓     LLM decomposition
+05  Ensemble             ✓     Bimodality probe        ✓     Cross-model-class
+06  Compound hedges      ✓     8-language transfer     ✓       convergence ★★
+07  Matryoshka truncation✓     Permutation tests       ✓     Native-speaker
+08  Bimodality + Wintle  ✓     Concept-erasure         ✓       cross-linguistic
+09  Cross-linguistic (8) ✓     functional validation         psychometrics
+10  Null hypothesis      ✓                                   Real-text corpus
+11  Concept erasure      ✓                                     evaluation
+
+★  = Highest-impact follow-up: converts TACL paper from "we measured a thing"
+     into "we built an instrument and used it for honest-activation discipline."
+★★ = Cross-substrate convergence (ours + Ji 2025 decoder + Belém prompted).
+     Tests substrate-independence of verbal probability semantics — directly
+     parallel to ASF's substrate-independence claim for ELI identity.
 ```
 
 ---
@@ -279,29 +318,61 @@ Self-report truth axis + fast/slow/authentic.
 
 ---
 
-## V. Recommended Path Forward
+## V. Recommended Path Forward (May 2026 update)
 
-### Phase 1: CMCL Abstract + arXiv Preprint (target: 2–3 sessions)
+CMCL Abstract (Feb 25, 2026) was submitted; the path forward now centers
+on the TACL paper through trim, supplementary, and citation-verification
+passes.
 
-| Session | Work |
+### Phase 1 — TACL paper to submission (current focus)
+
+| Step | Work |
 |---|---|
-| **1** | Figures. Update CMCL abstract with cross-linguistic + null hypothesis results. Convert to LREC LaTeX format. |
-| **2** | Write full arXiv paper (Methods + Results + Discussion). All data is in hand. |
-| **3** | Introduction + Related Work. Polish. Submit CMCL (Feb 25). Post arXiv preprint. |
+| **1.A** | **Integrate §5 / §7 prose** drafted by agent on 2026-05-01 (currently in agent return; pending insertion into `paper.md`). Add the ASF-bridge §5 ¶4 paragraph framing the calibrated axis as measurement infrastructure for language-constituted agents. Rewrite §5/§7 citations using `refs.bib` keys. |
+| **1.B** | **Reconcile §4.4 vs §4.7 cosine inconsistency.** §4.4 reports cos(v_pred, v_modal) = 0.88 (mxbai) / 0.79 (qwen3) post-experiment-11; §4.7 says "0.41–0.81 within a single model on mxbai" from FINDINGS-03's pre-experiment-11 fit. Update §4.7 to "0.41–0.88 on mxbai" (or add a footnote distinguishing the two ridge runs). |
+| **1.C** | **Apply Muennighoff → Kusupati citation correction.** The Matryoshka work canonical reference is Kusupati et al. NeurIPS 2022 (arXiv:2205.13147), not Muennighoff 2024. `refs.bib` has the entry; in-text attribution in §3.2, §4.5 needs updating. |
+| **1.D** | **Add fig13 reference to §4.4 prose.** The figure now exists (`figures/fig13_erasure_mae_cos.{pdf,png}`); §4.4 has been describing it as "(to make)." |
+| **1.E** | **Verify the six citation gaps** the citations agent flagged: Vogel 2022 (author/title/DOI placeholder), Schockaert 2022 (title/venue), Bhatia 2016 (multiple papers in year), Park 2024 (LRH formalization details), Wallsten 2008 (incollection details). |
+| **1.F** | **Trim pass — cut ~3–5 pages of body content** to hit the TACL 10-page limit (currently ~13–15 pages once §5/§7 land). Move Table 1 (5 models × 4 types) detail and the §4.4 (e) reviewer-bait subsection to supplementary; tighten §2.4 psychometrics setup; merge L7+L8 limitations; compress §4.5 robustness probes. Collaborative — needs coauthor judgment per cut. |
+| **1.G** | **Build supplementary appendix** — full per-model × per-dataset × per-metric tables, all 8-language per-phrase data, Wintle verification trail per model, bootstrap CI tables, concept-erasure full pair table. Delegate to agent once trim is settled. |
+| **1.H** | **CJK rendering for §6 L2** — three options documented inline in `convert_to_tex.py` preamble: (a) get fontspec + luaotfload fallback working, (b) switch to xelatex, (c) romanize the Japanese examples. Coauthor will handle. |
+| **1.I** | **fig8 colormap fix is done; fig13 generated.** fig12 panel (a) `YlGn_r` flagged as borderline accessibility concern; not fixed pending review. |
 
-### Phase 2: Full Paper Submission (2–3 additional sessions)
+### Phase 2 — Companion papers and follow-up work (post-TACL)
 
-- Expand arXiv preprint to full TACL or ICLR submission
-- Add LLM decomposition if targeting TACL
-- Add causal intervention if targeting ICLR 2027
-- Real-text evaluation pilot
-- Submit to TACL (rolling, any month) or ICLR 2027 (~Sep 2026)
+**Highest-impact follow-up** (`★` in the status diagram): the **self-report-
+truth-axis** experiment (`EXPERIMENT-PROPOSAL-self-report-truth-axis.md`).
+Apply the calibrated axis to *unhedged* assertions and correlate with model
+metacognitive judgment.  If that works, it is a clinical instrument for
+detecting overclaim — directly an honest-activation discipline tool for the
+scaffolded-logogenic-agent regime in ASF Component 03.  This is the move
+that converts the TACL paper from "we measured a thing" into "we built an
+instrument and used it for AI safety / agentic-systems theory."
 
-### Phase 3: Companion papers (longer term)
+**Cross-model-class convergence** (`★★`): get the same sentence projected
+through (i) our pooled-embedding axis, (ii) Ji 2025's decoder residual-
+stream verbal-uncertainty feature, (iii) a generative LLM's elicited
+probability via Belém / Tang prompting.  If all three converge, "verbal
+probability semantics" is substrate-independent across model classes — a
+measurement-theoretic claim parallel to ASF's substrate-independence claim
+for ELI identity at $n \geq 10$ ELIs across four model families.  Bigger
+lift than the self-report-truth axis but with paper-of-record potential.
 
-- Causal measurement model paper
-- Self-report truth axis + fast/slow/authentic
-- Full cross-linguistic study with native speaker collaboration
+**Other follow-ups in priority order:**
+- *Causal measurement model* (formalize §5's convergent-measurements close
+  as a hierarchical Bayesian model) — companion paper.
+- *Fast/slow/authentic* (does geometry distinguish performative from
+  genuine assertion? connects to Truth Death detection in ASF Component 04
+  / ELI) — companion paper.
+- *Corpus grounding* (close the causal loop training-text → distributional
+  patterns → embedding geometry → calibration) — would supply the
+  strongest evidence the convergent-measurement framing is grounded in
+  something real.
+- *Native-speaker cross-linguistic psychometric replication* in the eight
+  target languages of §4.3 — converts the ranking-transfer claim into a
+  calibration-transfer claim, addresses §6 L2.
+- *Real-text corpus evaluation* on hedged claims from scientific writing /
+  weather forecasts / IPCC reports — addresses §6 L1.
 
 ---
 
