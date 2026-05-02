@@ -1,0 +1,150 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 11: Linear Concept Erasure (Functional vs. Geometric)  ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: qwen3-embedding                                           ║
+║                                                                    ║
+║  Rank-1 erase v_A from type-B diffs; re-decode with v_B.           ║
+║  Compare degradation against uniform-random and cosine-matched     ║
+║  random direction baselines (N=100 each, seed=42).                 ║
+║                                                                    ║
+║  Negative z_matched ⇒ erasing the probability axis hurts more      ║
+║  than erasing a random direction with matched geometric overlap    ║
+║  ⇒ functional content, not just geometric correlation.             ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 4096
+
+══════════════════════════════════════════════════════════════════════════════
+AXIS TRAINING (in-sample fit per type)
+══════════════════════════════════════════════════════════════════════════════
+  Type            n     in-sample ρ    in-sample MAE
+  Predicative    13         +0.9011            5.470
+  Adverbial      19         +0.9158            4.718
+  NounPhrase     11         +0.9636            5.502
+  Modal          10         +0.9515            5.175
+
+══════════════════════════════════════════════════════════════════════════════
+PAIRWISE ERASURE ANALYSIS
+  For each (eraser A, target B): erase v_A from type-B diffs;
+  decode with v_B's calibrated regressor; compare vs. random baselines.
+
+  Two parallel views:
+    ρ-based   : higher ρ_treat = better; functional ⇒ z_ρ   < −2
+                verdicts: ↓↓ functional / ↓ trend / —
+    MAE-based : lower MAE_treat = better; functional ⇒ z_MAE > +2
+                verdicts: ↑↑ functional / ↑ trend / —
+══════════════════════════════════════════════════════════════════════════════
+
+  ρ-based view (higher ρ_treat better; functional ⇒ z_match < −2)
+
+  A→B                          cos |  ρ_base  ρ_treat |       ρ_unif μ±σ      ρ_match μ±σ |  z_unif  z_match | verdict
+  --------------------------------------------------------------------------------------------------------------------
+  Predicative→Adverbial     +0.444 |  +0.916   +0.942 |  +0.916±0.00   +0.908±0.01 |   +0.00    +2.97 | —
+  Predicative→NounPhrase    +0.770 |  +0.964   +0.945 |  +0.964±0.00   +0.963±0.01 |   +0.00    -3.43 | ↓↓ functional
+  Predicative→Modal         +0.793 |  +0.952   +0.976 |  +0.951±0.00   +0.943±0.01 |   +8.67    +3.18 | —
+  Adverbial→Predicative     +0.444 |  +0.901   +0.901 |  +0.901±0.00   +0.901±0.00 |   +0.00    +0.00 | —
+  Adverbial→NounPhrase      +0.416 |  +0.964   +0.955 |  +0.964±0.00   +0.964±0.00 |   +0.00    +0.00 | —
+  Adverbial→Modal           +0.452 |  +0.952   +0.903 |  +0.951±0.00   +0.946±0.01 |  -16.59    -7.17 | ↓↓ functional
+  NounPhrase→Predicative    +0.770 |  +0.901   +0.940 |  +0.901±0.00   +0.902±0.00 |   +0.00    +8.53 | —
+  NounPhrase→Adverbial      +0.416 |  +0.916   +0.902 |  +0.916±0.00   +0.909±0.01 |   +0.00    -0.61 | —
+  NounPhrase→Modal          +0.656 |  +0.952   +0.976 |  +0.951±0.00   +0.945±0.01 |   +8.67    +4.51 | —
+  Modal→Predicative         +0.793 |  +0.901   +0.907 |  +0.901±0.00   +0.903±0.00 |   +0.00    +0.82 | —
+  Modal→Adverbial           +0.452 |  +0.916   +0.949 |  +0.916±0.00   +0.908±0.01 |   +0.00    +3.58 | —
+  Modal→NounPhrase          +0.656 |  +0.964   +0.936 |  +0.964±0.00   +0.964±0.00 |   +0.00    -9.69 | ↓↓ functional
+
+  MAE-based view (lower MAE_treat better; functional ⇒ z_match_MAE > +2)
+
+  A→B                          cos |  MAE_b   MAE_t    ΔMAE |       MAE_unif μ±σ      MAE_match μ±σ |  z_uMAE   z_mMAE | verdict
+  ------------------------------------------------------------------------------------------------------------------------------
+  Predicative→Adverbial     +0.444 |   4.72   15.03  +10.31 |     4.72± 0.00        7.62± 0.24  | +3474.90   +30.40 | ↑↑ functional
+  Predicative→NounPhrase    +0.770 |   5.50   18.46  +12.95 |     5.51± 0.01       15.61± 0.12  | +1789.77   +23.60 | ↑↑ functional
+  Predicative→Modal         +0.793 |   5.17   22.53  +17.36 |     5.18± 0.00       20.02± 0.09  | +3857.35   +26.88 | ↑↑ functional
+  Adverbial→Predicative     +0.444 |   5.47   11.70   +6.23 |     5.47± 0.00        8.75± 0.08  | +1673.35   +35.97 | ↑↑ functional
+  Adverbial→NounPhrase      +0.416 |   5.50   11.01   +5.50 |     5.51± 0.01        8.22± 0.13  | +760.07   +21.58 | ↑↑ functional
+  Adverbial→Modal           +0.452 |   5.17    9.53   +4.36 |     5.18± 0.00        7.46± 0.06  | +968.29   +34.36 | ↑↑ functional
+  NounPhrase→Predicative    +0.770 |   5.47   22.94  +17.47 |     5.47± 0.00       20.99± 0.21  | +4690.25    +9.24 | ↑↑ functional
+  NounPhrase→Adverbial      +0.416 |   4.72   12.38   +7.66 |     4.72± 0.00        7.17± 0.20  | +2582.43   +25.87 | ↑↑ functional
+  NounPhrase→Modal          +0.656 |   5.17   16.65  +11.48 |     5.18± 0.00       14.03± 0.10  | +2549.70   +27.32 | ↑↑ functional
+  Modal→Predicative         +0.793 |   5.47   25.96  +20.49 |     5.47± 0.00       22.15± 0.21  | +5501.90   +18.35 | ↑↑ functional
+  Modal→Adverbial           +0.452 |   4.72   17.42  +12.70 |     4.72± 0.00        7.75± 0.25  | +4278.66   +38.04 | ↑↑ functional
+  Modal→NounPhrase          +0.656 |   5.50   18.22  +12.72 |     5.51± 0.01       12.59± 0.11  | +1757.11   +51.42 | ↑↑ functional
+
+══════════════════════════════════════════════════════════════════════════════
+CROSS-PAIR CORRELATIONS
+  Across the 12 ordered pairs:
+    Pearson r(cos, ΔMAE_real)         = +0.857
+    Pearson r(cos, z_match_MAE)       = -0.367
+    Pearson r(cos, ρ_treat - ρ_base)  = +0.241
+══════════════════════════════════════════════════════════════════════════════
+
+══════════════════════════════════════════════════════════════════════════════
+HEADLINE: Predicative ↔ Modal
+  Same Mosteller medians, different syntactic forms (adj vs. adv).
+  These axes have the strongest a priori reason to share content.
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative → Modal
+    cos(v_A, v_B):          +0.7929
+    ρ baseline:             +0.9515
+    ρ after v_A erasure:    +0.9758  (Δ = +0.0242)
+    MAE baseline:           5.175
+    MAE after v_A erasure:  22.535  (Δ = +17.360)
+    Uniform-random MAE:     5.177 ± 0.004   →  z_MAE = +3857.35
+    Cosine-matched MAE:     20.017 ± 0.094   →  z_MAE = +26.88
+    MAE-based verdict:      ↑↑ functional
+    Uniform-random ρ:       +0.9508 ± 0.0029   →  z = +8.67
+    Cosine-matched ρ:       +0.9432 ± 0.0102   →  z = +3.18
+    ρ-based verdict:        —
+
+  Modal → Predicative
+    cos(v_A, v_B):          +0.7929
+    ρ baseline:             +0.9011
+    ρ after v_A erasure:    +0.9066  (Δ = +0.0055)
+    MAE baseline:           5.470
+    MAE after v_A erasure:  25.959  (Δ = +20.489)
+    Uniform-random MAE:     5.472 ± 0.004   →  z_MAE = +5501.90
+    Cosine-matched MAE:     22.153 ± 0.207   →  z_MAE = +18.35
+    MAE-based verdict:      ↑↑ functional
+    Uniform-random ρ:       +0.9011 ± 0.0000   →  z = +0.00
+    Cosine-matched ρ:       +0.9025 ± 0.0050   →  z = +0.82
+    ρ-based verdict:        —
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  Pairs evaluated: 12 (4×3 ordered cross-type)
+
+  ρ-based (higher ρ_treat = better; functional ⇒ z < −2)
+  Vs. UNIFORM random baseline:
+    ↓↓ functional (z < −2):     1 / 12
+    ↓  trend     (−2 ≤ z<−1):   0 / 12
+    —  neutral   (z ≥ −1):     11 / 12
+
+  Vs. COSINE-MATCHED random baseline (the rigorous comparison):
+    ↓↓ functional (z < −2):     3 / 12
+    ↓  trend     (−2 ≤ z<−1):   0 / 12
+    —  neutral   (z ≥ −1):      9 / 12
+
+  MAE-based (lower MAE_treat = better; functional ⇒ z_MAE > +2)
+  Vs. MAE-based UNIFORM random baseline:
+    ↑↑ functional (z_MAE > +2):    12 / 12
+    ↑  trend     (1 ≤ z_MAE < 2):   0 / 12
+    —  neutral   (z_MAE < 1):       0 / 12
+
+  Vs. MAE-based COSINE-MATCHED random baseline:
+    ↑↑ functional (z_MAE > +2):    12 / 12
+    ↑  trend     (1 ≤ z_MAE < 2):   0 / 12
+    —  neutral   (z_MAE < 1):       0 / 12
+
+  Interpretation:
+    The cosine-matched control fixes the geometric overlap with v_B.
+    If real-axis erasure still degrades ρ_B more than matched random
+    erasure, the v_A direction carries probability content used by the
+    v_B linear decoder — i.e., the axis is functional, not just a
+    geometric correlate of lexical similarity. Pairs that cross the
+    functional threshold against the matched-random null are the
+    embedding-class analogue of causal-intervention evidence in
+    decoder-LLM interpretability.
+
