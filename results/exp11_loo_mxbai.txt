@@ -1,0 +1,148 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 11 LOO: Out-of-Sample Concept Erasure                  ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: mxbai-embed-large                                         ║
+║                                                                    ║
+║  Per (A, B): v_A trained on full type-A; for each i ∈ type B,      ║
+║  train v_B^(−i) on n_B − 1 items, decode item i baseline / treated ║
+║  with that LOO triple.  Compare against cosine-matched random      ║
+║  direction null (N=100), also LOO-decoded.                         ║
+║                                                                    ║
+║  Reproduces in-sample pattern ⇒ §4.4 upgrades to OUT-OF-SAMPLE     ║
+║  functional validation.                                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 1024
+
+══════════════════════════════════════════════════════════════════════════════
+AXIS TRAINING (full data per type — used for v_A only)
+══════════════════════════════════════════════════════════════════════════════
+  Type            n     in-sample ρ    in-sample MAE
+  Predicative    13         +0.9670            4.580
+  Adverbial      19         +0.9456            5.468
+  NounPhrase     11         +0.9727            4.768
+  Modal          10         +0.9758            6.792
+
+══════════════════════════════════════════════════════════════════════════════
+PAIRWISE LOO ERASURE ANALYSIS
+  For each (eraser A, target B):
+    v_A trained on full type-A;
+    for each i ∈ type B, train v_B^(−i) on n_B − 1 items,
+    decode baseline diff_i and erased diff_i with that LOO triple;
+    aggregate baseline LOO MAE, treated LOO MAE, ΔMAE.
+  Cosine-matched random null (N=100) also LOO-decoded per item.
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative→Adverbial    cos=+0.424  n_B=19  MAE_base=10.27  MAE_treat= 10.61  ΔMAE= +0.34  match μ±σ= 11.13±0.11  z_match= -4.54  ( 0.5s)
+  Predicative→NounPhrase   cos=+0.469  n_B=11  MAE_base= 8.98  MAE_treat=  9.34  ΔMAE= +0.36  match μ±σ=  9.95±0.13  z_match= -4.58  ( 0.3s)
+  Predicative→Modal        cos=+0.880  n_B=10  MAE_base=12.70  MAE_treat= 25.16  ΔMAE=+12.46  match μ±σ= 22.97±0.17  z_match=+12.84  ( 0.3s)
+  Adverbial→Predicative    cos=+0.424  n_B=13  MAE_base= 8.16  MAE_treat=  8.78  ΔMAE= +0.61  match μ±σ=  8.98±0.11  z_match= -1.89  ( 0.3s)
+  Adverbial→NounPhrase     cos=+0.411  n_B=11  MAE_base= 8.98  MAE_treat=  9.42  ΔMAE= +0.43  match μ±σ=  9.68±0.11  z_match= -2.34  ( 0.3s)
+  Adverbial→Modal          cos=+0.436  n_B=10  MAE_base=12.70  MAE_treat= 14.05  ΔMAE= +1.35  match μ±σ= 13.80±0.08  z_match= +3.20  ( 0.3s)
+  NounPhrase→Predicative   cos=+0.469  n_B=13  MAE_base= 8.16  MAE_treat=  9.45  ΔMAE= +1.29  match μ±σ=  9.20±0.12  z_match= +2.12  ( 0.3s)
+  NounPhrase→Adverbial     cos=+0.411  n_B=19  MAE_base=10.27  MAE_treat= 10.81  ΔMAE= +0.54  match μ±σ= 11.06±0.11  z_match= -2.35  ( 0.5s)
+  NounPhrase→Modal         cos=+0.343  n_B=10  MAE_base=12.70  MAE_treat= 13.30  ΔMAE= +0.60  match μ±σ= 13.33±0.05  z_match= -0.56  ( 0.3s)
+  Modal→Predicative        cos=+0.880  n_B=13  MAE_base= 8.16  MAE_treat= 19.90  ΔMAE=+11.73  match μ±σ= 17.99±0.32  z_match= +5.94  ( 0.3s)
+  Modal→Adverbial          cos=+0.436  n_B=19  MAE_base=10.27  MAE_treat= 10.89  ΔMAE= +0.62  match μ±σ= 11.18±0.12  z_match= -2.54  ( 0.5s)
+  Modal→NounPhrase         cos=+0.343  n_B=11  MAE_base= 8.98  MAE_treat=  9.07  ΔMAE= +0.08  match μ±σ=  9.44±0.09  z_match= -4.03  ( 0.3s)
+
+  Total LOO erasure runtime: 4.2s (0.1 min)
+
+══════════════════════════════════════════════════════════════════════════════
+PAIRWISE LOO ERASURE: PER-PAIR MAE TABLE
+══════════════════════════════════════════════════════════════════════════════
+
+  MAE-based view (lower MAE_treat better; functional ⇒ z_match_MAE > +2)
+
+  A→B                          cos |  MAE_b   MAE_t    ΔMAE |       MAE_unif μ±σ      MAE_match μ±σ |  z_uMAE   z_mMAE | verdict
+  ------------------------------------------------------------------------------------------------------------------------------
+  Predicative→Adverbial     +0.424 |  10.27   10.61   +0.34 |    10.27± 0.01       11.13± 0.11  |  +39.78    -4.54 | —
+  Predicative→NounPhrase    +0.469 |   8.98    9.34   +0.36 |     8.98± 0.01        9.95± 0.13  |  +39.78    -4.58 | —
+  Predicative→Modal         +0.880 |  12.70   25.16  +12.46 |    12.70± 0.01       22.97± 0.17  | +1477.92   +12.84 | ↑↑ functional
+  Adverbial→Predicative     +0.424 |   8.16    8.78   +0.61 |     8.17± 0.01        8.98± 0.11  |  +62.46    -1.89 | —
+  Adverbial→NounPhrase      +0.411 |   8.98    9.42   +0.43 |     8.98± 0.01        9.68± 0.11  |  +47.76    -2.34 | —
+  Adverbial→Modal           +0.436 |  12.70   14.05   +1.35 |    12.70± 0.01       13.80± 0.08  | +160.52    +3.20 | ↑↑ functional
+  NounPhrase→Predicative    +0.469 |   8.16    9.45   +1.29 |     8.17± 0.01        9.20± 0.12  | +131.63    +2.12 | ↑↑ functional
+  NounPhrase→Adverbial      +0.411 |  10.27   10.81   +0.54 |    10.27± 0.01       11.06± 0.11  |  +62.53    -2.35 | —
+  NounPhrase→Modal          +0.343 |  12.70   13.30   +0.60 |    12.70± 0.01       13.33± 0.05  |  +70.58    -0.56 | —
+  Modal→Predicative         +0.880 |   8.16   19.90  +11.73 |     8.17± 0.01       17.99± 0.32  | +1198.23    +5.94 | ↑↑ functional
+  Modal→Adverbial           +0.436 |  10.27   10.89   +0.62 |    10.27± 0.01       11.18± 0.12  |  +71.81    -2.54 | —
+  Modal→NounPhrase          +0.343 |   8.98    9.07   +0.08 |     8.98± 0.01        9.44± 0.09  |   +9.01    -4.03 | —
+
+  ρ-based view (higher ρ_treat better; functional ⇒ z_match_ρ < −2)
+
+  A→B                          cos |  ρ_base  ρ_treat      Δρ |       ρ_unif μ±σ      ρ_match μ±σ |    z_uρ     z_mρ
+  ------------------------------------------------------------------------------------------------------------------
+  Predicative→Adverbial     +0.424 |  +0.905   +0.889  -0.016 |  +0.905±0.00   +0.890±0.01 |  -10.43    -0.10
+  Predicative→NounPhrase    +0.469 |  +0.855   +0.873  +0.018 |  +0.854±0.00   +0.833±0.01 |   +5.31    +5.25
+  Predicative→Modal         +0.880 |  +0.806   -0.079  -0.885 |  +0.806±0.00   +0.092±0.03 |   +0.00    -4.91
+  Adverbial→Predicative     +0.424 |  +0.912   +0.879  -0.033 |  +0.912±0.00   +0.906±0.01 |   +0.00    -3.19
+  Adverbial→NounPhrase      +0.411 |  +0.855   +0.855  +0.000 |  +0.854±0.00   +0.838±0.01 |   +0.20    +1.85
+  Adverbial→Modal           +0.436 |  +0.806   +0.830  +0.024 |  +0.806±0.00   +0.807±0.01 |   +0.00    +4.36
+  NounPhrase→Predicative    +0.469 |  +0.912   +0.918  +0.005 |  +0.912±0.00   +0.903±0.01 |   +0.00    +1.50
+  NounPhrase→Adverbial      +0.411 |  +0.905   +0.885  -0.019 |  +0.905±0.00   +0.891±0.01 |  -12.74    -0.96
+  NounPhrase→Modal          +0.343 |  +0.806   +0.806  +0.000 |  +0.806±0.00   +0.808±0.01 |   +0.00    -0.25
+  Modal→Predicative         +0.880 |  +0.912   +0.654  -0.258 |  +0.912±0.00   +0.664±0.02 |   +0.00    -0.41
+  Modal→Adverbial           +0.436 |  +0.905   +0.889  -0.016 |  +0.905±0.00   +0.887±0.01 |  -10.43    +0.22
+  Modal→NounPhrase          +0.343 |  +0.855   +0.873  +0.018 |  +0.854±0.00   +0.841±0.01 |   +5.31    +3.62
+
+══════════════════════════════════════════════════════════════════════════════
+CROSS-PAIR CORRELATIONS (LOO)
+  Across the 12 ordered pairs:
+    Pearson r(cos, ΔMAE_LOO)          = +0.981
+    Pearson r(cos, z_match_MAE_LOO)   = +0.838
+    Pearson r(cos, Δρ_LOO)            = -0.835
+══════════════════════════════════════════════════════════════════════════════
+
+
+══════════════════════════════════════════════════════════════════════════════
+HEADLINE: Predicative ↔ Modal (LOO)
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative → Modal
+    cos(v_A, v_B_full):       +0.8797
+    LOO MAE baseline:         12.701
+    LOO MAE after v_A erase:  25.158  (Δ = +12.457)
+    Cosine-matched LOO MAE:   22.966 ± 0.171   →  z_MAE = +12.84
+    Uniform-random LOO MAE:   12.701 ± 0.008   →  z_MAE = +1477.92
+    LOO ρ baseline:           +0.8061
+    LOO ρ after v_A erase:    -0.0788  (Δ = -0.8848)
+    MAE-based verdict:        ↑↑ functional
+
+
+  Modal → Predicative
+    cos(v_A, v_B_full):       +0.8797
+    LOO MAE baseline:         8.164
+    LOO MAE after v_A erase:  19.898  (Δ = +11.734)
+    Cosine-matched LOO MAE:   17.987 ± 0.322   →  z_MAE = +5.94
+    Uniform-random LOO MAE:   8.165 ± 0.010   →  z_MAE = +1198.23
+    LOO ρ baseline:           +0.9121
+    LOO ρ after v_A erase:    +0.6538  (Δ = -0.2582)
+    MAE-based verdict:        ↑↑ functional
+
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY (LOO)
+══════════════════════════════════════════════════════════════════════════════
+
+  Pairs evaluated: 12 (4×3 ordered cross-type)
+
+  MAE-based (lower MAE_treat = better; functional ⇒ z_MAE > +2)
+  Vs. MAE-based UNIFORM random baseline (LOO):
+    ↑↑ functional (z_MAE > +2):    12 / 12
+    ↑  trend     (1 ≤ z_MAE < 2):   0 / 12
+    —  neutral   (z_MAE < 1):       0 / 12
+
+  Vs. MAE-based COSINE-MATCHED random baseline (LOO):
+    ↑↑ functional (z_MAE > +2):     4 / 12
+    ↑  trend     (1 ≤ z_MAE < 2):   0 / 12
+    —  neutral   (z_MAE < 1):       8 / 12
+
+  Interpretation:
+    Reproduces in-sample headline pattern ⇒ §4.4 upgrades from
+    'functional disruption of a fitted linear decoder' to
+    'out-of-sample functional validation.'  The target decoder
+    is now fit on items it never sees, so the cross-type
+    degradation is no longer an in-sample-fit artifact.
+
