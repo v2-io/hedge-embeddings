@@ -6,3 +6,17 @@ __pycache__/
 # in comparators/INDEX.md.
 comparators/*.pdf
 
+# LaTeX build artifacts from convert_to_tex.py / pdflatex.
+# paper.tex IS committed (a checkpoint of the current paper.md → LaTeX
+# conversion); paper.pdf and intermediate logs are not.
+paper.pdf
+paper.aux
+paper.log
+paper.out
+paper.toc
+paper.bbl
+paper.blg
+paper.synctex.gz
+paper.fdb_latexmk
+paper.fls
+
