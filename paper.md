@@ -2,8 +2,6 @@
 
 **Anonymous submission** *(TACL — double-blind; identifying information removed)*
 
-> **Working draft, May 2026.** Built from `cmcl-abstract-draft.md` (CMCL 2026 non-archival extended abstract), `FINDINGS-01.md`–`FINDINGS-06.md`, and the experiment results in `results/`. Framing follows modified Option B (`brainstorms/reframed-contribution-options.md`): foreground the **pretrained pooled sentence embedding** model-class gap relative to the recent decoder-LLM linear-feature literature; narrow the novelty claim to the conjunction of qualifiers (continuously calibrated, aligned with human psychometric data, pretrained, pooled sentence embedding). Concept-erasure result placeholder pending `experiment_11_concept_erasure.py` runs (mxbai-embed-large + qwen3-embedding). `[PLACEHOLDER]` markers indicate values to fill from those runs and from the undermind novelty audit.
-
 ---
 
 ## Abstract
@@ -239,40 +237,3 @@ Four directions extend the present work most directly. The first is native-speak
 ---
 
 ## References
-
-> **Intent:** Format placeholder. See `cmcl-abstract-draft.md` and `Novelty_memo_for_hedge_embeddings.md` references lists as starting points. Required additions for TACL submission per the undermind audit:
->
-> *Linear-feature decoder line:* Marks & Tegmark 2023, Bürger et al. 2024, Yu et al. 2025 (COLM 2025, arXiv:2505.21800), Ji et al. 2025 (EMNLP 2025, arXiv:2503.14477; PDF in `comparators/ji2025-verbal-uncertainty-linear-feature-emnlp.pdf`), Lepori, Hu, Dasgupta, Patel, Serre & Pavlick 2026 (ICLR 2026, arXiv:2507.12553v3 dated 2026-04-27; "Is This Just Fantasy? Language Model Representations Reflect Human Judgments of Event Plausibility"; PDF in `comparators/lepori2026-modal-difference-vectors-iclr.pdf`), Valois, Souza, Shimomoto & Fukui 2025 (TACL Vol. 13, pp. 1436–1458, doi:10.1162/TACL.a.48; PDF in `comparators/valois2025-frame-representation-hypothesis-tacl.pdf` — note: lead author Valois of Univ. Tsukuba; the "Valentin" attribution in the undermind audit is incorrect), Park et al. 2024 (LRH formalization), Ahdritz et al. 2024 (arXiv:2402.03563), Cohen et al. 2025 (arXiv:2505.21218), Cho et al. 2026, Adarsh et al. 2026 (arXiv:2601.06599).
->
-> *Verbal-probability behavioral psychometrics line:* Sileo & Moens 2023; Belém, Kelly, Steyvers, Singh & Smyth 2024 (arXiv:2407.15814; PDF in `comparators/belem2024-linguistic-uncertainty-perceptions.pdf`); Tang, Shen & Kejriwal 2026 (npj Complexity 3:8, doi:10.1038/s44260-026-00070-6; arXiv preprint 2405.15185 from 2024-05-24; USC ISI; PDF in `comparators/tang2026-estimative-uncertainty-npj-complexity.pdf`); 17 Words of Estimative Probability across GPT-3.5, GPT-4, Llama-2-7B, Llama-2-13B, ERNIE-4; prompted-output protocol with human survey baseline; cross-linguistic comparison (English vs. Chinese with ERNIE-4 prompted in Chinese); findings: human-LLM alignment for high-certainty WEPs but divergence on 11/12 mid-range WEPs, gendered-role prompts increase divergence, CoT prompting fails to improve LLM consistency under varying statistical uncertainty. Closest behavioral comparator on cross-linguistic verbal probability — distinct from our work in method (prompted-output behavioral elicitation vs. frozen-embedding linear axis extraction) and model class (conversational LLMs vs. pretrained pooled sentence embedding models); language coverage is similarly limited (English + Chinese vs. our 8 typologically diverse languages via multilingual embedding model); Maloney et al. 2024 (cited by Belém — closest direct comparator on numerical probability estimates from GPT-4 vs. humans, smaller stimulus set); Wang et al. 2024 (arXiv:2410.04315); Yang et al. 2026.
->
-> *Pretrained sentence-embedding probing line:* Jacobs, Hubbard & Federmeier 2022 (SCiL 2022 pp. 225–228, "Masked language models directly encode linguistic uncertainty"; PDF in `comparators/jacobs2022-masked-lms-linguistic-uncertainty-scil.pdf`), Chen, Jiang, Poliak, Sakaguchi & Van Durme 2019 (Uncertain NLI, ACL 2020 doi 10.18653/v1/2020.acl-main.774; PDF in `comparators/chen2019-uncertain-nli.pdf`), Schuster et al. 2019 (ACL 2020 doi 10.18653/v1/2020.acl-main.479), Pei & Jurgens 2021 (EMNLP 2021), Lee et al. 2015 (EMNLP), Stanovsky et al. 2017 (ACL), Bhatia 2016 (Cognitive Science), Shen et al. 2023 (arXiv:2306.02247).
->
-> *Concept-erasure methodology:* Belrose et al. 2023 (LEACE, NeurIPS) — required for §4.4 even though we use rank-1 projection, since the framework citation is what interpretability reviewers expect; Ravfogel et al. 2020 (INLP, ACL).
->
-> *Verbal-probability psychometrics data:* Mosteller & Youtz 1990, Vogel et al. 2022, Wintle et al. 2019, Wallsten et al. 1986, Lichtenstein & Newman 1967, Beyth-Marom 1982.
->
-> *Theoretical:* Lassiter 2017 (Graded Modality), Schockaert 2022 (formal framework for embeddings as epistemic states — flagged as missing in tactical-notes §6 Gate 1, now required).
->
-> *Embedding models:* Mikolov et al. 2013, BGE-M3 (Chen et al. 2024), Matryoshka (Kusupati et al. 2022).
-
----
-
-## Supplementary
-
-> **Intent:** Full per-model × per-dataset × per-metric tables (5 models × 3 datasets × {ρ, MAE, LOO ρ, bootstrap CI}). All eight-language per-phrase data. Wintle verification trail per model. Bootstrap CI tables (10,000 resamples). Concept-erasure z-scores per (eraser, target) pair × model. Inter-axis cosine matrices. Truncation curves per dimension per model.
-
----
-
-## Open dependencies
-
-- ~~**Concept-erasure v2 (MAE distribution stats)**~~ — **DONE.** v2 added MAE distribution stats and MAE-based z-scores; results in `results/exp11_mxbai.txt` and `results/exp11_qwen3.txt`. Headline pair clears z_match_MAE > +2 in all four model × direction combinations. Cross-pair r(cos, ΔMAE) = +0.922 (mxbai), +0.857 (qwen3) — confirmed. 9/12 ordered cross-type pairs MAE-functional on both models simultaneously. All [PLACEHOLDER] markers in §4.4 filled.
-- **Future-work design improvements (v3, optional, not blocking submission):** the MAE-stats agent flagged four design upgrades worth considering for revisions: (a) replace in-sample fit with leave-one-out for both base and treatment (gives ρ headroom by dropping the ceiling below 1.0 — would align concept erasure with the rest of the paper's LOO methodology); (b) report ΔMAE / matched-MAE_mean as effect-size ratio alongside z-scores (more interpretable than z when sd is small from n=100); (c) add a third control with cosine matched *and* orthogonal residual sampled from the empirical embedding manifold rather than isotropic Gaussian (addresses whether matched-random's "free 60% orthogonal noise" carries the over-conservatism story); (d) bump n_modal by adding the seven excluded estimated-value modal terms back in with explicit "noisy" flags. Worth doing if a reviewer requests robustness checks; not load-bearing for first submission.
-- ~~**Undermind novelty audit**~~ — **DONE.** Audit returned in `Novelty_memo_for_hedge_embeddings.md`. Verdict: substance-first framing is correct; the conjunction-claim is novel as audited; recommended wording sharpening "probability structure" → "verbal probability axis" (more specific, harder to attack); abstract comparator set restructured to two literature lines (linear features in decoder LLMs *and* verbal-probability psychometrics elicited behaviorally) — Valentin removed from abstract trio, Belém + Tang added; §2 Related Work expanded with the three identified literature lines (decoder linear features, behavioral verbal-probability psychometrics, pooled-sentence-embedding probing) including the two strong near-misses Maslej-Krešňáková et al. 2022 (Mas22 — pooled RoBERTa for cloze probability) and Lepori et al. 2025 (Lep25 — decoder hidden-state alignment with graded modal/plausibility judgments). All recommended changes applied to abstract, §1, §2; per-work pre-empts encoded in §2 positioning rather than as a separate "reviewer-bait" subsection. Citation correction during integration: Mas22 = Jacobs, Hubbard & Federmeier 2022 (SCiL); Lep25 = Lepori et al. 2026 (ICLR 2026, the arXiv version was upgraded to a published conference paper). Three near-miss PDFs (Jacobs 2022, Lepori 2026, Belém 2024) downloaded and placed in `comparators/`.
-- **fig8 colormap fix** — one-line change at `generate_figures.py:793` (RdYlGn → viridis or RdBu). Trivial, deferred to figure-consistency pass.
-- **fig13 (new) — ΔMAE vs. cos scatter, both models** — to make from concept-erasure results once v2 is in. Headline figure for §4.4. Suggested 12 points per model with predicative↔modal called out, r values in legend.
-- **Related Work §2** — to draft after undermind audit returns.
-- **Method §3.1–§3.4** — to draft from existing scripts and FINDINGS docs; protocol and math are settled, prose is what's missing.
-- **Results §4.1–§4.7 prose** — to draft from FINDINGS-01 through 06 plus exp07–10 results files. Section structure is locked; subsection prose is straightforward translation work.
-- **Limitations §6 prose expansion** — the eight sub-points above are intent notes plus pre-empted reviewer-bait; need to be expanded to paragraph form (6–8 sentences each on the load-bearing limitations).
-- **Mixed-non-epistemic LOO ρ = 0.69 reviewer-bait** — `results/exp10_nomic-v1.5.txt` Test 2 prints "WARNING: Non-epistemic adjectives show some structure" for the *mixed* set (LOO ρ = 0.69). The *pure* set is clean (ρ = 0.31). A skeptical reviewer will quote the WARNING line. Pre-empt explicitly in §4.6 prose: the mixed set contains adjectives with epistemic leakage ("expected", "obvious"); the pure set is the appropriate comparison. Worth flagging now so it doesn't get lost when results prose is drafted.
