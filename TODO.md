@@ -6,9 +6,21 @@ Tactical task list for completing the hedge-embeddings TACL submission. Sits bel
 
 ---
 
-## §1 — Verify a single fact before further work
+## §1 — Verified: TACL page limit is 7–10 content pages
 
-- [ ] **Verify the actual TACL page limit.** Codex cites the formatting instructions PDF saying 7–10 content pages with references excluded and appendices *included* in the limit. Gemini #1 (strategic) cites tactical-notes.md saying 12–15 is fine. The formatting PDF is more authoritative; fetch it directly to confirm. URL: `https://transacl.org/tacl-submission-templates/tacl2021v1-submission-formatting-instructions.pdf`. Result determines whether §4 below is "modest compression" or "aggressive cut."
+Confirmed against the official formatting instructions PDF (downloaded from `https://transacl.org/tacl-submission-templates/tacl2021v1-submission-formatting-instructions.pdf` on 2026-05-01):
+
+> *"Submissions may consist of seven to ten (7–10) A4 format (not letter) pages of content. The page limit includes any appendices. However, references do not count toward the page limit."*
+>
+> *"Violation: fewer than seven pages of content or more than ten pages of content, including any appendices."*
+
+**The hard rule for an original (non-resubmission) TACL submission:** body + appendices ≤ 10 pages, references excluded. Comparator papers running 23–25 pages were (b)/(c) resubmissions with explicit extra-page grants from Action Editors, which the formatting PDF lists as the only exception.
+
+Current PDF is 24 pages — we need to cut **~14 pages** to get to 10. The §4 trim is **aggressive**, not modest. Codex's reading was correct; the tactical-notes.md "12–15 is fine" inference was wrong (probably extrapolating from resubmissions).
+
+**Verified sub-question:** the TACL formatting PDF makes no mention of "supplementary materials" or any separate-file channel beyond appendix-within-page-limit. Searched the 5-page formatting instructions for `supplement|additional material|optional material`: zero hits. The only mechanism described is "Appendices, if any, directly follow the text and the references" with "appendices count towards the page limit."
+
+**Planning consequence:** assume the strict case — everything fits in 10 content pages or it doesn't go in the submission. Material we cannot fit either disappears from this paper or moves to a companion paper / future-work direction. The "move to supplementary" inventory below should be treated as "either fold into a tighter main-paper expression, or cut entirely; if a future TACL allowance for separate supplementary turns out to exist, we get the cut material back."
 
 ---
 
@@ -50,9 +62,25 @@ Sequence matters here:
 
 ---
 
-## §4 — Trim pass (size of cut depends on §1 result)
+## §4 — Trim pass (aggressive cut: 24 → 10, including appendix)
 
-If the verified page limit is 7–10 pages (Codex's reading), this is an aggressive cut: 24 → 10 = ~14 pages out. If it's 12–15 (Gemini #1's reading), this is modest: 24 → 14 = ~10 pages out. Either way the moves are similar; the question is how many of them to make.
+**Verified target:** 10 content pages including any appendix (§1). Current is 24. Cut: ~14 pages.
+
+**Per Codex's section-level targets** (which fit the 10-page rule):
+
+| Section | Current | Target |
+|---|---|---|
+| Abstract | ~290 words | 180–230 words |
+| §1 Introduction | ~1.5 pp | 1 pp |
+| §2 Related Work | ~3 pp | 1.25–1.5 pp |
+| §3 Method | ~2 pp | 1.5 pp |
+| §4 Results (all subsections) | ~7 pp | 4 pp |
+| §5 Discussion | ~1.5 pp | 0.6 pp |
+| §6 Limitations | ~2.5 pp | 0.9 pp |
+| §7 Conclusion | ~0.6 pp | 0.4 pp |
+| Appendix (if used) | — | 0–1 pp |
+
+That sums to ~9–10 main pages, leaving 0–1 page of headroom for appendix. References don't count toward this.
 
 **Cuts I'd propose, in roughly increasing reluctance to make them:**
 
