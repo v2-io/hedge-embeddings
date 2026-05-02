@@ -366,6 +366,41 @@ After seeing the new findings, Codex revised his earlier read in a favorable but
 
 These five do NOT replace §4 trim of TODO.md (they don't get us from 25 pages to 10 by themselves). They're the specific prose deltas the new experimental evidence justifies, on top of whatever section-level cuts we make in the trim pass.
 
+## §9 — Manuscript-quality items captured from Codex 01-33 read (post-trim phase)
+
+Per Joseph (2026-05-02): defer rendering / manuscript-quality issues until after the trim phase. Captured here so they don't get lost. Categorized as non-trim items extracted from `tmp/codex-feedback-01-33.md`; trim/restructuring items in that file are deliberately not duplicated here.
+
+### §9.1 — `\bottomrule` placement bug in Table 1 (paper.tex:344)
+
+Table 1 in `paper.md` has a header row, a "sup. / LOO" sub-header row, then the body rows. `convert_to_tex.py` is mishandling the table conversion: the generated `paper.tex` shows `\bottomrule` after `\midrule` but **before** the body rows (paper.tex line ~344, between the model header line and the data rows). Booktabs `\bottomrule` belongs at the end of the table, after the last data row. Visual symptom in the rendered PDF: a horizontal rule appears between the column header and the first data row where there shouldn't be one.
+
+**Fix path:** investigate `convert_to_tex.py`'s table-handling logic. The "sup. / LOO" row probably parses as something other than a body row (maybe interpreted as a separator?). Fix the converter, regenerate, verify Table 1 has only `\toprule` ... `\midrule` ... data rows ... `\bottomrule`.
+
+### §9.2 — Working-doc residue still in `paper.md` source
+
+Even though `convert_to_tex.py` strips most blockquotes (which is why the §4.4 intent block stayed invisible until I rewrote it), submission source should not depend on "strip-this-later" behavior. Specific residue:
+
+- Line 5 — opening **Working draft, May 2026** blockquote (project provenance / placeholder description).
+- Line 332 — `## References` section's blockquoted **Intent** placeholder with the full audited citation lists (linear-feature decoder line, behavioral psychometrics line, embedding-probing line, methodology, data, theoretical, embedding models). Useful internally; not for submission.
+- Line 352 — `## Supplementary` section's blockquoted **Intent** placeholder describing what the supplementary would contain.
+- Line 356 — `## Open dependencies` section, with both done items (concept-erasure v2, Undermind audit) and outstanding TODO items.
+
+**Fix path:** delete these sections from `paper.md` (or move them to `brainstorms/` if any of the content is still load-bearing). The actual references appear in the compiled PDF via natbib + `refs.bib`, not via this Markdown section.
+
+### §9.3 — 53 vs 52 Mosteller-count discrepancy
+
+The abstract (line 11) and §1 (line 25) and §2.4 (line 67) and §3.1 (line 89) all say "53-expression Mosteller dataset" / "53 verbal expressions". The PCA results in §3.1 line 93 and §4.1 line 169 say "PCA on the 52 mixed-type Mosteller difference vectors." Type counts in §3.1 sum: predicative 13 + frequency adverb 19 + noun phrase 11 + modal 10 = 53.
+
+So the 52-vs-53 gap is one item excluded from the mixed-type PCA but retained in the within-type analyses. Likely candidates: an item that's in two type partitions (and excluded from the mixed-PCA to avoid double-counting), or one that fails the PCA construction (e.g., empty / NaN diff vector). The data and FINDINGS files would say which.
+
+**Fix path:** identify the excluded item and either (a) name it in §3.1 in one parenthetical clause (e.g., *"PCA on the 52 mixed-type difference vectors — modal {expression} appears in both predicative and modal types and is dropped from the mixed-type PCA to avoid duplication — recovers PC1 as a syntactic-frame direction..."*), or (b) if no exclusion is intended, fix the count to 53.
+
+### §9.4 — Codex 01-33 trim/restructuring directives (deferred to trim phase, captured for reference)
+
+The file `tmp/codex-feedback-01-33.md` contains a comprehensive trim/restructuring plan: collapse 8 contributions to 3–4, target a 9-page main paper, demote concept erasure / multilingual / robustness to support claims, drop the "language-constituted agents" §5 paragraph for TACL, merge L7+L8 in §6, etc. These are NOT captured here; the file is the source of truth. When the trim phase begins, that file is the integration plan.
+
+---
+
 ## §7 — After submission (companion-paper directions)
 
 These are *not* on the critical path for the TACL submission. They're flagged here so they don't get lost when this TODO closes out. Full discussion in `PLAN.md` §V Phase 2.
