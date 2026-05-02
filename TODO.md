@@ -1,8 +1,36 @@
-# TODO.md — get the TACL paper to submission
+# TODO.md — TACL paper (submitted)
 
-## Session state — 2026-05-02 (handoff snapshot near context window)
+## SUBMITTED — 2026-05-02
 
-**Current PDF state:** 16 pages including ~2 pages of references. Body ≈ 14 pages, TACL target 10. ~4 pages still to cut.
+Submitted to TACL as `11139-epistemic-hedging.pdf` with ~5–6 minutes to spare. Final PDF: 12 pages = 10 body + 2 references; conclusion lands at the bottom of page 10. Submission section: Empirical and Data-Driven Methods. Editor comments: anonymization + reviewer-pairing (linear-feature interpretability ∩ verbal-probability psychometrics) + code-release commitment. Keywords (8): verbal probability, epistemic hedging, pretrained sentence embeddings, linear representation hypothesis, concept erasure, psychometric calibration, cross-linguistic transfer, interpretability.
+
+**Final-push trim (16 → 12 pages, body 14 → 10):**
+
+- §1 four "literature lines" paragraphs → one consolidated paragraph pointing to §2
+- §1 contributions list (3 paragraphs) → one (1)–(2)–(3) inline sentence
+- §2 paragraphs tightened (decoder-LLM and pooled-embedding lit blocks)
+- §3.3 lambda sweep prose → one-sentence summary
+- §3.3 linear-calibration paragraph → 2 sentences
+- §3.4 evaluation strands → one numbered-inline sentence
+- §4.1 confound + within-type paragraphs compressed; figure caption tightened
+- §4.2 third paragraph (three observations) → one paragraph
+- §4.4 erasure block (three long paragraphs) → three tighter paragraphs preserving both nulls, the cross-pair $r$ signature, the LOO robustness, and the LRH bridge
+- §4.5 four-probe paragraph → tighter prose; truncation paragraph compressed
+- §4.6 three null-control paragraphs → tighter prose (modal cross-model gradient + multi-$n$ power analysis preserved)
+- §4.7 IQR + ensemble paragraphs compressed
+- §5 Discussion: one paragraph compressed in place
+- §6 L1–L4 each tightened by 30–40%
+- §7 Conclusion compressed
+
+**What survived (load-bearing):** Tables 1, 2, 3 unchanged; all six §4 subsections present; both nulls in §4.4; LOO concept-erasure robustness; modal cross-model gradient + multi-$n$ power analysis in §4.6; evaluative non-epistemic control; IQR + ensemble negatives; all four limitations.
+
+Per Joseph's submission-eve guidance: trim was "preserve enough to get past the front door so reviewers know what to ask for." Reviewer-requested expansions land back in the manuscript on revision; the cut material is preserved in `supplement.md` and in the archival sections of this TODO below.
+
+---
+
+## Historical: pre-submission session state — 2026-05-02 (superseded by SUBMITTED block)
+
+**Pre-final-push PDF state:** 16 pages including ~2 pages of references. Body ≈ 14 pages, TACL target 10. ~4 pages still to cut. (See SUBMITTED block above for the final state.)
 
 **Trajectory this session:** 27 (peak post-§4.4 rewrite) → 16 pages, with substantial scientific strengthening alongside the trim (LOO concept-erasure robustness, M10 reruns surfacing the `improbably` outlier, data module eliminating protocol drift).
 
