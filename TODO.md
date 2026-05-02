@@ -1,42 +1,60 @@
 # TODO.md — get the TACL paper to submission
 
-## Session state — 2026-05-02 (live)
+## Session state — 2026-05-02 (handoff snapshot near context window)
 
-This block summarizes the in-flight integration work and pointers to the trim-phase planning files. Detailed per-section state is in `§8` below; non-trim manuscript-quality items deferred until after trim are in `§9`.
+**Current PDF state:** 16 pages including ~2 pages of references. Body ≈ 14 pages, TACL target 10. ~4 pages still to cut.
 
-### Integrations LANDED in `paper.md` so far this session
+**Trajectory this session:** 27 (peak post-§4.4 rewrite) → 16 pages, with substantial scientific strengthening alongside the trim (LOO concept-erasure robustness, M10 reruns surfacing the `improbably` outlier, data module eliminating protocol drift).
 
-| Integration | Commits | Source |
-|---|---|---|
-| §4.4 prose rewrite (replace blockquoted intent block with compilable prose) | `687f1ba` | §4.4 was missing from PDF before this; matched-random null + ratio framing |
-| §4.4 fig13 figure-environment fix (stray blockquote marker removed) | `58af880` | Codex flag, regression from 687f1ba |
-| §3.3 lambda sweep prose (replace "informally verified" with two-part claim) | `ca04668` + `c0ddb01` (cell-count fix) | TODO §8.3 |
-| §6 L4 + §4.6 evaluative non-epistemic control | `db03bbb` + `f205407` (§1 contribution-list alignment) | TODO §8.5 |
+### All §8 findings are now LANDED in `paper.md`
 
-### Integration IN PROGRESS
-
-- **§4.4 two-null framing rewrite** (matched-random + label-permutation, both architectures) — agent running in background, integrating from `results/exp11b_label_perm_{mxbai,qwen3}.txt`. See §8.2.
-
-### Integrations PENDING (waiting on data or queued)
-
-- **§4.6 modal-null paragraph + §6 L7 update** — waits for the `experiment_10` chain to finish on `mxbai-embed-large` and `qwen3-embedding`. Current chain progress: gemma DONE, moe DONE, mxbai mid-run (PID 56199), qwen3 next. Once data lands, prose target per §8.4 is "small-n + model-sensitive" framing with the gemma+moe+nomic-v1.5 contrast plus the §8.1 multi-n power-analysis curve as supporting structural evidence.
-- **§3.3/§6 L7 supplementary figure** — two-panel multi-n power-analysis figure (p-value collapse + violin plot of permuted distributions). Optional; depends on trim budget. See §8.1.
-
-### Trim-phase planning files (in `tmp/`, NOT integrated)
-
-When the trim phase begins, these are the source-of-truth files:
-
-| File | What it is |
+| Integration | Where it lives |
 |---|---|
-| `tmp/codex-feedback-01-33.md` | Codex's full audit (2026-05-02): trim plan, 4-claims restructure, contribution-list compression (8→3–4), specific cuts, claim calibration. Also contains the non-trim items captured in TODO §9. |
-| `tmp/rewrite_strategy.md` | Gemini's section-by-section compression strategy: load-bearing vs. expendable framing, "delete §5 Discussion entirely" recommendation, limitations consolidation (8→3). |
-| `tmp/draft_intro_related.md` | Gemini's draft compressed §1 + §2 prose (~60% length reduction). To be reviewed/adapted; not adopted as-is. |
+| §3.3 lambda sweep (two-part stability + asymmetry) | §3.3 prose, ~2 sentences |
+| §6 L4 + §4.6 evaluative non-epistemic control | §6 L4 (renumbered from §6) + §4.6 evaluative paragraph |
+| §4.4 two-null framing (matched-random + label-permutation) | §4.4 ¶2 leads with both nulls; §5 ¶1 + §6 L3 cross-references aligned |
+| §4.4 LOO concept-erasure robustness | §4.4 ¶3 closing sentence; cross-pair r rises to 0.98/0.89 under LOO |
+| §4.6 modal-null gradient + §8.1 multi-n power analysis | §4.6 permutation paragraph; §6 L4 (renumbered) develops in full |
+| 4-model `experiment_10` chain (gemma/moe/mxbai modal data) | §4.6 cross-model gradient prose |
+| M10 outlier finding (`improbably`, `very probably`) | §4.5 truncation paragraph; §4.7 ensemble paragraph; TODO §8.7 + supplement.md preserve original M15 framing |
+| Data module (`data/mosteller.py`) + experiment refactors | source-of-truth for item sets; experiments 05/06/07/08/09 + paper_validation import from it; eliminates protocol drift through code |
 
-These do NOT come into play until the integration pass for the new findings is complete and we move into the trim phase. Reading them prematurely would bias the per-section integrations toward Gemini's particular cuts before the empirical evidence is fully integrated.
+### Codex Best Remaining Non-Trim Fixes — status
 
-### Live experiment processes (as of 2026-05-02)
+| # | Item | Status |
+|---|---|---|
+| 1 | Rename "full 53-expression corpus" → "Mosteller-derived analysis set" | DONE (`1a69cd1`) |
+| 2 | Item-level provenance table in supplement | NOT DONE — no separate supplementary channel under TACL; item provenance now lives in `data/mosteller.py` instead |
+| 3 | Centralize item sets in code with manifest | DONE (`46e356e`/`71f72be`/`c6325f7`) — `data/mosteller.py` with `print_manifest()` |
+| 4 | Qualify cross-lingual as translation-subset ranking transfer | DONE (`a562f95`) |
+| 5 | Mark M15/modal author-estimated analyses as exploratory | DONE — §3.1 names M10 vs M15; §4.5/§4.7 prose uses M10 numbers |
+| 6 | LOO concept-erasure robustness check | DONE (`5a47b7d` script + `3423a9c` prose integration) |
+| 7 | Fix stale references and figure caption mismatches | MOSTLY DONE (figure-number stragglers fixed in `5a23a79`); `\bottomrule` bug in TODO §9.1 still open but per Joseph's direction deferred until after trim |
 
-None active. The `experiment_10` chain completed for nomic-v1.5, gemma, moe, and mxbai. The qwen3 portion was **killed deliberately** after running 17 minutes with only 18 lines of output (still in the first permutation test of the first axis). See §8.4 for the tactical reasoning.
+### Remaining trim targets (~4 pages to cut from body)
+
+In rough order of leverage:
+
+- **§4.1 Table 1 + surrounding prose** (~1.5 pages currently). Drop the in-sample column from Table 1 (always >0.90, near-zero information for the reader); compress the prose around the table.
+- **§4.4** (still 3 longish paragraphs + LOO sentence). The middle paragraph (headline pair under both nulls) has heavy number density — reportable as a small inline grid or compressed.
+- **§4.2** (3 paragraphs after recent compression — could go to 2).
+- **§3.1 modal-subsets paragraph** — load-bearing for protocol clarity but could be tighter.
+- **§4.5 truncation paragraph** — remains the longest single paragraph in §4.5; could compress while preserving the `improbably` outlier finding.
+
+### Trim-phase planning files (in `tmp/`)
+
+| File | Status |
+|---|---|
+| `tmp/codex-feedback-01-33.md` | Codex's full audit; integrated into TODO §9 (non-trim items) and inline trim cuts |
+| `tmp/rewrite_strategy.md` | Gemini's compression strategy; consulted for trim ordering |
+| `tmp/draft_intro_related.md` | Gemini's draft §1+§2 prose; structurally similar to what landed but not used verbatim |
+| `tmp/trim-strategy-coauthor-view.md` | My coauthor-view trim doc with positions and open questions |
+
+### Repo cleanup state
+
+- All four agent worktrees removed (`ea13e93` and earlier worktree-removal commit).
+- No live experiments running.
+- `git status` clean except `tmp/` and `.claude/` (gitignored and project-internal).
 
 ---
 
