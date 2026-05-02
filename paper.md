@@ -56,12 +56,12 @@ We extract a verbal probability axis from frozen pretrained pooled sentence embe
 
 **Cross-validation datasets.** Two independent psychometric datasets test whether the trained axis generalizes beyond the calibration source. \citet{vogel2022systematic} is a systematic review and meta-analysis of 21 verbal-probability studies spanning 1967–2018, supplied as `docs/vogel_2022_systematic_review.csv`; we extract the median pooled across studies for each expression that matches our syntactic types. \citet{wintle2019verbal} ($n \approx 924$) provides a third independent dataset; we transcribe nine predicative and three frequency-adverbial values from their Figure 2 and Table 1 (hardcoded in `experiment_08_bimodality_wintle.py`). All three sources collect aggregate human probability judgments under non-verifiable contexts following the methodological framework of \citet{wallsten1986measuring} and \citet{budescu1995processing}; the convergence of three datasets collected by different groups in different decades on different populations is the basis for the cross-dataset generalization claim in §4.2.
 
-**Type classification.** Mixing syntactic types confounds the analysis: PCA on the 52 mixed-type Mosteller-derived difference vectors (one sentence per source entry with a median) recovers PC1 as a syntactic-frame direction (28.7% of variance, ordering noun-phrase constructions against frequency adverbs) rather than as the probability axis (FINDINGS-01). Within-type analysis is therefore not a methodological convenience but a load-bearing decision that isolates the semantic signal from the syntactic envelope (§4.1; cf. the polarity confound \citealp{burger2024truth} report for truth directions). We partition the analysis set into four syntactic types, each with a single sentence template that holds syntax constant across all expressions of that type. Let $T_{\text{type}}(x)$ denote the template for syntactic type with hedge expression $x$ substituted for the placeholder, and let $s_0$ denote the bare claim "The experiment will succeed." The four types and their templates are:
+**Type classification.** Mixing syntactic types confounds the analysis: PCA on the 52 mixed-type Mosteller-derived difference vectors (one sentence per source entry with a median) recovers PC1 as a syntactic-frame direction (28.7% of variance, ordering noun-phrase constructions against frequency adverbs) rather than as the probability axis (FINDINGS-01). Within-type analysis is therefore not a methodological convenience but a load-bearing decision that isolates the semantic signal from the syntactic envelope (§4.1; cf. the polarity confound \citealp{burger2024truth} report for truth directions). We partition the analysis set into four syntactic types, each with a single sentence template that holds syntax constant across all expressions of that type. With $s_0$ denoting the bare claim "The experiment will succeed," the four types and their templates (with hedge expression $x$ substituted in) are:
 
-- **Predicative adjective** ($n = 13$): $T_{\text{pred}}(x) = $ "It is $x$ that the experiment will succeed."
-- **Frequency adverb** ($n = 19$): $T_{\text{freq}}(x) = $ "The experiment will $x$ succeed."
-- **Noun phrase** ($n = 11$): $T_{\text{np}}(x) = $ "There is a(n) $x$ that the experiment will succeed."
-- **Modal adverb** ($n = 10$): $T_{\text{mod}}(x) = $ "The experiment will $x$ succeed."
+- **Predicative adjective** ($n = 13$): "It is $x$ that the experiment will succeed."
+- **Frequency adverb** ($n = 19$): "The experiment will $x$ succeed."
+- **Noun phrase** ($n = 11$): "There is a(n) $x$ that the experiment will succeed."
+- **Modal adverb** ($n = 10$): "The experiment will $x$ succeed."
 
 The frequency-adverb and modal-adverb templates share a syntactic slot but encode different semantic types (base-rate frequency versus epistemic confidence); the modal axis is not derivable from the frequency axis (§4.1, FINDINGS-03). The modal-adverb items are derived as adverbial forms of corresponding predicative entries (e.g., the modal "certainly" reuses the median of the predicative "Certain"), so the four within-type partitions sum to 53 template-instance items distributed across 43 unique source rows.
 
@@ -69,16 +69,7 @@ Three modal subsets appear in the codebase, and we name them explicitly to keep 
 
 ### 3.2 Models
 
-We test six pretrained embedding models, accessed through the Ollama embedding endpoint at `http://localhost:11434/api/embed`. Five models are used for the within-type analyses; the sixth (bge-m3) supports the multilingual experiment. We make no fine-tuning, no head training, and no architectural modifications; the qualifier "frozen pretrained" in the novelty claim depends on this.
-
-| Model | Dimension | Architecture | Role |
-|---|---|---|---|
-| nomic-embed-text v1.5 | 768 | BERT + Matryoshka | Default |
-| embeddinggemma 300M | 768 | Decoder-derived (Gemma) | Architectural variety |
-| nomic-embed-text v2 MoE | 768 | Mixture of Experts | Architectural variety |
-| mxbai-embed-large | 1024 | BERT-large | Architectural variety |
-| qwen3-embedding | 4096 | Qwen3 | Larger capacity |
-| bge-m3 | 1024 | XLM-RoBERTa, multilingual | Cross-linguistic transfer (§4.3) |
+We test six frozen pretrained embedding models spanning five architectural families and dimensions from 768 to 4096: nomic-embed-text v1.5 (768d, BERT + Matryoshka; default for the within-type analyses), embeddinggemma 300M (768d, decoder-derived from Gemma), nomic-embed-text v2 MoE (768d, Mixture of Experts), mxbai-embed-large (1024d, BERT-large), qwen3-embedding (4096d, Qwen3 architecture), and bge-m3 (1024d, XLM-RoBERTa-based, multilingual; used for the §4.3 cross-linguistic transfer). We make no fine-tuning, no head training, and no architectural modifications; the qualifier "frozen pretrained" in the novelty claim depends on this.
 
 The five within-type models span five distinct architectural families (BERT, BERT-large, Mixture of Experts, decoder-derived heads, and Qwen3) and three training paradigms; bge-m3 adds a multilingual XLM-R-based encoder trained on more than one hundred languages. All five within-type models output a single mean- or [CLS]-pooled sentence vector per input. Cross-architecture robustness (§4.1) is the basis for the claim that the verbal probability axis is a property of pretrained pooled-embedding geometry rather than of any specific architecture or training corpus.
 
