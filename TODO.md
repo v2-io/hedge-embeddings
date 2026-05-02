@@ -36,8 +36,7 @@ These do NOT come into play until the integration pass for the new findings is c
 
 ### Live experiment processes (as of 2026-05-02)
 
-- `experiment_10_null_hypothesis.py mxbai-embed-large` — PID 56199, mid-modal-permutation. Will be followed by qwen3.
-- (Other agent worktrees may be live; check `git worktree list`.)
+None active. The `experiment_10` chain completed for nomic-v1.5, gemma, moe, and mxbai. The qwen3 portion was **killed deliberately** after running 17 minutes with only 18 lines of output (still in the first permutation test of the first axis). See §8.4 for the tactical reasoning.
 
 ---
 
@@ -323,9 +322,40 @@ If the trim budget allows, this could be a single 2–3 sentence paragraph addit
 
 ---
 
-### §8.4 — 0.A Cross-model modal permutation  (partial — gemma + moe done, mxbai + qwen3 pending)
+### §8.4 — 0.A Cross-model modal permutation  (4 models complete; qwen3 deliberately not run)
 
-**Integration status:** NOT YET INTEGRATED. Waiting for the `experiment_10` chain to finish on mxbai-embed-large (mid-run as of 2026-05-02) and qwen3-embedding (next in queue). Once the full 5-model picture is in, the §4.6 modal-null paragraph + §6 L7 forward-reference get rewritten in a single integration pass — likely paired with §8.1 (multi-n power analysis) since both inform the same prose targets.
+**Integration status:** READY for integration. 4-of-5 models complete (`results/exp10_{nomic-v1.5,gemma,moe,mxbai}.txt`). qwen3 portion of the chain was killed after 17 minutes with only 18 lines of output (still in the first permutation test of the first axis); see "qwen3 tactical decision" below.
+
+**Modal-permutation gradient across the four completed models:**
+
+| Model | Modal LOO ρ | Real-rank percentile | Modal perm p | Random-label p | Verdict |
+|---|---:|---:|---:|---:|---|
+| nomic-embed-text:v1.5 | 0.6485 | 79.2  | 0.2080 | 0.207 | fails |
+| embeddinggemma:300m   | 0.5879 | 78.2  | 0.2180 | 0.198 | fails |
+| mxbai-embed-large     | 0.8061 | 94.6  | **0.0540** | 0.066 | **near-threshold** |
+| nomic-v2-moe          | 0.9152 | 99.6  | 0.0040 | 0.005 | **passes** |
+
+**Pattern:** modal permutation outcome tracks modal LOO ρ across the four models in a smooth gradient — 0.59 / 0.65 fail, 0.81 near-threshold, 0.92 clear pass. This is exactly the §6 L7 small-n rank-saturation prediction made visible across architectures, with mxbai sitting as a natural transition point right at the boundary. Same direction on both the permutation test (Test 1) and the random-label control (Test 3) — see the per-model files.
+
+**Larger-n axes (predicative, frequency adverb, noun phrase) — also captured for §4.6 integration:**
+
+All three of these axes pass cleanly across all four completed models with p ≤ 0.029 on permutation and corresponding random-label tests. This is Codex's "cleanest reviewer-facing evidence" — the within-type calibration is not a one-model finding. Specific p-values per Codex's read of the result files:
+
+- gemma: predicative p=0.005, adverbial p<0.001, noun phrase p=0.028
+- moe:   predicative p=0.009, adverbial p<0.001, noun phrase p=0.025
+- mxbai: predicative p=0.001, adverbial p<0.001, noun phrase p=0.029
+
+(Plus nomic-v1.5 from prior data, also passing all three at p ≤ 0.005.)
+
+**qwen3 tactical decision (2026-05-02):**
+
+Killed the qwen3 chain after weighing: data already informative without it (4-model gradient is clean), runtime cost very high (primal ridge at d=4096 with 53,000+ ridge solves per axis × 4 axes × 3 tests; first-axis permutation test alone was on track to take hours; total chain estimated 6–10 hours), and the qualitative finding ("modal permutation outcome tracks modal LOO ρ; small-n + model-sensitive") doesn't change with one more data point landing somewhere between mxbai's 0.81 LOO and moe's 0.92 LOO. The §4.6 prose framing — "small-n and model-sensitive, consistent with the §6 L7 rank-saturation regime" — is supported by the 4-model gradient as it stands. The honest tradeoff is closure-over-completeness: we chose to land integration tonight rather than wait hours for one more data point.
+
+**Recovery path if qwen3 is ever needed (e.g., reviewer revision):** rewrite `train_axis` in dual form. Current implementation solves a 4096×4096 primal system; the dual form solves an n×n system (n ≤ 19), which would make the whole chain finish in minutes rather than hours at d=4096. Cheap follow-up; not blocking.
+
+**Careful prose framing for §4.6 integration (incorporating Codex's hedging directive):** Do not say "the modal failure is a power artifact." Say: *"the modal permutation result is small-n and model-sensitive; nomic-v1.5 and gemma fail at modal LOO 0.65 and 0.59 respectively, mxbai sits at the 0.054-threshold boundary at LOO 0.81, and moe passes cleanly at 0.004 with LOO 0.92 — the failure pattern is consistent with the small-n rank-test regime developed in §6 L7 and the §4.6→§8.1 power-analysis curve."* The "consistent with" hedging is doing real work: we have evidence compatible with the L7 framing across four architectures, not evidence that proves it.
+
+**Integration target in paper:** §4.6 modal paragraph rewrite + small forward-reference into §6 L7. Pair with §8.1 (the multi-n power analysis on nomic-v1.5) as the two evidence streams jointly supporting the small-n + model-sensitive interpretation. Probably 2–3 sentences in §4.6 plus possibly one row added to a table; if §8.1's two-panel supplementary figure makes the cut in trim, the §4.6 prose can reference it.
 
 **Status as of 2026-05-02:** sequential `experiment_10` chain on gemma → moe → mxbai → qwen3 (PID 54675, `python -u` for line-buffered progress). gemma and moe complete (results in `results/exp10_gemma.txt` and `results/exp10_moe.txt`); mxbai and qwen3 still running.
 
