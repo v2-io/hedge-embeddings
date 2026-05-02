@@ -4,15 +4,15 @@
 
 Three small experimental permutations that would clarify the modal-axis-fails-permutation-at-n=10 finding. None are in scope for the bugfix track, but each is small and would strengthen the paper's empirical story if there's room.
 
-- [ ] **(0.A) Cross-model modal permutation.** Currently we run §4.6 null-hypothesis tests only on nomic-embed-text:v1.5 (modal LOO = 0.648, fails permutation at p = 0.21). Run the same tests on the other four models. Modal LOO is much higher elsewhere (moe 0.915, qwen3 0.855, mxbai 0.806, gemma 0.588), so modal probably passes cleanly on the three high-LOO models. **Narrative payoff:** converts §4.6 from "modal fails on the one model we tested" to "modal passes on three of five models; the two failures are exactly the two models with the weakest modal LOO, consistent with the §6 L7 small-n + saturated-LOO-as-test-input story." *Cost:* 2-line CLI modification + 4 model runs, ~15 min agent time. *Recommendation:* highest-leverage of the three; do this if we do any.
+- [x] **(0.A) Cross-model modal permutation.** Greenlit and run 2026-05-02. Status: data collection in progress (sequential `experiment_10` chain on gemma → moe → mxbai → qwen3). nomic-v1.5 baseline already on file (`results/exp10_nomic-v1.5.txt`). Findings to be added to §8 below as runs land.
 
-- [ ] **(0.B) Multi-n power analysis on modal.** Run the permutation test at n = 10, 12, 14, 17 by adding the seven author-estimated modal terms incrementally. Plot p-value (or "real-ρ percentile") against n. Concretely demonstrates the §6 L7 small-n saturation claim. *Cost:* modify experiment_10 to take a sample-size flag, rerun on nomic-v1.5 at four n values, ~10 min. Adds one small supplementary figure or table row. *Methodological caveat:* author-estimated values aren't psychometrically grounded, which is why they're excluded from the calibration target — but using them in a *power analysis* (not as a calibration target) is clean. Should be flagged in the prose.
+- [x] **(0.B) Multi-n power analysis on modal.** Greenlit and run 2026-05-02. Result: `experiment_10b_modal_power_analysis.py` (committed `fe320e0`), output in `results/exp10b_modal_power_analysis.txt`. See §8 below for findings and recommended figure design.
 
-- [ ] **(0.C) Permutation test on §4.4 ΔMAE.** Shuffle Mosteller labels, retrain modal axis on shuffled labels, redo the §4.4 concept-erasure measurement, build a null distribution of ΔMAE values under shuffled labels. If real-axis ΔMAE exceeds the 95th percentile of this distribution, it's a different functional-validation claim than the cosine-matched-random control — and one that may have *higher* power than the §4.6 LOO permutation because ΔMAE isn't rank-saturated. **Why it's interesting:** addresses Codex's reviewer-bait worry about the §4.4 z-scores looking inflated when matched-null std rounds to ~0. A clean permutation null on ΔMAE would be the natural alternative reporting form. *Cost:* modify experiment_11 to wrap per-axis training in a permutation loop, rerun on both models, ~30 min agent time.
+- [x] **(0.C) Label-permutation null on §4.4 ΔMAE.** Greenlit and run 2026-05-02. Result: `experiment_11b_label_permutation.py` (committed `5213a58`), mxbai output in `results/exp11b_label_perm_mxbai.txt`; qwen3 rerun in progress. See §8 below for findings.
 
-**Decision points before any of these run:**
-- Do they fit in the 10-page TACL limit, or are they companion-paper material? (0.A) probably fits as a sentence-level addition to §4.6; (0.B) needs a small supplementary figure; (0.C) probably needs a paragraph in §4.4.
-- Are they worth running before vs. after the §4.4 prose rewrite + trim pass? Argument for *before*: changes what §4.4 / §4.6 prose says. Argument for *after*: the trim pass might cut the room they'd land in anyway.
+- [x] **(0.D — added on Codex feedback) Lambda-sensitivity sweep.** Run 2026-05-02. Result: `experiment_12_lambda_sweep.py` (committed `5cd524a`), output in `results/exp12_lambda_sweep.txt`. Replaces §3.3's "informally verified" hand-wave with quantitative numbers. See §8.
+
+- [ ] **(0.E — added on Codex feedback) Evaluative non-epistemic control.** Greenlit 2026-05-02. Status: `experiment_10c_evaluative_control.py` exists but has a bug — Mosteller predicative LOO ρ comes back at −0.022 in the script when the canonical paper-validation pipeline reports 0.874 on the same data. Bug must be debugged before the EVALUATIVE control number is trustworthy. See §8 for the proposed adjective set and the bug status.
 
 ---
 
@@ -150,6 +150,160 @@ Six entries in `refs.bib` need verification — citations agent built them from 
 - [ ] **LOO concept erasure (v3 design upgrade).** Currently the §4.4 baseline uses in-sample-fit calibration; the rest of the paper uses LOO. A reviewer will ask why the inconsistency. Either rerun erasure with LOO calibration (~30 min experiment_11 modification + rerun on both models) or explicitly demote §4.4 to "mechanistic diagnostic" rather than generalization claim. The new Gemini audit says the in-sample choice is mathematically honest as written and the paper says so explicitly; but reviewer-eye-test is reviewer-eye-test.
 
 - [ ] **fig12 panel (a) YlGn_r colormap.** Borderline accessibility concern (deuteranopes lose green-end discrimination). Not fixed pending coauthor review. Easy swap to viridis_r or cividis if we want maximum safety.
+
+---
+
+## §8 — Findings from new experiments (need integration into paper)
+
+**Captured here so the agent summaries don't get orphaned before they make it into prose.** The committed `results/exp*.txt` files have the raw numbers; this section captures the interpretive prose, recommended figure designs, surprises, and integration notes from each agent's report-back. Update as new experiments land.
+
+---
+
+### §8.1 — 0.B Multi-n modal power analysis  (`results/exp10b_modal_power_analysis.txt`, commit `fe320e0`)
+
+**Headline:** quantitatively confirms §6 L7 small-n rank-saturation. The p-value for the modal permutation test collapses three orders of magnitude across n=10 → n=14, with the threshold for crossing p < 0.05 between n=10 and n=12.
+
+**Numbers (nomic-embed-text:v1.5, 1000 perms per row, seed 42):**
+
+| n  | Mosteller items | Estimated items | real LOO ρ | perm μ ± σ | perm 95th | %ile  | p-val  |
+|---:|----------------:|----------------:|-----------:|-----------:|----------:|------:|-------:|
+| 10 | 10              | 0               | +0.6485    | −0.264 ± 0.375 | 0.806 | 79.2  | 0.2080 |
+| 12 | 10              | 2               | +0.8561    | −0.208 ± 0.364 | 0.789 | 97.7  | 0.0230 |
+| 14 | 10              | 4               | +0.9636    | −0.166 ± 0.343 | 0.736 | 100.0 | <0.001 |
+| 17 | 10              | 7               | +0.9469    | −0.151 ± 0.310 | 0.671 | 100.0 | <0.001 |
+
+**Mechanisms (both move together):** real LOO ρ rises (0.65 → 0.96) AND permuted distribution narrows (95th 0.81 → 0.67). At n=14 the real ρ exceeds every one of 1000 permutations.
+
+**Surprise worth noting:** real ρ slightly *decreases* at n=17 (0.96 → 0.95), consistent with author-estimated values introducing label noise (e.g., several "perhaps/maybe/conceivably" items pinned at 38.5). Doesn't undermine the power-analysis reading because the permuted distribution narrows in parallel — but it's evidence that the n=17 row is bounded above by the noise floor of the author-estimated values rather than by intrinsic embedding signal.
+
+**Methodological flag for prose:** the n>10 rows use author-estimated modal values appended to the Mosteller-grounded set. These values are NOT psychometrically calibrated and are explicitly excluded from the load-bearing modal axis training elsewhere. Their use here is a *power analysis* of sample-size variation — testing the structural prediction that small n saturates rank-based metrics — and is NOT a calibration claim on the expanded set. Both the script header and the result file flag this.
+
+**Recommended supplementary figure (two panels, shared x-axis):**
+
+- **Panel (a) — p-value vs. n, log y-axis.** Plot p-value points; horizontal dashed lines at p=0.05 and p=0.01. Use an open-circle marker for n=10 and filled circles for n>10 to flag n=10 as the only Mosteller-calibrated row. Floor the log axis at a value that lets n=14, 17 zeros draw as down-arrows ("p < 1/1000") rather than as actual zeros.
+- **Panel (b) — permuted LOO ρ distribution (violin), with real ρ overlaid as star marker per n.** Visualizes the two simultaneous mechanisms: violins narrow with n; real-label star moves up the violin until it sits above every shuffled point.
+
+**Recommended caption (template):** "Modal permutation test power as a function of n. Bars/violins for n>10 include author-estimated modal values appended to the 10-item Mosteller-grounded set; these rows test the §6 L7 structural prediction and do not constitute a calibration claim. The p-value collapses from 0.21 (n=10) to <0.001 (n=14, 17), confirming that §4.6's modal non-significance is a small-sample power artifact rather than evidence of absent signal — independently corroborated by the §4.4 concept-erasure functional validation."
+
+**Where this lands in paper:** §6 L7 prose changes from a verbal claim ("rank-based tests have low power at n=10") to a quantitative one ("threshold for p<0.05 is between n=10 and n=12; small-sample regime is empirically demonstrated"). §4.6 modal-non-significance prose should reference this curve. Suggested as a supplementary figure if room; otherwise a single sentence in §4.6 with the four (n, p) values inline.
+
+**Cross-model robustness:** not run for 0.B; default agent decided the curve was clean enough on nomic-v1.5 alone. If reviewer pressure justifies, a single follow-up run on qwen3-embedding (already foregrounded in §4.4) would be the natural choice — output to `results/exp10b_modal_power_analysis_qwen3.txt`.
+
+---
+
+### §8.2 — 0.C Label-permutation null on §4.4 (mxbai)  (`results/exp11b_label_perm_mxbai.txt`, commit `5213a58`)
+
+**Headline:** the cosine-matched-direction null and the label-permutation null are answering different questions. The label-permutation null has wide std (1.7–4.3 on the headline pair) where the matched-random null's std rounds to ~0 at high cosine, and the predicative ↔ modal headline pair clears it with massive headroom (p = 0.002 both directions). This **directly addresses Codex's z-score-inflation worry far more cleanly than the §4.4 prose-level ratio reframing alone could**.
+
+**Per-pair table (mxbai-embed-large, K=500 permutations):**
+
+| A→B | cos | real ΔMAE | label-perm null μ±σ | percentile | p-val | matched-random verdict | label-perm verdict |
+|---|---:|---:|---:|---:|---:|---|---|
+| **Pred→Modal** | **0.88** | **+18.37** | **+1.22 ± 1.71** | **100.0** | **0.002** | functional | **functional** |
+| **Modal→Pred** | **0.88** | **+24.62** | **+3.27 ± 4.28** | **100.0** | **0.002** | functional | **functional** |
+| Pred→Adv  | 0.42 | +9.10  | +0.73 ± 1.35 | 99.6  | 0.006 | functional | functional |
+| Pred→NP   | 0.47 | +5.44  | +0.53 ± 0.73 | 100.0 | 0.002 | functional | functional |
+| Adv→NP    | 0.41 | +3.40  | +0.42 ± 0.59 | 99.8  | 0.004 | functional | functional |
+| Adv→Pred  | 0.42 | +3.36  | +0.60 ± 0.79 | 99.0  | 0.012 | trend      | trend |
+| Modal→Adv | 0.44 | +10.32 | +1.69 ± 2.34 | 98.6  | 0.016 | functional | trend |
+| Modal→NP  | 0.34 | +3.50  | +0.86 ± 1.09 | 96.0  | 0.042 | functional | trend |
+| NP→Adv    | 0.41 | +4.88  | +0.72 ± 1.52 | 97.0  | 0.032 | functional | trend |
+| Adv→Modal | 0.44 | +2.69  | +0.49 ± 0.70 | 98.8  | 0.014 | functional | trend |
+| NP→Pred   | 0.47 | +3.89  | +0.88 ± 1.61 | 93.4  | 0.068 | —          | — |
+| NP→Modal  | 0.34 | +1.36  | +0.58 ± 1.10 | 87.4  | 0.128 | trend      | — |
+
+**Cross-null agreement:** 5/12 functional under both nulls (the strongest cases), 4/12 only under matched-random, **0/12 only under label-perm**, 3/12 under neither. Label-perm is the more stringent null and **never disagrees directionally** with matched-random — when they disagree, label-perm is just the more conservative test.
+
+**Methodological note:** the label-permutation null and the matched-random null answer different questions. Matched-random asks: "is this *direction* more damaging than a random direction with the same overlap with v_B?" Label-permutation asks: "is the *probability content* of v_A doing the work, or just the geometric/structural properties that survive label shuffling?" Both are valid and complementary; pairs functional under both are the strongest functional-validation cases.
+
+**Where this lands in paper:** the §4.4 rewrite landed before 0.C ran, so the prose currently uses only the matched-random null with the ratio framing. Integration options:
+
+1. **Minimal:** add 1–2 sentences to §4.4 ¶2 noting that the headline pair clears a label-permutation null at p = 0.002 with wide null variance — addresses Codex's z-score-inflation worry directly.
+2. **Stronger:** rewrite §4.4 ¶2 to lead with both nulls. Frame as "two complementary nulls: matched-random for geometry, label-permutation for content; both clear on the headline pair." Costs ~3 lines net beyond minimal option.
+3. **Strongest:** drop the matched-random null to a parenthetical and lead with label-permutation. Probably overcorrection — matched-random is the standard control for this kind of test, and demoting it would invite a different reviewer objection.
+
+Recommendation: option 2. The two-nulls framing is genuinely the strongest version of the §4.4 result.
+
+**qwen3 status:** still running (PID 53967, 7+ min in, output buffered). Will populate `results/exp11b_label_perm_qwen3.txt` once it completes.
+
+---
+
+### §8.3 — 0.D Lambda-sensitivity sweep  (`results/exp12_lambda_sweep.txt`, commit `5cd524a`)
+
+**Headline:** ridge λ choice is robust across four decades. Worst-case LOO ρ drop relative to the paper's λ=0.1 reference is ≤ 0.072 across all (model × type × λ) cells of the swept grid (nomic-v1.5 + mxbai-embed-large × four within-type axes × five λ values).
+
+**Numbers (LOO ρ per λ):**
+
+**nomic-embed-text:v1.5 (768d):**
+
+| Type | λ=0.001 | λ=0.01 | λ=0.1 (ref) | λ=1 | λ=10 |
+|---|---:|---:|---:|---:|---:|
+| Predicative      (n=13) | 0.946 | 0.901 | **0.874** | 0.835 | 0.802 |
+| Frequency adverb (n=19) | 0.956 | 0.944 | **0.923** | 0.867 | 0.856 |
+| Noun phrase      (n=11) | 0.900 | 0.918 | **0.936** | 0.936 | 0.936 |
+| Modal            (n=10) | 0.867 | 0.770 | **0.648** | 0.673 | 0.636 |
+
+**mxbai-embed-large (1024d):**
+
+| Type | λ=0.001 | λ=0.01 | λ=0.1 (ref) | λ=1 | λ=10 |
+|---|---:|---:|---:|---:|---:|
+| Predicative      (n=13) | 0.951 | 0.940 | **0.912** | 0.930 | 0.902 |
+| Frequency adverb (n=19) | 0.851 | 0.926 | **0.905** | 0.879 | 0.840 |
+| Noun phrase      (n=11) | 0.827 | 0.855 | **0.855** | 0.855 | 0.836 |
+| Modal            (n=10) | 0.903 | 0.903 | **0.806** | 0.833 | 0.869 |
+
+**Surprises worth flagging in §3.3:**
+
+- **λ=0.1 is intentionally on the conservative side, not at the optimum.** On 6 of 8 (model × type) cells, λ=0.001 or λ=0.01 yields a *higher* LOO ρ than λ=0.1. A reviewer probing "why λ=0.1?" needs an honest answer: chosen for fairness/comparability across cells, not optimized.
+
+- **mxbai modal is sensitive in the opposite direction.** LOO ρ is 0.903 at λ=0.001 vs. 0.806 at λ=0.1 (a +0.097 gain by *decreasing* λ 100×), recovering to 0.869 at λ=10. The reference λ=0.1 sits at the *minimum* across the sweep for this cell. Same pattern, weaker, on nomic modal. Modal at n=10 is the cell where regularizer choice does the most rank shuffling — consistent with §6 L7's small-n saturation framing.
+
+- **Noun phrase on nomic shows the opposite pattern** — LOO ρ rises monotonically with λ from 0.001 to 1 (then plateaus). For that one cell, the paper's λ=0.1 is at or above the LOO optimum.
+
+**Where this lands in paper — and what NOT to say:** §3.3 currently reads "informally verified across λ ∈ {0.001, 0.01, 0.1, 1, 10}" near line 125. The replacement must NOT summarize the result as just "stable" — that is true but understates what the data says, and Codex flagged this directly. The honest two-part claim is:
+
+  1. **Stability:** LOO Spearman ρ stays within 0.072 of the λ=0.1 reference across the full four-decade sweep on both models × four within-type axes (worst case: nomic predicative, 0.874 at λ=0.1 → 0.802 at λ=10).
+
+  2. **Asymmetry:** On 6 of 8 (model × type) cells, *smaller* λ would yield a higher LOO ρ than λ=0.1. The strongest such cell is mxbai modal (LOO ρ 0.806 at λ=0.1 → 0.903 at λ=0.001 → 0.869 at λ=10; reference sits at the minimum). Modal at n=10 is also the cell where regularizer choice does the most rank shuffling, consistent with the §6 L7 small-n saturation framing.
+
+The honest framing for §3.3 prose is therefore: *the reference λ=0.1 was chosen for cross-cell comparability rather than per-cell optimum, and the sweep confirms the choice is robust within ±0.07 LOO ρ across the order of magnitude tested while flagging that several cells (notably mxbai modal, n=10) would improve with smaller λ in a per-cell tuning regime.* Cross-reference to §6 L7 on the modal sensitivity.
+
+If the trim budget allows, this could be a single 2–3 sentence paragraph addition to §3.3. If not, fold the asymmetry into a footnote or §6 L7 forward-reference — but do NOT drop it; a reviewer who sweeps λ themselves will find the asymmetry and ask why we didn't disclose it.
+
+---
+
+### §8.4 — 0.A Cross-model modal permutation  (in progress)
+
+**Status as of 2026-05-02:** sequential `experiment_10` chain on gemma → moe → mxbai → qwen3 is running directly in the main repo (PID 54675, with `python -u` for line-buffered progress). gemma's predicative axis already passes permutation at the 99.5th percentile (real LOO ρ = 0.874, p = 0.005) — same as nomic-v1.5. Awaiting the modal-axis numbers across all four models.
+
+**Hypothesis being tested:** modal permutation passes cleanly on the three high-LOO models (moe 0.92, mxbai 0.81, qwen3 0.86), and likely fails on gemma (modal LOO 0.59) similarly to nomic-v1.5 (modal LOO 0.65). If true, converts §4.6 from "modal fails on the one model we tested" to "modal passes on 3/5 (or 4/5) models; failures correlate with weakest modal LOO, exactly as §6 L7 predicts."
+
+**Reporting target once data lands:** one row per model in a small summary table — Modal LOO ρ | Modal real-rank percentile (perm) | Modal permutation p | Random-label p | Non-epistemic mixed-set ρ. Plus a 1–3 sentence diagnostic on whether the prediction held.
+
+**Integration target in paper:** likely 1–2 sentences in §4.6 modal-axis paragraph plus possibly one row added to a table; pairs naturally with §8.1 (multi-n power analysis on nomic-v1.5).
+
+---
+
+### §8.5 — 0.E Evaluative non-epistemic control  (BLOCKED — debugging)
+
+**Goal:** replace the original `PURE_NON_EPISTEMIC` set in `experiment_10_null_hypothesis.py` (lines 143–157) — flagged by Codex for grammatical mismatch — with a grammatically clean evaluative set whose semantics are uniformly non-probabilistic.
+
+**Proposed adjective set (13 items, all *that*-complement-grammatical, scrambled-arbitrary labels in the 20–80 range so they do NOT track natural evaluative valence):**
+
+```python
+EVALUATIVE = {
+    "tragic": 60, "regrettable": 35, "unfortunate": 75, "disappointing": 20,
+    "concerning": 50, "troubling": 80, "interesting": 30, "noteworthy": 65,
+    "fitting": 25, "encouraging": 70, "satisfying": 40, "fortunate": 55,
+    "wonderful": 45,
+}
+```
+
+**Status as of 2026-05-02:** `experiment_10c_evaluative_control.py` was written and run, but produced anomalous numbers — Mosteller predicative (positive control, expected LOO ρ ≈ 0.874) came back at LOO ρ = −0.022, which is impossible against the canonical `paper_validation.py` baseline. **Bug in the standalone script, not in the paper's data.** The script's `train_axis` was first written without the std-normalization in `medians_c`; I added the fix (`(medians - mean()) / std()`) but the rerun produced identical numbers, suggesting either (a) the fix didn't take, (b) there's a second discrepancy somewhere (likely in the embed pipeline — single vs. batch call to Ollama, dtype handling, etc.), or (c) something more subtle.
+
+**Next step:** debug `experiment_10c_evaluative_control.py` against `paper_validation.py` byte-by-byte until the Mosteller predicative number comes back in the 0.85–0.88 range. THEN trust the EVALUATIVE number. Do NOT integrate the EVALUATIVE LOO ρ into §6 L4 or anywhere else in the paper until the positive control matches.
+
+**Integration target once unblocked:** §6 L4 prose update — the evaluative control LOO ρ replaces the current "PURE_NON_EPISTEMIC LOO ρ = 0.31 against author-assigned arbitrary labels" claim. The MIXED set (`NON_EPISTEMIC_ADJECTIVES`) stays unchanged in the paper as the epistemic-leakage probe.
 
 ---
 
