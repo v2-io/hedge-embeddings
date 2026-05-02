@@ -1,0 +1,187 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 10b: Modal Permutation-Test Power Analysis             ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: nomic-embed-text:v1.5                                     ║
+║                                                                    ║
+║  Operationalizes §6 L7: walks the modal permutation test out of    ║
+║  the small-sample rank-saturation regime by appending up to 7      ║
+║  author-estimated modal terms to the 10-item Mosteller set.        ║
+║                                                                    ║
+║  CAVEAT: author-estimated values are NOT Mosteller-calibrated.     ║
+║  Used here ONLY for sample-size variation in a structural power    ║
+║  analysis — NOT for any calibration claim. See §6 L8.              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 768
+
+Modal expression composition:
+  Mosteller-grounded (n=10):
+    certainly                99.6  [Mosteller-calibrated]
+    almost certainly         90.2  [Mosteller-calibrated]
+    very likely              87.5  [Mosteller-calibrated]
+    likely                   71.1  [Mosteller-calibrated]
+    probably                 70.2  [Mosteller-calibrated]
+    very probably            89.7  [Mosteller-calibrated]
+    possibly                 38.5  [Mosteller-calibrated]
+    unlikely                 17.2  [Mosteller-calibrated]
+    very unlikely             5.0  [Mosteller-calibrated]
+    improbably               12.5  [Mosteller-calibrated]
+  Author-estimated pool (n=7):
+    conceivably              38.5  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+    definitely               99.6  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+    perhaps                  38.5  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+    maybe                    38.5  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+    presumably               70.2  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+    undoubtedly              95.0  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+    arguably                 55.0  [AUTHOR-ESTIMATED — NOT Mosteller-calibrated]
+
+  Sample sizes swept: [10, 12, 14, 17]
+  Permutations per n: 1000
+  RNG seed:           42
+
+Author-estimated inclusion order (seeded permutation, seed=42):
+  position 1: conceivably (38.5)
+  position 2: definitely (99.6)
+  position 3: undoubtedly (95.0)
+  position 4: perhaps (38.5)
+  position 5: presumably (70.2)
+  position 6: maybe (38.5)
+  position 7: arguably (55.0)
+
+══════════════════════════════════════════════════════════════════════════════
+n = 10  (10 Mosteller + 0 author-estimated)
+──────────────────────────────────────────────────────────────────────────────
+  Modal expressions used:
+    [Mosteller       ] certainly               99.6
+    [Mosteller       ] almost certainly        90.2
+    [Mosteller       ] very likely             87.5
+    [Mosteller       ] likely                  71.1
+    [Mosteller       ] probably                70.2
+    [Mosteller       ] very probably           89.7
+    [Mosteller       ] possibly                38.5
+    [Mosteller       ] unlikely                17.2
+    [Mosteller       ] very unlikely            5.0
+    [Mosteller       ] improbably              12.5
+
+  Real-label LOO ρ:        +0.6485
+  Permuted LOO ρ mean:     -0.2636
+  Permuted LOO ρ std:      0.3753
+  Permuted |ρ| max:        0.9758
+  Permuted |ρ| 95th %ile:  0.8061
+  Permuted |ρ| 99th %ile:  0.8789
+  Real-rank percentile:    79.2th
+  p-value (two-sided):     0.2080
+
+══════════════════════════════════════════════════════════════════════════════
+n = 12  (10 Mosteller + 2 author-estimated)
+──────────────────────────────────────────────────────────────────────────────
+  Modal expressions used:
+    [Mosteller       ] certainly               99.6
+    [Mosteller       ] almost certainly        90.2
+    [Mosteller       ] very likely             87.5
+    [Mosteller       ] likely                  71.1
+    [Mosteller       ] probably                70.2
+    [Mosteller       ] very probably           89.7
+    [Mosteller       ] possibly                38.5
+    [Mosteller       ] unlikely                17.2
+    [Mosteller       ] very unlikely            5.0
+    [Mosteller       ] improbably              12.5
+    [AUTHOR-ESTIMATED] conceivably             38.5
+    [AUTHOR-ESTIMATED] definitely              99.6
+
+  Real-label LOO ρ:        +0.8561
+  Permuted LOO ρ mean:     -0.2082
+  Permuted LOO ρ std:      0.3639
+  Permuted |ρ| max:        0.9719
+  Permuted |ρ| 95th %ile:  0.7895
+  Permuted |ρ| 99th %ile:  0.8928
+  Real-rank percentile:    97.7th
+  p-value (two-sided):     0.0230
+
+══════════════════════════════════════════════════════════════════════════════
+n = 14  (10 Mosteller + 4 author-estimated)
+──────────────────────────────────────────────────────────────────────────────
+  Modal expressions used:
+    [Mosteller       ] certainly               99.6
+    [Mosteller       ] almost certainly        90.2
+    [Mosteller       ] very likely             87.5
+    [Mosteller       ] likely                  71.1
+    [Mosteller       ] probably                70.2
+    [Mosteller       ] very probably           89.7
+    [Mosteller       ] possibly                38.5
+    [Mosteller       ] unlikely                17.2
+    [Mosteller       ] very unlikely            5.0
+    [Mosteller       ] improbably              12.5
+    [AUTHOR-ESTIMATED] conceivably             38.5
+    [AUTHOR-ESTIMATED] definitely              99.6
+    [AUTHOR-ESTIMATED] undoubtedly             95.0
+    [AUTHOR-ESTIMATED] perhaps                 38.5
+
+  Real-label LOO ρ:        +0.9636
+  Permuted LOO ρ mean:     -0.1656
+  Permuted LOO ρ std:      0.3427
+  Permuted |ρ| max:        0.8641
+  Permuted |ρ| 95th %ile:  0.7359
+  Permuted |ρ| 99th %ile:  0.8288
+  Real-rank percentile:    100.0th
+  p-value (two-sided):     0.0000
+
+══════════════════════════════════════════════════════════════════════════════
+n = 17  (10 Mosteller + 7 author-estimated)
+──────────────────────────────────────────────────────────────────────────────
+  Modal expressions used:
+    [Mosteller       ] certainly               99.6
+    [Mosteller       ] almost certainly        90.2
+    [Mosteller       ] very likely             87.5
+    [Mosteller       ] likely                  71.1
+    [Mosteller       ] probably                70.2
+    [Mosteller       ] very probably           89.7
+    [Mosteller       ] possibly                38.5
+    [Mosteller       ] unlikely                17.2
+    [Mosteller       ] very unlikely            5.0
+    [Mosteller       ] improbably              12.5
+    [AUTHOR-ESTIMATED] conceivably             38.5
+    [AUTHOR-ESTIMATED] definitely              99.6
+    [AUTHOR-ESTIMATED] undoubtedly             95.0
+    [AUTHOR-ESTIMATED] perhaps                 38.5
+    [AUTHOR-ESTIMATED] presumably              70.2
+    [AUTHOR-ESTIMATED] maybe                   38.5
+    [AUTHOR-ESTIMATED] arguably                55.0
+
+  Real-label LOO ρ:        +0.9469
+  Permuted LOO ρ mean:     -0.1514
+  Permuted LOO ρ std:      0.3103
+  Permuted |ρ| max:        0.8864
+  Permuted |ρ| 95th %ile:  0.6705
+  Permuted |ρ| 99th %ile:  0.7758
+  Real-rank percentile:    100.0th
+  p-value (two-sided):     0.0000
+
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY TABLE  —  Modal permutation-test power vs. sample size
+══════════════════════════════════════════════════════════════════════════════
+
+    n  Most.  Est.    real ρ    perm mean ± std  perm 95%    %ile    p-val
+  ──────────────────────────────────────────────────────────────────────────
+   10     10     0   +0.6485     -0.264 ± 0.375    0.8061   79.2th   0.2080
+   12     10     2   +0.8561     -0.208 ± 0.364    0.7895   97.7th   0.0230
+   14     10     4   +0.9636     -0.166 ± 0.343    0.7359  100.0th   0.0000
+   17     10     7   +0.9469     -0.151 ± 0.310    0.6705  100.0th   0.0000
+
+  Columns:
+    n         total modal items in the regression
+    Most.     count of Mosteller-grounded items (max 10)
+    Est.      count of AUTHOR-ESTIMATED items appended (max 7)
+    real ρ    LOO Spearman ρ on real labels
+    perm      mean ± std of LOO ρ over 1000 label permutations
+    perm 95%  95th percentile of |permuted ρ|
+    %ile      where real |ρ| sits in the permuted |ρ| distribution
+    p-val     fraction of permutations with |ρ| ≥ |real ρ|
+
+  REMINDER: rows with n > 10 include AUTHOR-ESTIMATED modal values.
+  Those rows do NOT support any calibration claim. They test the
+  STRUCTURAL prediction that small-n saturates rank-based metrics
+  (§6 L7) by varying n with all other pipeline elements held fixed.
+
