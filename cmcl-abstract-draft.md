@@ -80,7 +80,7 @@ Mean zero-shot |ρ| = 0.928 across all language-frame combinations. Per-language
 
 ## 4. Discussion
 
-Our results demonstrate that sentence embedding models learn calibrated probability structure as an emergent geometric property — extending the truth-direction findings (Marks & Tegmark, 2023; Yu et al., 2025) from binary factuality to continuously graded epistemic modality, and from English to a cross-linguistic universal.
+Our results demonstrate that sentence embedding models learn calibrated probability structure as an emergent geometric property — extending the truth-direction findings (Marks & Tegmark, 2023; Yu et al., 2025) from binary factuality to continuously graded epistemic modality, with preliminary evidence of cross-linguistic transfer.
 
 The structure is **type-specific**: different syntactic constructions have different probability axes, forming a 4-dimensional epistemic subspace (analogous to the multi-dimensional truth cones of Yu et al., 2025). The four axes are moderately correlated (cosine 0.25–0.81), with predicative-modal alignment increasing with model size — suggesting larger models develop a more unified probability representation.
 
@@ -104,7 +104,7 @@ Bürger, L., et al. (2024). Truth is universal: Robust detection of lies in LLMs
 
 Conneau, A., et al. (2018). What you can cram into a single $&!#* vector. In *Proceedings of ACL* (pp. 2126–2136).
 
-Ji, Z., et al. (2025). Calibrating verbal uncertainty as a linear feature to reduce hallucinations. *arXiv:2501.07929*.
+Ji, Z., et al. (2025). Calibrating verbal uncertainty as a linear feature to reduce hallucinations. *Proceedings of EMNLP*, 3769–3793. *arXiv:2503.14477*.
 
 Lassiter, D. (2017). *Graded Modality*. Oxford University Press.
 
@@ -126,6 +126,6 @@ Vogel, T., et al. (2022). Systematic review of verbal probability expressions.
 
 Wintle, B., et al. (2019). Verbal probabilities: Very likely to be somewhat more confusing than numbers. *PLoS ONE*, 14(4), e0213522.
 
-Yu, S., et al. (2025). From directions to cones: Exploring multidimensional representations of propositional facts in LLMs. *arXiv:2501.14457*.
+Yu, S., et al. (2025). From directions to cones: Exploring multidimensional representations of propositional facts in LLMs. *Proceedings of COLM*. *arXiv:2505.21800*.
 
 Zhou, K., et al. (2023). Navigating the grey area: How expressions of uncertainty and overconfidence affect language models. *arXiv:2302.13439*.

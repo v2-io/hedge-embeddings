@@ -282,17 +282,9 @@ def main():
     print("═" * 78)
     print()
 
-    # Find minimum dimension where LOO ρ stays above 0.7 for all groups
+    # Find smallest dimension where LOO ρ stays above threshold for all groups
     for threshold in [0.9, 0.8, 0.7, 0.6]:
-        min_dim = full_dim
-        for gname in GROUPS:
-            for d in reversed(truncations):
-                if all_results[gname][d]["loo_rho"] >= threshold:
-                    if d < min_dim:
-                        min_dim = d
-                    break
-        # Actually: find smallest d where ALL groups meet the threshold
-        for d in truncations:
+        for d in sorted(truncations):
             if all(all_results[gname][d]["loo_rho"] >= threshold for gname in GROUPS):
                 print(f"  LOO ρ ≥ {threshold:.1f} for all groups: {d}d minimum")
                 break

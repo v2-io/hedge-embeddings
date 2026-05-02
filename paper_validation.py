@@ -5,7 +5,6 @@ This script produces the statistical rigor needed for the paper:
 
 1. BASELINES — Compare supervised ridge axis against:
    - Random direction (mean of 100 random unit vectors)
-   - Phrase-lookup (Mosteller median directly — upper bound for known phrases)
    - Mean-difference direction (unsupervised centroid)
    - PCA PC1 (unsupervised, best single component)
    - Supervised ridge (our method)
