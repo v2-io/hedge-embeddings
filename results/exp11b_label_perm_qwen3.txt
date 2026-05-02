@@ -1,0 +1,122 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 11b: Label-Permutation Null for Concept Erasure        ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: qwen3-embedding                                           ║
+║  K (permutations per pair): 500                                     ║
+║                                                                    ║
+║  Shuffle Mosteller medians among type-A expressions; retrain v_A   ║
+║  on shuffled labels (same template, same ridge protocol).  Erase   ║
+║  v_A_shuffled from type-B diffs; decode with v_B's REAL calibrated ║
+║  triple.  Compare real ΔMAE against the shuffled-null distribution.║
+║                                                                    ║
+║  Tests: is the *probability content* of v_A doing work — beyond    ║
+║  the geometric/structural properties that survive label shuffling? ║
+║                                                                    ║
+║  Complementary to experiment_11.py's cosine-matched random null —  ║
+║  not a replacement.  The two nulls answer different questions.     ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 4096
+
+══════════════════════════════════════════════════════════════════════════════
+AXIS TRAINING (real labels, in-sample fit per type)
+══════════════════════════════════════════════════════════════════════════════
+  Type            n     in-sample ρ    in-sample MAE
+  Predicative    13         +0.9011            5.470
+  Adverbial      19         +0.9158            4.718
+  NounPhrase     11         +0.9636            5.502
+  Modal          10         +0.9515            5.175
+
+══════════════════════════════════════════════════════════════════════════════
+LABEL-PERMUTATION NULL: PER-PAIR PROCESSING
+══════════════════════════════════════════════════════════════════════════════
+  500 permutations per pair × 12 pairs.  Eraser v_A retrained on
+  shuffled type-A labels each permutation; v_B's calibrated triple is real.
+
+  Pair                            │ progress
+  ────────────────────────────────┼──────────────────
+  Predicative→Adverbial           │ K=500  141.3s  ΔMAE_real=+10.31  null μ=+0.91±1.43  p=0.0040
+  Predicative→NounPhrase          │ K=500  132.3s  ΔMAE_real=+12.95  null μ=+1.31±1.65  p=0.0020
+  Predicative→Modal               │ K=500  135.7s  ΔMAE_real=+17.36  null μ=+1.28±1.87  p=0.0020
+  Adverbial→Predicative           │ K=500  148.3s  ΔMAE_real= +6.23  null μ=+0.42±0.65  p=0.0020
+  Adverbial→NounPhrase            │ K=500  146.1s  ΔMAE_real= +5.50  null μ=+0.55±0.76  p=0.0020
+  Adverbial→Modal                 │ K=500  147.1s  ΔMAE_real= +4.36  null μ=+0.27±0.45  p=0.0020
+  NounPhrase→Predicative          │ K=500  147.9s  ΔMAE_real=+17.47  null μ=+1.15±1.97  p=0.0020
+  NounPhrase→Adverbial            │ K=500  149.5s  ΔMAE_real= +7.66  null μ=+0.68±0.91  p=0.0020
+  NounPhrase→Modal                │ K=500  150.3s  ΔMAE_real=+11.48  null μ=+0.80±1.19  p=0.0020
+  Modal→Predicative               │ K=500  148.9s  ΔMAE_real=+20.49  null μ=+2.67±3.88  p=0.0020
+  Modal→Adverbial                 │ K=500  148.3s  ΔMAE_real=+12.70  null μ=+2.08±2.97  p=0.0120
+  Modal→NounPhrase                │ K=500  148.9s  ΔMAE_real=+12.72  null μ=+1.87±2.46  p=0.0040
+
+  Total label-perm runtime: 1744.7s (29.1 min)
+
+══════════════════════════════════════════════════════════════════════════════
+LABEL-PERMUTATION NULL: PER-PAIR RESULTS
+══════════════════════════════════════════════════════════════════════════════
+
+  A→B                          cos |  real ΔMAE         null μ±σ |    pct   p-val | matched        label-perm              
+  -------------------------------------------------------------------------------------------------------------------------
+  Predicative→Adverbial     +0.444 |    +10.313       +0.91±1.43 |  99.8%  0.0040 | ↑↑ functional  ↑↑ label-perm functional
+  Predicative→NounPhrase    +0.770 |    +12.953       +1.31±1.65 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  Predicative→Modal         +0.793 |    +17.360       +1.28±1.87 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  Adverbial→Predicative     +0.444 |     +6.233       +0.42±0.65 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  Adverbial→NounPhrase      +0.416 |     +5.503       +0.55±0.76 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  Adverbial→Modal           +0.452 |     +4.359       +0.27±0.45 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  NounPhrase→Predicative    +0.770 |    +17.467       +1.15±1.97 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  NounPhrase→Adverbial      +0.416 |     +7.664       +0.68±0.91 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  NounPhrase→Modal          +0.656 |    +11.476       +0.80±1.19 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  Modal→Predicative         +0.793 |    +20.489       +2.67±3.88 | 100.0%  0.0020 | ↑↑ functional  ↑↑ label-perm functional
+  Modal→Adverbial           +0.452 |    +12.698       +2.08±2.97 |  99.0%  0.0120 | ↑↑ functional  ↑ label-perm trend      
+  Modal→NounPhrase          +0.656 |    +12.716       +1.87±2.46 |  99.8%  0.0040 | ↑↑ functional  ↑↑ label-perm functional
+
+══════════════════════════════════════════════════════════════════════════════
+CROSS-NULL AGREEMENT
+══════════════════════════════════════════════════════════════════════════════
+
+  Pairs evaluated: 12
+
+  Matched-random null (MAE-side, exp11):
+    ↑↑ functional:        12 / 12
+    ↑ trend:               0 / 12
+
+  Label-permutation null (this experiment):
+    ↑↑ functional (p≤.01):  11 / 12
+    ↑ trend (p≤.05):         1 / 12
+
+  Cross-null per-pair agreement:
+    Functional under both nulls:    11 / 12
+    Functional only under matched:   1 / 12
+    Functional only under label-pm:  0 / 12
+    Functional under neither:        0 / 12
+
+  Pairs functional under BOTH nulls:
+    Adverbial → Modal
+    Adverbial → NounPhrase
+    Adverbial → Predicative
+    Modal → NounPhrase
+    Modal → Predicative
+    NounPhrase → Adverbial
+    NounPhrase → Modal
+    NounPhrase → Predicative
+    Predicative → Adverbial
+    Predicative → Modal
+    Predicative → NounPhrase
+
+  Pairs functional only under matched-random:
+    Modal → Adverbial
+
+  Headline pair (predicative ↔ modal, both directions):
+    Predicative  → Modal         cos=+0.793  real ΔMAE=+17.36  null μ±σ=+1.28±1.87  p=0.0020
+    Modal        → Predicative   cos=+0.793  real ΔMAE=+20.49  null μ±σ=+2.67±3.88  p=0.0020
+
+  Interpretation:
+    The label-permutation null asks whether the *probability content*
+    of v_A is the load-bearing input to the cross-type degradation,
+    with the template subspace, regularizer, and diff-vector geometry
+    held fixed.  The matched-random null in experiment_11.py asks
+    whether the *direction* of v_A is more damaging than a random
+    direction with the same geometric overlap with v_B.  The two
+    nulls answer different questions; pairs functional under BOTH
+    are the strongest functional-validation cases.
+

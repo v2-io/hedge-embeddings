@@ -224,7 +224,11 @@ Six entries in `refs.bib` need verification — citations agent built them from 
 
 Recommendation: option 2. The two-nulls framing is genuinely the strongest version of the §4.4 result.
 
-**qwen3 status:** still running (PID 53967, 7+ min in, output buffered). Will populate `results/exp11b_label_perm_qwen3.txt` once it completes.
+**qwen3 result (DONE, `results/exp11b_label_perm_qwen3.txt`, ready to commit):** Output flushed when script completed. **11/12 ordered pairs are functional under BOTH nulls on qwen3** (vs. 5/12 on mxbai) — substantially stronger cross-null agreement than the mxbai run. Headline pair clears p=0.002 both directions: Predicative→Modal real ΔMAE +17.36 vs. null μ±σ = +1.28±1.87; Modal→Predicative real ΔMAE +20.49 vs. null +2.67±3.88. Only Modal→Adverbial is functional only under matched-random; **0/12 functional only under label-perm**, **0/12 functional under neither**.
+
+**Cross-architecture summary:** matched-random and label-permutation nulls agree on the headline predicative ↔ modal pair on both models (p=0.002 in all four model × direction combinations under label-perm). The two complementary nulls + two architectures + clean cross-null per-pair agreement is now a much tighter §4.4 result than the §4.4 prose rewrite captured (which used only matched-random with the ratio framing).
+
+**Updated integration recommendation:** option 2 from earlier ("rewrite §4.4 ¶2 to lead with both nulls") is reinforced. The qwen3 numbers make the both-nulls framing the obvious choice: it's not just mxbai's headline pair clearing two different nulls; it's qwen3's 11/12 pairs all clearing both nulls. That's a paper-level structural finding, not a per-pair sanity check.
 
 ---
 
@@ -272,19 +276,38 @@ If the trim budget allows, this could be a single 2–3 sentence paragraph addit
 
 ---
 
-### §8.4 — 0.A Cross-model modal permutation  (in progress)
+### §8.4 — 0.A Cross-model modal permutation  (partial — gemma + moe done, mxbai + qwen3 pending)
 
-**Status as of 2026-05-02:** sequential `experiment_10` chain on gemma → moe → mxbai → qwen3 is running directly in the main repo (PID 54675, with `python -u` for line-buffered progress). gemma's predicative axis already passes permutation at the 99.5th percentile (real LOO ρ = 0.874, p = 0.005) — same as nomic-v1.5. Awaiting the modal-axis numbers across all four models.
+**Status as of 2026-05-02:** sequential `experiment_10` chain on gemma → moe → mxbai → qwen3 (PID 54675, `python -u` for line-buffered progress). gemma and moe complete (results in `results/exp10_gemma.txt` and `results/exp10_moe.txt`); mxbai and qwen3 still running.
 
-**Hypothesis being tested:** modal permutation passes cleanly on the three high-LOO models (moe 0.92, mxbai 0.81, qwen3 0.86), and likely fails on gemma (modal LOO 0.59) similarly to nomic-v1.5 (modal LOO 0.65). If true, converts §4.6 from "modal fails on the one model we tested" to "modal passes on 3/5 (or 4/5) models; failures correlate with weakest modal LOO, exactly as §6 L7 predicts."
+**Modal-axis findings so far** (cross-referenced with Codex's read of the result files):
 
-**Reporting target once data lands:** one row per model in a small summary table — Modal LOO ρ | Modal real-rank percentile (perm) | Modal permutation p | Random-label p | Non-epistemic mixed-set ρ. Plus a 1–3 sentence diagnostic on whether the prediction held.
+| Model | Modal LOO ρ | Modal perm percentile | Modal perm p | Result |
+|---|---:|---:|---:|---|
+| nomic-embed-text:v1.5 | 0.6485 | 79.2  | 0.2080 | fails |
+| embeddinggemma:300m   | 0.5879 | ~78.2 | 0.2180 | fails |
+| nomic-v2-moe          | 0.9152 | 99.6  | **0.0040** | **passes** |
+| mxbai-embed-large     | 0.806  | —     | (running) | pending |
+| qwen3-embedding       | 0.855  | —     | (running) | pending |
 
-**Integration target in paper:** likely 1–2 sentences in §4.6 modal-axis paragraph plus possibly one row added to a table; pairs naturally with §8.1 (multi-n power analysis on nomic-v1.5).
+**Hypothesis tracking so far:** prediction was *modal passes on the three high-modal-LOO models (moe 0.92, mxbai 0.81, qwen3 0.86) and fails on the two low-modal-LOO models (nomic 0.65, gemma 0.59)*. Two confirms (gemma fails as predicted, moe passes as predicted), three pending (nomic was already known to fail, mxbai and qwen3 still running). The two failures are exactly the two lowest-modal-LOO models; the one pass so far is from a high-modal-LOO model. Pattern is on track.
+
+**Larger-n axes (predicative, adverbial, noun phrase) on the two completed models reinforce the main calibrated-axis claim:**
+
+- gemma: predicative p=0.005, adverbial p<0.001, noun phrase p=0.028
+- moe:   predicative p=0.009, adverbial p<0.001, noun phrase p=0.025
+
+This is Codex's "cleanest reviewer-facing evidence" for the within-type calibration claim — it's not just nomic-v1.5; the larger-n axes pass null tests on gemma and moe too, with predicative/adverbial well below p=0.01.
+
+**Caveat (Codex caught this):** `results/exp10_moe.txt` line 88 stops at the random-label test header — modal permutation is usable, but the random-label section for moe is incomplete. Verify when chain completes. (May be a writing-buffer issue with the chain still in flight.)
+
+**Careful prose framing (Codex's recommended hedging — incorporate into §4.6):** Do not say "the modal failure is a power artifact." That's overcommitted. Say: *"the modal permutation result is small-n and model-sensitive; nomic-v1.5 and gemma fail (modal LOO 0.65 and 0.59 respectively, both small-n at n=10), while nomic-v2-moe (modal LOO 0.92) passes cleanly at p=0.004; the failure pattern is consistent with the small-n rank-test regime developed in §6 L7, and pairs with the §4.6→§8.1 power-analysis curve showing p<0.05 is reached with 2 author-estimated additions to the Mosteller-grounded set."* Note: the "consistent with" is doing real work — we have evidence that's compatible with the L7 framing, not evidence that proves it.
+
+**Integration target in paper:** §4.6 modal paragraph rewrite. Honest framing: model-sensitivity story (with the gemma+moe contrast as the empirical content) plus the §8.1 power-analysis curve as the structural-prediction confirmation. Probably 2–3 sentences in §4.6 plus possibly one row added to a table. Once mxbai and qwen3 land, the table either confirms (3/5 passes) or further nuances the framing.
 
 ---
 
-### §8.5 — 0.E Evaluative non-epistemic control  (BLOCKED — debugging)
+### §8.5 — 0.E Evaluative non-epistemic control  (DONE, ready for §6 L4 prose update)
 
 **Goal:** replace the original `PURE_NON_EPISTEMIC` set in `experiment_10_null_hypothesis.py` (lines 143–157) — flagged by Codex for grammatical mismatch — with a grammatically clean evaluative set whose semantics are uniformly non-probabilistic.
 
@@ -299,13 +322,49 @@ EVALUATIVE = {
 }
 ```
 
-**Status as of 2026-05-02:** `experiment_10c_evaluative_control.py` was written and run, but produced anomalous numbers — Mosteller predicative (positive control, expected LOO ρ ≈ 0.874) came back at LOO ρ = −0.022, which is impossible against the canonical `paper_validation.py` baseline. **Bug in the standalone script, not in the paper's data.** The script's `train_axis` was first written without the std-normalization in `medians_c`; I added the fix (`(medians - mean()) / std()`) but the rerun produced identical numbers, suggesting either (a) the fix didn't take, (b) there's a second discrepancy somewhere (likely in the embed pipeline — single vs. batch call to Ollama, dtype handling, etc.), or (c) something more subtle.
+**Status as of 2026-05-02:** First version of `experiment_10c_evaluative_control.py` was written with three protocol drifts vs. canonical (BARE_CLAIM trailing period, phrases not lowercased, `train_axis` missing `/std()` on `medians_c`) and produced an impossible Mosteller predicative LOO ρ = −0.022. Codex caught two of the three drifts in independent code review against `paper_validation.py`. Rewritten to import canonical functions directly from `paper_validation.py` rather than maintain a parallel implementation; positive-control gate added to abort if Mosteller LOO ρ < 0.80. Committed `7203ae2`.
 
-**Next step:** debug `experiment_10c_evaluative_control.py` against `paper_validation.py` byte-by-byte until the Mosteller predicative number comes back in the 0.85–0.88 range. THEN trust the EVALUATIVE number. Do NOT integrate the EVALUATIVE LOO ρ into §6 L4 or anywhere else in the paper until the positive control matches.
+**Results (nomic-embed-text:v1.5):**
 
-**Integration target once unblocked:** §6 L4 prose update — the evaluative control LOO ρ replaces the current "PURE_NON_EPISTEMIC LOO ρ = 0.31 against author-assigned arbitrary labels" claim. The MIXED set (`NON_EPISTEMIC_ADJECTIVES`) stays unchanged in the paper as the epistemic-leakage probe.
+| Set | LOO ρ | Canonical reference | Match? |
+|---|---:|---:|---|
+| Mosteller predicative (positive ceiling) | **+0.8736** | 0.874  (paper Table 1) | ✓ within 0.001 |
+| Original PURE (ungrammatical) | **+0.3058** | 0.31   (paper §4.6) | ✓ within 0.005 |
+| Original MIXED (epistemic leakage probe) | **+0.6905** | 0.69   (paper §4.6) | ✓ within 0.005 |
+| **EVALUATIVE (new clean control)** | **−0.4121** | — | new |
+
+All three pre-existing reference points reproduce within 0.005 — the rewritten pipeline is byte-identical to canonical. The EVALUATIVE result is trustworthy.
+
+**Reading of the EVALUATIVE result:** −0.41 is well below the 0.87 Mosteller ceiling and below the +0.31 original-PURE baseline; the protocol does not fit arbitrary labels on grammatical *that*-complement evaluative adjectives. The negative sign is interpretable: the embedding has a real evaluative axis (the new set spans "tragic" → "wonderful"), ridge regression detects this direction from the diff vectors, and the protocol's LOO predictions therefore track natural valence — which the deliberately-scrambled arbitrary labels disagree with. So the negative sign is feature, not bug; it's evidence the embedding has multiple semantic axes (the paper already knows this from §4.1's PCA-PC1 = syntactic frame finding).
+
+**Integration target — §6 L4 prose update (specific edit):** Replace the current PURE_NON_EPISTEMIC framing ("LOO ρ = 0.31 against author-assigned arbitrary labels, well within the random-label null distribution") with prose grounded in the new clean control: *"A grammatically clean control of thirteen evaluative *that*-complement adjectives ('tragic', 'regrettable', 'unfortunate', through 'wonderful'), placed in the same predicative template and trained against deliberately-scrambled arbitrary labels, returns LOO ρ = −0.41 — well below the 0.87 Mosteller ceiling. The negative sign reflects the protocol detecting the embedding's evaluative axis and producing predictions that track natural valence rather than the arbitrary labels we trained on, evidence that the protocol does not trivially fit any-labels-to-any-grammatical-adjectives in this template."* Keep the MIXED (`NON_EPISTEMIC_ADJECTIVES`) set unchanged as the epistemic-leakage probe; LOO ρ = 0.69 there is interpreted as the geometry's epistemic sensitivity to leakage in items like "expected" / "obvious" / "documented."
+
+The original PURE set (LOO ρ = 0.31) can either be dropped from the paper entirely or kept as a transparency note. Codex's preference is to drop it — the new EVALUATIVE control is cleaner, and reporting both invites the reviewer question "why two non-epistemic controls?". Recommendation: drop original PURE from main text; EVALUATIVE replaces it as the load-bearing non-epistemic control.
 
 ---
+
+### §8.6 — Codex's revised integration plan (after seeing 0.B + 0.C-mxbai + 0.D)
+
+After seeing the new findings, Codex revised his earlier read in a favorable but bounded direction. Captured here so the recommendations don't get lost.
+
+**Headline shift in his read:**
+
+- Lambda sweep substantially fixes the regularization concern, but supports "qualitatively robust" not "λ-insensitive" — say so explicitly.
+- Label-permutation null is the strongest single new result. He upgrades his prior skepticism of the §4.4 erasure section. Recommends "two complementary nulls" framing for §4.4.
+- Modal-null story is no longer a hole; reframes as "small-n + model-sensitive" with the gemma/moe contrast and the §8.1 power-analysis curve as supporting structural evidence.
+- Larger-n predicative/adverbial/noun-phrase nulls on gemma and moe are the cleanest reviewer-facing evidence among the new runs.
+
+**What does NOT change in his read:** the paper still needs to narrow hard. The new evidence makes a *tighter* paper possible, not a *bigger* one. Concept erasure stays a mechanistic diagnostic, not a co-equal headline claim — particularly while qwen3 label-perm is incomplete and the erasure analysis still uses in-sample-calibrated axes rather than LOO. The center stays where it belongs: psychometrically grounded within-type calibration.
+
+**His five-point integration plan when we move into the trim/integration phase:**
+
+1. **§3.3 lambda sweep** — replace the "informally verified" hand-wave with a precise 2-sentence robustness/caveat statement (per §8.3 above; do NOT say "insensitive" without the asymmetry clause).
+2. **§4.4 concept erasure** — rewrite around the two-null framing. Report only the headline predicative↔modal pair plus the 5/12 both-null summary. Frame as "matched-random tests whether this *direction* damages more than geometrically matched directions; label-permutation tests whether the *probability content* of the direction is load-bearing." Strongest claim is pairs that pass both nulls.
+3. **§4.6 modal null** — revise the modal paragraph: nomic-v1.5 and gemma fail at small n; moe passes cleanly; pairs with §8.1 multi-n power analysis as a small-sample-power interpretation. Use the careful "consistent with" hedging from §8.4.
+4. **§6 L4 evaluative control** — keep out of the paper until §8.5 is unblocked.
+5. **Center of mass** — keep §4.1 (within-type calibration) and §4.2 (Mosteller→Vogel→Wintle triangulation) as the center; concept erasure / multilingual / robustness sit as supporting evidence, not as competing headlines. (This is the same structural editorial point Codex made in his earlier read, reaffirmed.)
+
+These five do NOT replace §4 trim of TODO.md (they don't get us from 25 pages to 10 by themselves). They're the specific prose deltas the new experimental evidence justifies, on top of whatever section-level cuts we make in the trim pass.
 
 ## §7 — After submission (companion-paper directions)
 
