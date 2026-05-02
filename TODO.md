@@ -1,5 +1,46 @@
 # TODO.md — get the TACL paper to submission
 
+## Session state — 2026-05-02 (live)
+
+This block summarizes the in-flight integration work and pointers to the trim-phase planning files. Detailed per-section state is in `§8` below; non-trim manuscript-quality items deferred until after trim are in `§9`.
+
+### Integrations LANDED in `paper.md` so far this session
+
+| Integration | Commits | Source |
+|---|---|---|
+| §4.4 prose rewrite (replace blockquoted intent block with compilable prose) | `687f1ba` | §4.4 was missing from PDF before this; matched-random null + ratio framing |
+| §4.4 fig13 figure-environment fix (stray blockquote marker removed) | `58af880` | Codex flag, regression from 687f1ba |
+| §3.3 lambda sweep prose (replace "informally verified" with two-part claim) | `ca04668` + `c0ddb01` (cell-count fix) | TODO §8.3 |
+| §6 L4 + §4.6 evaluative non-epistemic control | `db03bbb` + `f205407` (§1 contribution-list alignment) | TODO §8.5 |
+
+### Integration IN PROGRESS
+
+- **§4.4 two-null framing rewrite** (matched-random + label-permutation, both architectures) — agent running in background, integrating from `results/exp11b_label_perm_{mxbai,qwen3}.txt`. See §8.2.
+
+### Integrations PENDING (waiting on data or queued)
+
+- **§4.6 modal-null paragraph + §6 L7 update** — waits for the `experiment_10` chain to finish on `mxbai-embed-large` and `qwen3-embedding`. Current chain progress: gemma DONE, moe DONE, mxbai mid-run (PID 56199), qwen3 next. Once data lands, prose target per §8.4 is "small-n + model-sensitive" framing with the gemma+moe+nomic-v1.5 contrast plus the §8.1 multi-n power-analysis curve as supporting structural evidence.
+- **§3.3/§6 L7 supplementary figure** — two-panel multi-n power-analysis figure (p-value collapse + violin plot of permuted distributions). Optional; depends on trim budget. See §8.1.
+
+### Trim-phase planning files (in `tmp/`, NOT integrated)
+
+When the trim phase begins, these are the source-of-truth files:
+
+| File | What it is |
+|---|---|
+| `tmp/codex-feedback-01-33.md` | Codex's full audit (2026-05-02): trim plan, 4-claims restructure, contribution-list compression (8→3–4), specific cuts, claim calibration. Also contains the non-trim items captured in TODO §9. |
+| `tmp/rewrite_strategy.md` | Gemini's section-by-section compression strategy: load-bearing vs. expendable framing, "delete §5 Discussion entirely" recommendation, limitations consolidation (8→3). |
+| `tmp/draft_intro_related.md` | Gemini's draft compressed §1 + §2 prose (~60% length reduction). To be reviewed/adapted; not adopted as-is. |
+
+These do NOT come into play until the integration pass for the new findings is complete and we move into the trim phase. Reading them prematurely would bias the per-section integrations toward Gemini's particular cuts before the empirical evidence is fully integrated.
+
+### Live experiment processes (as of 2026-05-02)
+
+- `experiment_10_null_hypothesis.py mxbai-embed-large` — PID 56199, mid-modal-permutation. Will be followed by qwen3.
+- (Other agent worktrees may be live; check `git worktree list`.)
+
+---
+
 ## §0 — Permutations to consider (scientifically illuminating, not yet greenlit)
 
 Three small experimental permutations that would clarify the modal-axis-fails-permutation-at-n=10 finding. None are in scope for the bugfix track, but each is small and would strengthen the paper's empirical story if there's room.
@@ -12,7 +53,7 @@ Three small experimental permutations that would clarify the modal-axis-fails-pe
 
 - [x] **(0.D — added on Codex feedback) Lambda-sensitivity sweep.** Run 2026-05-02. Result: `experiment_12_lambda_sweep.py` (committed `5cd524a`), output in `results/exp12_lambda_sweep.txt`. Replaces §3.3's "informally verified" hand-wave with quantitative numbers. See §8.
 
-- [ ] **(0.E — added on Codex feedback) Evaluative non-epistemic control.** Greenlit 2026-05-02. Status: `experiment_10c_evaluative_control.py` exists but has a bug — Mosteller predicative LOO ρ comes back at −0.022 in the script when the canonical paper-validation pipeline reports 0.874 on the same data. Bug must be debugged before the EVALUATIVE control number is trustworthy. See §8 for the proposed adjective set and the bug status.
+- [x] **(0.E — added on Codex feedback) Evaluative non-epistemic control.** Greenlit 2026-05-02. Result: `experiment_10c_evaluative_control.py` (committed `7203ae2` after canonical-pipeline rewrite that fixed three protocol drifts); output in `results/exp10c_evaluative_control.txt`. Mosteller predicative positive control reproduces canonical 0.874 within 0.001; EVALUATIVE LOO ρ = −0.41 well below the 0.87 ceiling. Integrated into §6 L4 and §4.6 (`db03bbb`) and §1 contribution 7 (`f205407`). See §8.5.
 
 ---
 
@@ -161,6 +202,8 @@ Six entries in `refs.bib` need verification — citations agent built them from 
 
 ### §8.1 — 0.B Multi-n modal power analysis  (`results/exp10b_modal_power_analysis.txt`, commit `fe320e0`)
 
+**Integration status:** NOT YET INTEGRATED into `paper.md`. Pairs with §8.4 (cross-model modal permutation) for the §6 L7 / §4.6 modal-null prose update. Will land in the same integration pass after the `experiment_10` chain completes for mxbai and qwen3.
+
 **Headline:** quantitatively confirms §6 L7 small-n rank-saturation. The p-value for the modal permutation test collapses three orders of magnitude across n=10 → n=14, with the threshold for crossing p < 0.05 between n=10 and n=12.
 
 **Numbers (nomic-embed-text:v1.5, 1000 perms per row, seed 42):**
@@ -191,7 +234,9 @@ Six entries in `refs.bib` need verification — citations agent built them from 
 
 ---
 
-### §8.2 — 0.C Label-permutation null on §4.4 (mxbai)  (`results/exp11b_label_perm_mxbai.txt`, commit `5213a58`)
+### §8.2 — 0.C Label-permutation null on §4.4  (`results/exp11b_label_perm_{mxbai,qwen3}.txt`, commits `5213a58` + `633cbbb`)
+
+**Integration status:** IN PROGRESS — §4.4 two-null framing rewrite agent running in background as of 2026-05-02. The current §4.4 in `paper.md` (from commit `687f1ba`, refined by `58af880`) uses only the matched-random null with the ratio framing. The in-flight rewrite incorporates both the label-permutation results below AND the qwen3 11/12 cross-null cross-architecture finding.
 
 **Headline:** the cosine-matched-direction null and the label-permutation null are answering different questions. The label-permutation null has wide std (1.7–4.3 on the headline pair) where the matched-random null's std rounds to ~0 at high cosine, and the predicative ↔ modal headline pair clears it with massive headroom (p = 0.002 both directions). This **directly addresses Codex's z-score-inflation worry far more cleanly than the §4.4 prose-level ratio reframing alone could**.
 
@@ -233,6 +278,8 @@ Recommendation: option 2. The two-nulls framing is genuinely the strongest versi
 ---
 
 ### §8.3 — 0.D Lambda-sensitivity sweep  (`results/exp12_lambda_sweep.txt`, commit `5cd524a`)
+
+**Integration status:** LANDED in `paper.md` §3.3 at commits `ca04668` (initial integration) + `c0ddb01` (cell-count fix from "sixteen" → "eight"). Current §3.3 prose carries the two-part stability + asymmetry claim with the modal-axis sensitivity observation cross-referenced to §6 L7.
 
 **Headline:** ridge λ choice is robust across four decades. Worst-case LOO ρ drop relative to the paper's λ=0.1 reference is ≤ 0.072 across all (model × type × λ) cells of the swept grid (nomic-v1.5 + mxbai-embed-large × four within-type axes × five λ values).
 
@@ -278,6 +325,8 @@ If the trim budget allows, this could be a single 2–3 sentence paragraph addit
 
 ### §8.4 — 0.A Cross-model modal permutation  (partial — gemma + moe done, mxbai + qwen3 pending)
 
+**Integration status:** NOT YET INTEGRATED. Waiting for the `experiment_10` chain to finish on mxbai-embed-large (mid-run as of 2026-05-02) and qwen3-embedding (next in queue). Once the full 5-model picture is in, the §4.6 modal-null paragraph + §6 L7 forward-reference get rewritten in a single integration pass — likely paired with §8.1 (multi-n power analysis) since both inform the same prose targets.
+
 **Status as of 2026-05-02:** sequential `experiment_10` chain on gemma → moe → mxbai → qwen3 (PID 54675, `python -u` for line-buffered progress). gemma and moe complete (results in `results/exp10_gemma.txt` and `results/exp10_moe.txt`); mxbai and qwen3 still running.
 
 **Modal-axis findings so far** (cross-referenced with Codex's read of the result files):
@@ -307,7 +356,9 @@ This is Codex's "cleanest reviewer-facing evidence" for the within-type calibrat
 
 ---
 
-### §8.5 — 0.E Evaluative non-epistemic control  (DONE, ready for §6 L4 prose update)
+### §8.5 — 0.E Evaluative non-epistemic control  (LANDED)
+
+**Integration status:** LANDED in `paper.md` §6 L4 + §4.6 at commit `db03bbb`; §1 contributions list aligned at `f205407`. The original `PURE_NON_EPISTEMIC` set is dropped from the main text per Codex's recommendation; the EVALUATIVE control replaces it as the load-bearing non-epistemic null. The MIXED set stays unchanged as the epistemic-leakage probe.
 
 **Goal:** replace the original `PURE_NON_EPISTEMIC` set in `experiment_10_null_hypothesis.py` (lines 143–157) — flagged by Codex for grammatical mismatch — with a grammatically clean evaluative set whose semantics are uniformly non-probabilistic.
 
@@ -344,6 +395,8 @@ The original PURE set (LOO ρ = 0.31) can either be dropped from the paper entir
 ---
 
 ### §8.6 — Codex's revised integration plan (after seeing 0.B + 0.C-mxbai + 0.D)
+
+**Status:** Codex confirmed the framing in `tmp/codex-feedback-01-33.md` (his most recent read after seeing all the new findings). Five-point plan below was verified item-by-item against the new evidence. The four-claims restructure (§4.6 in this file) and contribution-list compression (8→3-4) are trim-phase work, deferred until empirical-evidence integration is complete.
 
 After seeing the new findings, Codex revised his earlier read in a favorable but bounded direction. Captured here so the recommendations don't get lost.
 
