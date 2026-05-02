@@ -1,5 +1,22 @@
 # TODO.md — get the TACL paper to submission
 
+## §0 — Permutations to consider (scientifically illuminating, not yet greenlit)
+
+Three small experimental permutations that would clarify the modal-axis-fails-permutation-at-n=10 finding. None are in scope for the bugfix track, but each is small and would strengthen the paper's empirical story if there's room.
+
+- [ ] **(0.A) Cross-model modal permutation.** Currently we run §4.6 null-hypothesis tests only on nomic-embed-text:v1.5 (modal LOO = 0.648, fails permutation at p = 0.21). Run the same tests on the other four models. Modal LOO is much higher elsewhere (moe 0.915, qwen3 0.855, mxbai 0.806, gemma 0.588), so modal probably passes cleanly on the three high-LOO models. **Narrative payoff:** converts §4.6 from "modal fails on the one model we tested" to "modal passes on three of five models; the two failures are exactly the two models with the weakest modal LOO, consistent with the §6 L7 small-n + saturated-LOO-as-test-input story." *Cost:* 2-line CLI modification + 4 model runs, ~15 min agent time. *Recommendation:* highest-leverage of the three; do this if we do any.
+
+- [ ] **(0.B) Multi-n power analysis on modal.** Run the permutation test at n = 10, 12, 14, 17 by adding the seven author-estimated modal terms incrementally. Plot p-value (or "real-ρ percentile") against n. Concretely demonstrates the §6 L7 small-n saturation claim. *Cost:* modify experiment_10 to take a sample-size flag, rerun on nomic-v1.5 at four n values, ~10 min. Adds one small supplementary figure or table row. *Methodological caveat:* author-estimated values aren't psychometrically grounded, which is why they're excluded from the calibration target — but using them in a *power analysis* (not as a calibration target) is clean. Should be flagged in the prose.
+
+- [ ] **(0.C) Permutation test on §4.4 ΔMAE.** Shuffle Mosteller labels, retrain modal axis on shuffled labels, redo the §4.4 concept-erasure measurement, build a null distribution of ΔMAE values under shuffled labels. If real-axis ΔMAE exceeds the 95th percentile of this distribution, it's a different functional-validation claim than the cosine-matched-random control — and one that may have *higher* power than the §4.6 LOO permutation because ΔMAE isn't rank-saturated. **Why it's interesting:** addresses Codex's reviewer-bait worry about the §4.4 z-scores looking inflated when matched-null std rounds to ~0. A clean permutation null on ΔMAE would be the natural alternative reporting form. *Cost:* modify experiment_11 to wrap per-axis training in a permutation loop, rerun on both models, ~30 min agent time.
+
+**Decision points before any of these run:**
+- Do they fit in the 10-page TACL limit, or are they companion-paper material? (0.A) probably fits as a sentence-level addition to §4.6; (0.B) needs a small supplementary figure; (0.C) probably needs a paragraph in §4.4.
+- Are they worth running before vs. after the §4.4 prose rewrite + trim pass? Argument for *before*: changes what §4.4 / §4.6 prose says. Argument for *after*: the trim pass might cut the room they'd land in anyway.
+
+---
+
+
 Tactical task list for completing the hedge-embeddings TACL submission. Sits below `PLAN.md` (which holds the strategic shape of the program) and above the working-document state in `paper.md`. Tick items as they land. Section ordering reflects dependencies — items in an earlier section unblock items in later sections.
 
 **Last updated:** 2026-05-01 after consolidating feedback from Gemini (strategic + code-audit) and Codex (manuscript audit).
