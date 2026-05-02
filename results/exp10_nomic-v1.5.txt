@@ -1,0 +1,132 @@
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  Experiment 10: Null Hypothesis Testing                            ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Model: nomic-embed-text:v1.5                                     ║
+║                                                                    ║
+║  Could ANY set of adjectives in the same templates produce         ║
+║  similar results? Or is the signal genuinely epistemic?            ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Model loaded. Dim: 768
+
+══════════════════════════════════════════════════════════════════════════════
+TEST 1: PERMUTATION TEST (1000 permutations)
+  Shuffle Mosteller medians across expressions. Re-train axis.
+  If real LOO ρ >> shuffled LOO ρ, the signal is in the
+  phrase-probability MAPPING, not in the template structure.
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative (n=13):
+    Real LOO ρ:           +0.8736
+    Permuted LOO ρ mean:  -0.1585 (std: 0.3555)
+    Permuted LOO ρ max:   +0.9121
+    Permuted 95th %%ile:   +0.7310
+    Permuted 99th %%ile:   +0.8336
+    Real ρ percentile:    99.7th
+    p-value (two-sided):  0.0030
+    → SIGNIFICANT (p < 0.01): The phrase→probability mapping
+      is NOT an artifact of template structure.
+
+  Adverbial (n=19):
+    Real LOO ρ:           +0.9227
+    Permuted LOO ρ mean:  -0.0804 (std: 0.2918)
+    Permuted LOO ρ max:   +0.8664
+    Permuted 95th %%ile:   +0.6031
+    Permuted 99th %%ile:   +0.7948
+    Real ρ percentile:    100.0th
+    p-value (two-sided):  0.0000
+    → SIGNIFICANT (p < 0.01): The phrase→probability mapping
+      is NOT an artifact of template structure.
+
+  Noun phrase (n=11):
+    Real LOO ρ:           +0.9364
+    Permuted LOO ρ mean:  -0.1473 (std: 0.4141)
+    Permuted LOO ρ max:   +0.9636
+    Permuted 95th %%ile:   +0.8000
+    Permuted 99th %%ile:   +0.9182
+    Real ρ percentile:    99.5th
+    p-value (two-sided):  0.0050
+    → SIGNIFICANT (p < 0.01): The phrase→probability mapping
+      is NOT an artifact of template structure.
+
+  Modal (n=10):
+    Real LOO ρ:           +0.6485
+    Permuted LOO ρ mean:  -0.2636 (std: 0.3753)
+    Permuted LOO ρ max:   +0.9758
+    Permuted 95th %%ile:   +0.8061
+    Permuted 99th %%ile:   +0.8789
+    Real ρ percentile:    79.2th
+    p-value (two-sided):  0.2080
+    → NOT SIGNIFICANT: The result could arise from shuffled labels.
+
+══════════════════════════════════════════════════════════════════════════════
+TEST 2: NON-EPISTEMIC ADJECTIVE CONTROL
+  Same template, but with adjectives that carry NO probability
+  content. If ridge regression achieves high LOO ρ on these,
+  the method is prone to overfitting on template structure.
+══════════════════════════════════════════════════════════════════════════════
+
+  Mixed (some epistemic leakage) (n=13):
+    In-sample ρ (arbitrary labels):  +0.9436
+    LOO ρ (arbitrary labels):        +0.6905
+    Random-label LOO ρ mean:         -0.1298 (std: 0.3600)
+    Random-label LOO ρ 95th %%ile:    +0.6816
+    Real epistemic predicative LOO ρ: +0.8736
+    → WARNING: Non-epistemic adjectives show some structure.
+      Investigate whether this reflects genuine semantic ordering.
+
+  Pure non-epistemic (n=13):
+    In-sample ρ (arbitrary labels):  +0.9792
+    LOO ρ (arbitrary labels):        +0.3058
+    Random-label LOO ρ mean:         -0.1237 (std: 0.3586)
+    Random-label LOO ρ 95th %%ile:    +0.7036
+    Real epistemic predicative LOO ρ: +0.8736
+    → GOOD: Non-epistemic adjectives don't produce structured axes.
+      The method is not prone to template-structure overfitting.
+
+══════════════════════════════════════════════════════════════════════════════
+TEST 3: RANDOM LABELS ON REAL EPISTEMIC EXPRESSIONS (1000 trials)
+  Keep the real hedge words but assign random Uniform(0,100)
+  probabilities. How often does LOO ρ match our real values?
+══════════════════════════════════════════════════════════════════════════════
+
+  Predicative (n=13):
+    Real LOO ρ:             +0.8736
+    Random-label mean:      -0.1316 (std: 0.3539)
+    Random-label 95th %%ile:  +0.7198
+    Random-label max:       +0.9231
+    p-value:                0.0060
+
+  Adverbial (n=19):
+    Real LOO ρ:             +0.9227
+    Random-label mean:      -0.0869 (std: 0.3032)
+    Random-label 95th %%ile:  +0.6232
+    Random-label max:       +0.8456
+    p-value:                0.0000
+
+  Noun phrase (n=11):
+    Real LOO ρ:             +0.9364
+    Random-label mean:      -0.1483 (std: 0.3951)
+    Random-label 95th %%ile:  +0.7909
+    Random-label max:       +0.9818
+    p-value:                0.0030
+
+  Modal (n=10):
+    Real LOO ρ:             +0.6485
+    Random-label mean:      -0.2499 (std: 0.3789)
+    Random-label 95th %%ile:  +0.8182
+    Random-label max:       +0.9758
+    p-value:                0.1970
+
+══════════════════════════════════════════════════════════════════════════════
+SUMMARY
+══════════════════════════════════════════════════════════════════════════════
+
+  Test 1 (Permutation): Do shuffled labels produce comparable LOO ρ?
+  Test 2 (Non-epistemic): Do non-probability adjectives produce axes?
+  Test 3 (Random labels): Do random targets produce comparable LOO ρ?
+
+  If all three fail to match our real LOO ρ values, the signal is
+  genuinely epistemic — it's in the phrase meanings, not the method.
+
