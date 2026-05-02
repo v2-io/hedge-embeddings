@@ -1,0 +1,53 @@
+========================================================================
+Experiment 10c — evaluative non-epistemic control (canonical pipeline)
+Model: nomic-embed-text:v1.5
+Template: "It is {PHRASE} that the experiment will succeed"
+Bare claim: "The experiment will succeed"  (no trailing period — canonical)
+========================================================================
+
+--- Mosteller predicative — positive ceiling  (n = 13) ---
+    In-sample ρ : +0.9341
+    In-sample MAE: 7.11
+    LOO ρ        : +0.8736
+    LOO MAE      : 13.48
+
+[positive control PASSED at LOO ρ = +0.8736, ≥ 0.8]
+
+--- Original PURE — ungrammatical (Codex critique target)  (n = 13) ---
+    In-sample ρ : +0.9792
+    In-sample MAE: 1.46
+    LOO ρ        : +0.3058
+    LOO MAE      : 6.24
+
+--- Original MIXED — epistemic leakage probe  (n = 13) ---
+    In-sample ρ : +0.9436
+    In-sample MAE: 3.86
+    LOO ρ        : +0.6905
+    LOO MAE      : 10.87
+
+--- NEW EVALUATIVE — clean grammatical control  (n = 13) ---
+    In-sample ρ : +0.9231
+    In-sample MAE: 5.12
+    LOO ρ        : -0.4121
+    LOO MAE      : 22.73
+
+========================================================================
+SUMMARY
+========================================================================
+  Set                                                          LOO ρ
+  ------------------------------------------------------- ----------
+  Mosteller predicative (ceiling)                            +0.8736
+  Original PURE (ungrammatical)                              +0.3058
+  Original MIXED (leakage probe)                             +0.6905
+  EVALUATIVE (new clean control)                             -0.4121
+
+Reading:
+  - The protocol is selective for actual probability semantics if
+    EVALUATIVE LOO ρ is near zero (or anywhere comfortably below the
+    ORIG_PURE 0.31 baseline).
+  - If EVALUATIVE LOO ρ rises substantially above zero, the protocol
+    fits arbitrary labels on grammatical adjectives in this template,
+    which would weaken the §4.6 control story.
+  - Mosteller predicative is the positive ceiling. ORIG_MIXED's
+    elevated LOO ρ is the epistemic-leakage signal §6 L4 already
+    documents — kept as-is in the paper.
