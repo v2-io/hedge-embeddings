@@ -45,11 +45,12 @@ arXiv:2407.15814v2 dated 2024-11-07. UC Irvine CS + Cog Sci.
 
 Strongest behavioral comparator on the same phenomenon as our work. Prompted-output protocol with 10 LLMs and 94 baseline humans on 14 uncertainty expressions from Wallsten et al. 1986a/2008. Theory-of-mind framing distinguishes speaker's certainty from the participant's own belief about the proposition ("Sonia believes it is unlikely it will rain today" — quantify Sonia's certainty). Findings: 7/10 LLMs map uncertainty to probabilities in human-aligned ways; LLMs systematically more biased by prior knowledge (truth/falsehood of proposition) than humans are. Differentiation: method (prompted-output behavior elicitation vs. frozen-embedding linear axis extraction), model class (conversational LLMs vs. pretrained pooled sentence embeddings).
 
-### `tang2024-estimative-uncertainty-llms.pdf`
-**Tang, Shen & Kejriwal (2024)**
-*"An Evaluation of Estimative Uncertainty in Large Language Models"*
-arXiv:2405.15185v1 dated 2024-05-24. USC ISI. (Undermind cites *npj Complexity* — verify venue before final submission.)
-- arXiv: https://arxiv.org/abs/2405.15185
+### `tang2026-estimative-uncertainty-npj-complexity.pdf`
+**Tang, Shen & Kejriwal (2026)**
+*"An evaluation of estimative uncertainty in large language models"*
+*npj Complexity* (2026) 3:8. doi:10.1038/s44260-026-00070-6. USC Information Sciences Institute. (Earlier arXiv preprint: arXiv:2405.15185 dated 2024-05-24.)
+- npj Complexity: https://doi.org/10.1038/s44260-026-00070-6
+- arXiv preprint: https://arxiv.org/abs/2405.15185
 
 Closest behavioral comparator on cross-linguistic verbal probability. 17 Words of Estimative Probability across GPT-3.5, GPT-4, Llama-2-7B, Llama-2-13B, ERNIE-4. Prompted-output protocol with human survey baseline. Cross-linguistic comparison: English vs. Chinese (with ERNIE-4 prompted in Chinese, GPT-4 prompted in both). Findings: human-LLM alignment for high-certainty WEPs but divergence on 11/12 mid-range WEPs (GPT-3.5/GPT-4); gendered-role prompts increase divergence; CoT prompting fails to improve LLM consistency under varying statistical uncertainty. Their cross-linguistic scope is English+Chinese (behavioral); ours is 8 typologically diverse languages (geometric ranking transfer).
 
