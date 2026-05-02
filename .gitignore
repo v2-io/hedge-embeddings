@@ -1,1 +1,8 @@
 __pycache__/
+
+# Comparator PDFs are useful working artifacts but we don't have
+# redistribution rights to publish them in a public repo.  Keep them
+# locally; future sessions can re-fetch from the citations and links
+# in comparators/INDEX.md.
+comparators/*.pdf
+
