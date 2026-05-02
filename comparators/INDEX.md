@@ -17,8 +17,8 @@ EMNLP 2025, pp. 3769–3793. arXiv:2503.14477.
 
 Closest direct comparator on the verbal-uncertainty *phenomenon*. Single linear "verbal uncertainty feature" extracted from decoder LLM residual streams via difference-in-means; calibrated to LLM-as-Judge model behavior aligned with Semantic Uncertainty; causal intervention via inference-time scaling of activations along that direction. Three QA datasets (TriviaQA, NQ-Open, PopQA) on three decoder LLMs (Llama-3.1-8B, Mistral-7B, Qwen2.5-7B). The paper's title is dangerously close to ours; differentiation in our §2 must be explicit and early.
 
-### `valentin2025-frame-representation-hypothesis-tacl.pdf`
-**Valois, Souza, Shimomoto & Fukui (2025)** [author convention may be "Valentin et al." in some indices — verify lead author from the PDF]
+### `valois2025-frame-representation-hypothesis-tacl.pdf`
+**Valois, Souza, Shimomoto & Fukui (2025)** — *NB: undermind audit attributed this to "Valentin et al." which is incorrect; lead author is Pedro H. V. Valois (Univ. Tsukuba)*
 *"Frame Representation Hypothesis: Multi-Token LLM Interpretability and Concept-Guided Text Generation"*
 TACL Vol. 13, pp. 1436–1458. doi:10.1162/TACL.a.48.
 - ACL Anthology: https://aclanthology.org/2025.tacl-1.65/
