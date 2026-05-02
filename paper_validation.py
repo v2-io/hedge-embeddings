@@ -127,10 +127,18 @@ MODAL_ALL = {
 }
 
 # Modal axis — MOSTELLER-ONLY expressions (no author estimates)
+# Matches experiment_11_concept_erasure.py:172 — n=10 canonical set.
 MODAL_MOSTELLER_ONLY = {
-    "certainly": 99.6, "almost certainly": 90.2, "very likely": 87.5,
-    "likely": 71.1, "probably": 70.2, "possibly": 38.5,
-    "unlikely": 17.2, "very unlikely": 5.0,
+    "certainly": 99.6,         # adverb of "Certain"
+    "almost certainly": 90.2,  # adverb of "Almost certain"
+    "very likely": 87.5,
+    "likely": 71.1,
+    "probably": 70.2,          # adverb of "Probable"
+    "very probably": 89.7,     # adverb of "Very probable"
+    "possibly": 38.5,          # adverb of "Possible"
+    "unlikely": 17.2,
+    "very unlikely": 5.0,
+    "improbably": 12.5,        # adverb of "Improbable"
 }
 MODAL_TEMPLATE = "The experiment will {PHRASE} succeed"
 
@@ -315,7 +323,7 @@ def run_modal_comparison(bare_emb):
     results = {}
 
     for label, expressions in [("Modal (all 15)", MODAL_ALL),
-                                ("Modal (Mosteller-only 8)", MODAL_MOSTELLER_ONLY)]:
+                                ("Modal (Mosteller-only 10)", MODAL_MOSTELLER_ONLY)]:
         phrases = list(expressions.keys())
         medians = np.array([expressions[p] for p in phrases])
         sentences = [MODAL_TEMPLATE.replace("{PHRASE}", p) for p in phrases]
@@ -346,13 +354,14 @@ def run_modal_comparison(bare_emb):
             "axis": w, "slope": slope, "intercept": intercept,
         }
 
-    # Cross-test: train on Mosteller-only, test on the 7 author-estimated phrases
+    # Cross-test: train on Mosteller-only, test on the author-estimated phrases
+    # in MODAL_ALL not present in the Mosteller-only set.
     author_only = {k: v for k, v in MODAL_ALL.items()
                    if k not in MODAL_MOSTELLER_ONLY}
     if author_only:
-        w_m = results["Modal (Mosteller-only 8)"]["axis"]
-        sl_m = results["Modal (Mosteller-only 8)"]["slope"]
-        int_m = results["Modal (Mosteller-only 8)"]["intercept"]
+        w_m = results["Modal (Mosteller-only 10)"]["axis"]
+        sl_m = results["Modal (Mosteller-only 10)"]["slope"]
+        int_m = results["Modal (Mosteller-only 10)"]["intercept"]
 
         a_phrases = list(author_only.keys())
         a_medians = np.array([author_only[p] for p in a_phrases])

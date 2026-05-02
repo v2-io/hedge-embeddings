@@ -132,19 +132,19 @@ SECTION 5: MODAL AXIS — ALL EXPRESSIONS vs. MOSTELLER-ONLY
     In-sample:  ρ = 0.971, MAE = 7.7%
     LOO:        ρ = 0.948, MAE = 12.2%
 
-  Modal (Mosteller-only 8) (n=8):
-    In-sample:  ρ = 0.952, MAE = 9.1%
-    LOO:        ρ = 0.667, MAE = 15.1%
+  Modal (Mosteller-only 10) (n=10):
+    In-sample:  ρ = 0.927, MAE = 10.2%
+    LOO:        ρ = 0.648, MAE = 17.9%
 
   Mosteller-only → author-estimated (n=7):
-    ρ = 0.964, MAE = 17.8%
-      conceivably           Pred= 68.4%  True= 38.5%  Err=29.9%
-      definitely            Pred= 86.8%  True= 99.6%  Err=12.8%
-      perhaps               Pred= 64.4%  True= 38.5%  Err=25.9%
-      maybe                 Pred= 61.2%  True= 38.5%  Err=22.7%
-      presumably            Pred= 73.8%  True= 70.2%  Err= 3.6%
-      undoubtedly           Pred= 80.5%  True= 95.0%  Err=14.5%
-      arguably              Pred= 70.5%  True= 55.0%  Err=15.5%
+    ρ = 0.927, MAE = 17.8%
+      conceivably           Pred= 57.8%  True= 38.5%  Err=19.3%
+      definitely            Pred= 87.5%  True= 99.6%  Err=12.1%
+      perhaps               Pred= 68.3%  True= 38.5%  Err=29.8%
+      maybe                 Pred= 65.5%  True= 38.5%  Err=27.0%
+      presumably            Pred= 73.2%  True= 70.2%  Err= 3.0%
+      undoubtedly           Pred= 79.7%  True= 95.0%  Err=15.3%
+      arguably              Pred= 73.2%  True= 55.0%  Err=18.2%
 
 ══════════════════════════════════════════════════════════════════════════════
 SUMMARY TABLE FOR PAPER

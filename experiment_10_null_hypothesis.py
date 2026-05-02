@@ -110,6 +110,16 @@ NOUN_PHRASE = {
 }
 NOUN_PHRASE_TEMPLATE = "There is a {PHRASE} that the experiment will succeed"
 
+# Modal: 10-item Mosteller-derived set, unified with experiment_11 / paper_validation
+MODAL = {
+    "certainly": 99.6,         "almost certainly": 90.2,
+    "very likely": 87.5,       "likely": 71.1,
+    "probably": 70.2,          "very probably": 89.7,
+    "possibly": 38.5,          "unlikely": 17.2,
+    "very unlikely": 5.0,      "improbably": 12.5,
+}
+MODAL_TEMPLATE = "The experiment will {PHRASE} succeed"
+
 # Non-epistemic adjectives for control — same template, no probability content
 NON_EPISTEMIC_ADJECTIVES = {
     # Using same predicative template: "It is {X} that the experiment will succeed"
@@ -210,6 +220,7 @@ def main():
         "Predicative": (PREDICATIVE, PREDICATIVE_TEMPLATE),
         "Adverbial": (ADVERBIAL, ADVERBIAL_TEMPLATE),
         "Noun phrase": (NOUN_PHRASE, NOUN_PHRASE_TEMPLATE),
+        "Modal": (MODAL, MODAL_TEMPLATE),
     }
 
     group_diffs = {}
