@@ -1,4 +1,4 @@
-# Calibrated Linear Structure of Verbal Probability in Pretrained Sentence Embeddings
+# Epistemic Hedging is Linear in Pretrained Sentence Embeddings
 
 **Anonymous submission** *(TACL — double-blind; identifying information removed)*
 
